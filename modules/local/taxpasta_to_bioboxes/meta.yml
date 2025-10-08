@@ -1,0 +1,63 @@
+name: taxpasta_to_bioboxes
+description: Convert taxpasta standardized format to CAMI Bioboxes profiling format
+keywords:
+  - format conversion
+  - taxonomic profiling
+  - CAMI
+  - Bioboxes
+  - taxpasta
+  - standardization
+tools:
+  - custom:
+      description: |
+        Custom Python script to convert taxpasta standardized taxonomic profiling
+        format to CAMI Bioboxes profiling format for use with OPAL evaluation tool.
+        Uses ete3 for NCBI taxonomy lookups to obtain lineage information.
+      homepage: https://github.com/nf-core/taxbencher
+      documentation: https://github.com/nf-core/taxbencher
+      licence: ["MIT"]
+
+input:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information and optional parameters:
+        - id: Sample identifier (required)
+        - sample_id: Alternative sample identifier for output (optional, defaults to id)
+        - ranks: Pipe-separated taxonomic ranks (optional, default: superkingdom|phylum|class|order|family|genus|species|strain)
+        - taxonomy_db: Taxonomy database name (optional, default: NCBI)
+  - taxpasta_tsv:
+      type: file
+      description: |
+        Taxpasta standardized TSV file containing taxonomy_id and count columns.
+        Format example:
+        taxonomy_id    count
+        562            1000
+        1280           500
+      pattern: "*.{tsv,txt}"
+      ontologies:
+        - edam: http://edamontology.org/format_3475 # TSV
+
+output:
+  - meta:
+      type: map
+      description: Groovy Map containing sample information (same as input meta)
+  - bioboxes:
+      type: file
+      description: |
+        CAMI Bioboxes profiling format file with metadata headers and taxonomic
+        lineage information. Includes TAXID, RANK, TAXPATH, TAXPATHSN, and PERCENTAGE.
+      pattern: "*.bioboxes"
+      ontologies:
+        - edam: http://edamontology.org/format_3475 # TSV
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+      ontologies:
+        - edam: http://edamontology.org/format_3750 # YAML
+
+authors:
+  - "@taxbencher"
+maintainers:
+  - "@taxbencher"

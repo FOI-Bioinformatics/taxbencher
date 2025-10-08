@@ -1,0 +1,83 @@
+nextflow_process {
+
+    name "Test Process TAXPASTA_TO_BIOBOXES"
+    script "../main.nf"
+    process "TAXPASTA_TO_BIOBOXES"
+
+    tag "modules"
+    tag "modules_local"
+    tag "taxpasta_to_bioboxes"
+
+    test("taxpasta to bioboxes - basic") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id: 'test_sample', sample_id: 'test_1' ],
+                    file('${moduleDir}/testdata/test_taxpasta.tsv', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("taxpasta to bioboxes - custom parameters") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [
+                        id: 'test_sample_custom',
+                        sample_id: 'custom_sample',
+                        ranks: 'domain|phylum|class|order|family|genus|species',
+                        taxonomy_db: 'NCBI'
+                    ],
+                    file('${moduleDir}/testdata/test_taxpasta.tsv', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("taxpasta to bioboxes - stub") {
+
+        options "-stub"
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id: 'test_sample', sample_id: 'test_1' ],
+                    file('${moduleDir}/testdata/test_taxpasta.tsv', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+}

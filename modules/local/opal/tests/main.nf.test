@@ -1,0 +1,121 @@
+nextflow_process {
+
+    name "Test Process OPAL"
+    script "../main.nf"
+    process "OPAL"
+
+    tag "modules"
+    tag "modules_local"
+    tag "opal"
+
+    test("opal - single prediction") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id: 'test_single' ],
+                    file('${moduleDir}/testdata/gold_standard.bioboxes', checkIfExists: true)
+                ]
+                input[1] = [
+                    file('${moduleDir}/testdata/prediction1.bioboxes', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("opal - multiple predictions") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [
+                        id: 'test_multi',
+                        labels: 'Classifier1,Classifier2'
+                    ],
+                    file('${moduleDir}/testdata/gold_standard.bioboxes', checkIfExists: true)
+                ]
+                input[1] = [
+                    file('${moduleDir}/testdata/prediction1.bioboxes', checkIfExists: true),
+                    file('${moduleDir}/testdata/prediction2.bioboxes', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("opal - with filtering and normalization") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [
+                        id: 'test_filtered',
+                        filter: 0.01,
+                        normalize: true,
+                        rank: 'species'
+                    ],
+                    file('${moduleDir}/testdata/gold_standard.bioboxes', checkIfExists: true)
+                ]
+                input[1] = [
+                    file('${moduleDir}/testdata/prediction1.bioboxes', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("opal - stub") {
+
+        options "-stub"
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id: 'test_stub' ],
+                    file('${moduleDir}/testdata/gold_standard.bioboxes', checkIfExists: true)
+                ]
+                input[1] = [
+                    file('${moduleDir}/testdata/prediction1.bioboxes', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+}

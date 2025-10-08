@@ -1,0 +1,53 @@
+.nextflow*
+work/
+data/
+results/
+.DS_Store
+testing/
+testing*
+*.pyc
+null/
+.nf-test*
+.nf-test.*
+test_results
+test_*
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Testing artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# IDE files
+*.swp
+*.swo
+*~
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Alternative results directories
+results_*/
+output/
+outdir/
+
+# Logs
+*.log
+!.nf-core.log
+
+# Conda/Environment
+.snakemake/
+.conda/
+
+# Temporary development scripts
+/*.sh
+!bin/*.sh
