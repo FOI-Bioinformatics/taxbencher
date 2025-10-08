@@ -55,14 +55,16 @@ workflow TAXBENCHER {
 
     //
     // Create meta map for gold standard with labels
+    // Combine the labels channel with the gold standard file
     //
     ch_gold_with_meta = ch_bioboxes_labels
-        .map { labels -> [
+        .combine(ch_gold_standard)
+        .map { labels, gold_std -> [
             [
                 id: 'benchmark',
                 labels: labels
             ],
-            ch_gold_standard
+            gold_std
         ] }
 
     //

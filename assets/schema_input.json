@@ -10,26 +10,22 @@
             "sample": {
                 "type": "string",
                 "pattern": "^\\S+$",
-                "errorMessage": "Sample name must be provided and cannot contain spaces",
-                "meta": ["sample"]
+                "errorMessage": "Sample name must be provided and cannot contain spaces"
             },
             "classifier": {
                 "type": "string",
                 "pattern": "^\\S+$",
-                "errorMessage": "Classifier name must be provided and cannot contain spaces",
-                "meta": ["classifier"]
+                "errorMessage": "Classifier name must be provided and cannot contain spaces"
             },
             "taxpasta_file": {
                 "type": "string",
-                "format": "file-path",
                 "pattern": "^\\S+\\.(tsv|txt)$",
                 "errorMessage": "Taxpasta file must be provided, cannot contain spaces, and must have extension '.tsv' or '.txt'"
             },
             "taxonomy_db": {
                 "type": "string",
                 "default": "NCBI",
-                "errorMessage": "Taxonomy database should be specified (default: NCBI)",
-                "meta": ["taxonomy_db"]
+                "errorMessage": "Taxonomy database should be specified (default: NCBI)"
             }
         },
         "required": ["sample", "classifier", "taxpasta_file"]
