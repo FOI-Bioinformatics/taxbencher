@@ -1,0 +1,9 @@
+name: utils_nfcore_taxbencher_pipeline
+description: Utility subworkflow for taxbencher pipeline initialization and completion
+keywords:
+  - utility
+  - initialization
+  - completion
+components: []
+authors:
+  - "@andreassjodin"

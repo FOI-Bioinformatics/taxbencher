@@ -16,15 +16,6 @@
 include { TAXBENCHER  } from './workflows/taxbencher'
 include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_taxbencher_pipeline'
 include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_taxbencher_pipeline'
-include { getGenomeAttribute      } from './subworkflows/local/utils_nfcore_taxbencher_pipeline'
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    GENOME PARAMETER VALUES
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-// No genome files needed for taxbencher - we use taxpasta profiles
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -50,15 +41,20 @@ workflow FOIBIOINFORMATICS_TAXBENCHER {
     //
     // Parse samplesheet to create taxpasta channel
     // Samplesheet format: sample,classifier,taxpasta_file,taxonomy_db
+    // Channel emits maps with column names as keys from splitCsv
     //
-    ch_taxpasta = samplesheet.map { meta ->
-        def new_meta = [
-            id: "${meta.sample}_${meta.classifier}",
-            sample_id: meta.sample,
-            classifier: meta.classifier,
-            taxonomy_db: meta.taxonomy_db ?: 'NCBI'
+    ch_taxpasta = samplesheet.map { row ->
+        def meta = [
+            id: "${row.sample}_${row.classifier}",
+            sample_id: row.sample,
+            classifier: row.classifier,
+            taxonomy_db: row.taxonomy_db
         ]
-        [new_meta, file(meta.taxpasta_file)]
+        // Resolve file path relative to projectDir if it's not absolute
+        def taxpasta_path = row.taxpasta_file.startsWith('/') ?
+            file(row.taxpasta_file) :
+            file("${projectDir}/${row.taxpasta_file}")
+        [meta, taxpasta_path]
     }
 
     //
@@ -82,6 +78,9 @@ workflow FOIBIOINFORMATICS_TAXBENCHER {
 workflow {
 
     main:
+
+    ch_versions = Channel.empty()
+
     //
     // SUBWORKFLOW: Run initialisation tasks
     //
@@ -93,6 +92,7 @@ workflow {
         params.outdir,
         params.input
     )
+    ch_versions = ch_versions.mix(PIPELINE_INITIALISATION.out.versions)
 
     //
     // WORKFLOW: Run main workflow
