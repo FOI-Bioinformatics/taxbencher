@@ -3,4 +3,5 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
+  - python=3.12
   - bioconda::taxpasta=0.7.0
