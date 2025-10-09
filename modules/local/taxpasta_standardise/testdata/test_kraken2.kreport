@@ -1,0 +1,14 @@
+ 99.95	9995	9995	U	0	unclassified
+  0.05	5	0	R	1	root
+  0.03	3	0	D	2	  Bacteria
+  0.02	2	0	P	1224	    Pseudomonadota
+  0.01	1	0	C	1236	      Gammaproteobacteria
+  0.01	1	0	O	91347	        Enterobacterales
+  0.01	1	0	F	543	          Enterobacteriaceae
+  0.01	1	1	G	561	            Escherichia
+  0.02	2	0	D	2157	  Archaea
+  0.02	2	0	P	28890	    Euryarchaeota
+  0.01	1	0	C	183925	      Methanobacteria
+  0.01	1	0	O	2158	        Methanobacteriales
+  0.01	1	0	F	2159	          Methanobacteriaceae
+  0.01	1	1	G	2172	            Methanobrevibacter

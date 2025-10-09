@@ -39,11 +39,14 @@ workflow FOIBIOINFORMATICS_TAXBENCHER {
     ch_gold_standard = Channel.fromPath(params.gold_standard, checkIfExists: true).first()
 
     //
-    // Parse samplesheet to create taxpasta channel
+    // Parse samplesheet to create input channel
     // Samplesheet format: sample,classifier,taxpasta_file,taxonomy_db
+    // taxpasta_file can be either:
+    //   - Pre-standardized taxpasta TSV (.tsv, .txt)
+    //   - Raw profiler output (will be standardized automatically based on file extension)
     // Channel emits maps with column names as keys from splitCsv
     //
-    ch_taxpasta = samplesheet.map { row ->
+    ch_input = samplesheet.map { row ->
         def meta = [
             id: "${row.sample}_${row.classifier}",
             sample_id: row.sample,
@@ -51,17 +54,17 @@ workflow FOIBIOINFORMATICS_TAXBENCHER {
             taxonomy_db: row.taxonomy_db
         ]
         // Resolve file path relative to projectDir if it's not absolute
-        def taxpasta_path = row.taxpasta_file.startsWith('/') ?
+        def input_path = row.taxpasta_file.startsWith('/') ?
             file(row.taxpasta_file) :
             file("${projectDir}/${row.taxpasta_file}")
-        [meta, taxpasta_path]
+        [meta, input_path]
     }
 
     //
     // WORKFLOW: Run pipeline
     //
     TAXBENCHER (
-        ch_taxpasta,
+        ch_input,
         ch_gold_standard
     )
 

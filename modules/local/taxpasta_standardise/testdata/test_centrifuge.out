@@ -1,0 +1,6 @@
+readID	seqID	taxID	score	2ndBestScore	hitLength	queryLength	numMatches
+read1	NC_000913.3	562	15000	0	100	100	1
+read2	NC_000913.3	562	14500	0	100	100	1
+read3	NZ_CP007136.1	1280	15000	0	100	100	1
+read4	NC_003112.2	272631	14000	0	100	100	1
+read5	unclassified	0	0	0	0	100	0

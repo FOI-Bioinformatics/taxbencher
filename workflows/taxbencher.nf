@@ -3,6 +3,7 @@
     IMPORT MODULES / SUBWORKFLOWS / FUNCTIONS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
+include { TAXPASTA_STANDARDISE   } from '../modules/local/taxpasta_standardise/main'
 include { TAXPASTA_TO_BIOBOXES   } from '../modules/local/taxpasta_to_bioboxes/main'
 include { OPAL                   } from '../modules/local/opal/main'
 include { MULTIQC                } from '../modules/nf-core/multiqc/main'
@@ -20,13 +21,41 @@ include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_taxb
 workflow TAXBENCHER {
 
     take:
-    ch_taxpasta      // channel: [ [meta], path(taxpasta.tsv) ]
+    ch_input         // channel: [ [meta], path(input_file) ] - Can be taxpasta TSV or raw profiler output
     ch_gold_standard // channel: path(gold_standard.bioboxes)
 
     main:
 
     ch_versions = Channel.empty()
     ch_multiqc_files = Channel.empty()
+
+    //
+    // BRANCH: Separate inputs that need standardization from those that don't
+    // Check file extension to determine if taxpasta standardisation is needed
+    // .tsv or .txt files are already standardized, others need processing
+    //
+    ch_input
+        .branch { meta, file ->
+            standardised: file.name.endsWith('.tsv') || file.name.endsWith('.txt')
+                return [meta, file]
+            needs_standardisation: true
+                return [meta, file]
+        }
+        .set { ch_branched }
+
+    //
+    // MODULE: Standardise raw profiler outputs (optional)
+    // Only runs for files that are not already in taxpasta TSV format
+    //
+    TAXPASTA_STANDARDISE(ch_branched.needs_standardisation)
+    ch_versions = ch_versions.mix(TAXPASTA_STANDARDISE.out.versions.first())
+
+    //
+    // CHANNEL: Combine standardised and already-standardised files
+    // This creates a unified channel of taxpasta TSV files for downstream processing
+    //
+    ch_taxpasta = ch_branched.standardised
+        .mix(TAXPASTA_STANDARDISE.out.standardised)
 
     //
     // MODULE: Convert taxpasta profiles to CAMI Bioboxes format

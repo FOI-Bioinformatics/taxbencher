@@ -1,0 +1,2 @@
+sample,classifier,taxpasta_file,taxonomy_db
+test_sample,kraken2,assets/test_data/profiler_outputs/sample1_kraken2.kreport,NCBI

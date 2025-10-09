@@ -1,0 +1,122 @@
+{
+    "taxpasta standardise - kraken2": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test_kraken2",
+                            "classifier": "kraken2",
+                            "taxonomy_db": "NCBI"
+                        },
+                        "test_kraken2.tsv:md5,4074437ead67f2058fdd95464dfeeaba"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                ],
+                "standardised": [
+                    [
+                        {
+                            "id": "test_kraken2",
+                            "classifier": "kraken2",
+                            "taxonomy_db": "NCBI"
+                        },
+                        "test_kraken2.tsv:md5,4074437ead67f2058fdd95464dfeeaba"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.7"
+        },
+        "timestamp": "2025-10-09T06:42:04.339714"
+    },
+    "taxpasta standardise - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test_stub",
+                            "classifier": "kraken2",
+                            "taxonomy_db": "NCBI"
+                        },
+                        "test_stub.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                ],
+                "standardised": [
+                    [
+                        {
+                            "id": "test_stub",
+                            "classifier": "kraken2",
+                            "taxonomy_db": "NCBI"
+                        },
+                        "test_stub.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.7"
+        },
+        "timestamp": "2025-10-09T06:42:23.812135"
+    },
+    "taxpasta standardise - centrifuge": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "1": [
+                    
+                ],
+                "standardised": [
+                    
+                ],
+                "versions": [
+                    
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.7"
+        },
+        "timestamp": "2025-10-09T06:42:16.998644"
+    },
+    "taxpasta standardise - metaphlan": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "1": [
+                    
+                ],
+                "standardised": [
+                    
+                ],
+                "versions": [
+                    
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.7"
+        },
+        "timestamp": "2025-10-09T06:42:10.801521"
+    }
+}

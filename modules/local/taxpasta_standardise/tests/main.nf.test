@@ -1,0 +1,56 @@
+nextflow_process {
+
+    name "Test Process TAXPASTA_STANDARDISE"
+    script "../main.nf"
+    process "TAXPASTA_STANDARDISE"
+
+    tag "modules"
+    tag "modules_local"
+    tag "taxpasta_standardise"
+
+    test("taxpasta standardise - kraken2") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id: 'test_kraken2', classifier: 'kraken2', taxonomy_db: 'NCBI' ],
+                    file('${moduleDir}/testdata/test_kraken2.kreport', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("taxpasta standardise - stub") {
+
+        options "-stub"
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id: 'test_stub', classifier: 'kraken2', taxonomy_db: 'NCBI' ],
+                    file('${moduleDir}/testdata/test_kraken2.kreport', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+}

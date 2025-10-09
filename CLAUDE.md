@@ -2,6 +2,9 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Subagent
+**Active Subagent**: `bioinformatics-pipeline-dev`
+
 ## Overview
 
 **taxbencher** is an nf-core compliant Nextflow pipeline for benchmarking taxonomic classifiers. It evaluates classifier predictions against ground truth using CAMI OPAL metrics.
@@ -9,7 +12,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **Key characteristics:**
 - Nextflow DSL2 workflow (≥24.10.5)
 - nf-core template v3.3.2 compliance
-- Accepts taxpasta standardized format (from nf-core/taxprofiler)
+- **Accepts both raw profiler outputs AND pre-standardized taxpasta TSV files**
+- Automatic format detection and standardization
+- Supports 10+ taxonomic profilers (Kraken2, MetaPhlAn, Centrifuge, Kaiju, Bracken, and more)
 - Uses CAMI OPAL for evaluation metrics
 - Biocontainer-based reproducibility
 - nf-test suite for validation
@@ -25,20 +30,47 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 # Test the pipeline
 nextflow run . -profile test,docker
 
-# Run with real data
+# Test with raw profiler outputs
+nextflow run . -profile test_raw,docker
+
+# Run with real data (taxpasta TSV files)
 nextflow run . \
   --input samplesheet.csv \
   --gold_standard gold_standard.bioboxes \
   --outdir results \
   -profile docker
+
+# Run with raw profiler outputs (automatically standardized)
+nextflow run . \
+  --input samplesheet_raw.csv \
+  --gold_standard gold_standard.bioboxes \
+  --outdir results \
+  --save_standardised_profiles \
+  -profile docker
 ```
+
+## Technical Stack
+- **Workflow Language**: Nextflow DSL2
+- **Framework**: nf-core template
+- **Testing**: nf-test
+- **Containers**: Docker/Singularity
+- **Languages**: Python for utility scripts
+
+## Key Requirements
+1. Follow nf-core pipeline structure and guidelines
+2. Implement comprehensive nf-test suites for all processes
+3. Ensure reproducibility with proper containerization
+4. Include proper documentation and parameter validation
+5. Support resume functionality and error handling
 
 ## Architecture
 
 ### Pipeline Flow
 
 ```
-Input: taxpasta TSV files + gold standard bioboxes
+Input: Raw profiler outputs OR taxpasta TSV files + gold standard bioboxes
+    ↓
+[TAXPASTA_STANDARDISE] - Standardize raw profiler outputs (optional, automatic)
     ↓
 [TAXPASTA_TO_BIOBOXES] - Convert to CAMI format
     ↓
@@ -57,8 +89,9 @@ Output: HTML reports + metrics
 │   └── taxbencher.nf          # Main workflow logic
 ├── modules/
 │   ├── local/
-│   │   ├── taxpasta_to_bioboxes/  # Format conversion module
-│   │   └── opal/                   # OPAL evaluation module
+│   │   ├── taxpasta_standardise/   # Standardization module (optional)
+│   │   ├── taxpasta_to_bioboxes/   # Format conversion module
+│   │   └── opal/                    # OPAL evaluation module
 │   └── nf-core/
 │       └── multiqc/                # Report aggregation
 ├── subworkflows/
@@ -78,6 +111,29 @@ Output: HTML reports + metrics
 ```
 
 ### Key Modules
+
+#### TAXPASTA_STANDARDISE
+
+**Location**: `modules/local/taxpasta_standardise/`
+
+**Purpose**: Converts raw profiler outputs to taxpasta TSV format (runs automatically when needed)
+
+**Inputs**:
+- `tuple val(meta), path(profiler_output)` - Raw profiler output file
+- Meta fields: `id`, `classifier`, `taxonomy_db`
+
+**Outputs**:
+- `tuple val(meta), path("*.tsv")` - Standardized taxpasta TSV
+- `path("versions.yml")` - Version tracking
+
+**Implementation**:
+- Uses `taxpasta standardise` command
+- Automatically triggered for non-.tsv/.txt file extensions
+- Supports: Bracken, Centrifuge, DIAMOND, ganon, Kaiju, Kraken2, KrakenUniq, MEGAN6/MALT, MetaPhlAn, mOTUs
+
+**Container**: `biocontainers/taxpasta:0.7.0--pyhdfd78af_0`
+
+**When it runs**: Automatically when input files have extensions like `.kreport`, `.out`, `.profile`, `.mpa`, etc.
 
 #### TAXPASTA_TO_BIOBOXES
 
@@ -158,6 +214,14 @@ Output: HTML reports + metrics
 - `.mix()` - Combine channels
 
 ## Development Workflow
+
+###  Development Guidelines
+- All processes should be modular and reusable
+- Use nf-core modules where available
+- Implement proper logging and error messages
+- Follow semantic versioning
+- Ensure FAIR compliance
+
 
 ### Adding a New Module
 
@@ -287,7 +351,8 @@ nf-test test --update-snapshot
 ```
 
 **Test profiles**:
-- `test` - Minimal dataset in `assets/test_data/`
+- `test` - Minimal dataset with pre-standardized taxpasta TSV files
+- `test_raw` - Minimal dataset with raw profiler outputs (kraken2)
 - `docker` - Docker containers
 - `singularity` - Singularity containers
 - `conda` - Conda environments
@@ -300,18 +365,38 @@ nf-test test --update-snapshot
 
 **Columns**:
 - `sample` - Sample identifier (required)
-- `classifier` - Tool name (required)
-- `taxpasta_file` - Path to taxpasta TSV (required)
+- `classifier` - Tool name (required, e.g., kraken2, metaphlan, centrifuge)
+- `taxpasta_file` - Path to taxpasta TSV OR raw profiler output (required)
 - `taxonomy_db` - Taxonomy DB, default NCBI (optional)
 
-**Example**:
+**Input Options**:
+The pipeline accepts two input types:
+
+1. **Pre-standardized taxpasta TSV** (.tsv or .txt extension):
 ```csv
 sample,classifier,taxpasta_file,taxonomy_db
 sample1,kraken2,results/sample1_kraken2.tsv,NCBI
 sample1,metaphlan,results/sample1_metaphlan.tsv,NCBI
 ```
 
+2. **Raw profiler outputs** (automatically standardized):
+```csv
+sample,classifier,taxpasta_file,taxonomy_db
+sample1,kraken2,results/sample1_kraken2.kreport,NCBI
+sample1,metaphlan,results/sample1_metaphlan.profile,NCBI
+sample1,centrifuge,results/sample1_centrifuge.out,NCBI
+```
+
+**Supported file extensions**:
+- Taxpasta: `.tsv`, `.txt`
+- Kraken2/KrakenUniq: `.kreport`
+- MetaPhlAn: `.profile`, `.mpa`
+- Centrifuge: `.out`
+- Other profilers: `.kaiju`, `.bracken`, `.ganon`, `.motus`, `.megan`, `.rma6`
+
 **Validation**: `assets/schema_input.json`
+
+**Note**: The pipeline automatically detects file type by extension and applies standardization when needed.
 
 ### Gold Standard Format
 

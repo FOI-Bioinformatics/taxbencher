@@ -1,0 +1,43 @@
+name: taxpasta_standardise
+description: Standardise taxonomic profiler output to taxpasta TSV format
+keywords:
+  - metagenomics
+  - taxonomy
+  - standardisation
+  - profiling
+tools:
+  - taxpasta:
+      description: TAXonomic Profile Aggregation and STAndardisation
+      homepage: https://taxpasta.readthedocs.io/
+      documentation: https://taxpasta.readthedocs.io/
+      tool_dev_url: https://github.com/taxprofiler/taxpasta
+      doi: "10.5281/zenodo.7728364"
+      licence: ["Apache-2.0"]
+input:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [ id:'test', classifier:'kraken2', taxonomy_db:'NCBI' ]
+  - profiler_output:
+      type: file
+      description: Taxonomic profiler output file in native format
+      pattern: "*.{kreport,out,profile,mpa,kraken,centrifuge,kaiju,bracken,ganon,motus,megan,rma6}"
+output:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [ id:'test', classifier:'kraken2', taxonomy_db:'NCBI' ]
+  - standardised:
+      type: file
+      description: Standardised taxpasta TSV file with taxonomy_id and count columns
+      pattern: "*.tsv"
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+authors:
+  - "@andreassjodin"
+maintainers:
+  - "@andreassjodin"
