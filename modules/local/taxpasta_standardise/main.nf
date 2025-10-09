@@ -29,7 +29,7 @@ process TAXPASTA_STANDARDISE {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        taxpasta: \$(taxpasta --version 2>&1 | sed 's/taxpasta, version //')
+        taxpasta: \$(taxpasta --version 2>/dev/null | sed 's/taxpasta, version //')
     END_VERSIONS
     """
 
@@ -40,7 +40,7 @@ process TAXPASTA_STANDARDISE {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        taxpasta: \$(taxpasta --version 2>&1 | sed 's/taxpasta, version //')
+        taxpasta: \$(taxpasta --version 2>/dev/null | sed 's/taxpasta, version //')
     END_VERSIONS
     """
 }
