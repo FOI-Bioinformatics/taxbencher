@@ -163,7 +163,6 @@ def convert_taxpasta_to_bioboxes(
         f.write(f"@Version:{version}\n")
         f.write(f"@Ranks:{ranks if isinstance(ranks, str) else '|'.join(ranks)}\n")
         f.write(f"@TaxonomyID:{taxonomy_db}\n")
-        f.write("\n")
 
         # Write column headers
         f.write("@@TAXID\tRANK\tTAXPATH\tTAXPATHSN\tPERCENTAGE\n")
