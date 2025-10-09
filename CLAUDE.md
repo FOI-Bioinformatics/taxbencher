@@ -493,24 +493,59 @@ python3 bin/validate_taxpasta.py input.tsv
 
 #### validate_bioboxes.py
 
-Validates CAMI Bioboxes profiling format:
+Validates CAMI Bioboxes profiling format with **CRITICAL OPAL compatibility checks**:
 
 ```bash
 python3 bin/validate_bioboxes.py gold_standard.bioboxes
 ```
 
-**Checks**:
-- Required headers: `@SampleID`, `@Version`, `@Ranks`, `@TaxonomyID`
-- Required columns: `TAXID`, `RANK`, `TAXPATH`, `TAXPATHSN`, `PERCENTAGE`
+**CRITICAL Checks (will cause OPAL to fail)**:
+- ✓ Required headers: `@SampleID`, `@Version`, `@Ranks`, `@TaxonomyID`
+- ✓ Required columns: `TAXID`, `RANK`, `TAXPATH`, `TAXPATHSN`, `PERCENTAGE`
+- ✓ **Column count mismatch** between header and data rows
+- ✓ **Unsupported OPAL ranks** in data (root, no rank, unknown, cellular root, domain, kingdom, subspecies)
+- ✓ Unsupported ranks in header (must be: superkingdom, phylum, class, order, family, genus, species, strain)
+
+**Data Quality Checks**:
 - TAXPATH format (pipe-separated taxonomy IDs)
 - TAXPATHSN matches TAXPATH length
 - Percentages in valid range (0-100)
 - Percentages sum to ~100%
 - No duplicate TAXIDs
+- Valid TAXIDs (positive integers)
 
 **Exit codes**:
 - 0: Valid file
 - 1: Validation errors found
+
+**Common Issues**:
+If validation fails, use `fix_gold_standard.py` to automatically fix common issues. See [Gold Standard Troubleshooting](docs/troubleshooting-gold-standard.md).
+
+#### fix_gold_standard.py
+
+Automatically fixes common gold standard file issues:
+
+```bash
+python3 bin/fix_gold_standard.py \
+  -i gold_standard.bioboxes \
+  -o gold_standard_fixed.bioboxes \
+  -s sample_id
+```
+
+**Automatic Fixes**:
+- ✓ Adds missing TAXPATH column (uses taxid as placeholder or ete3 for full lineage)
+- ✓ Adds missing required headers (@SampleID, @Version, @Ranks, @TaxonomyID)
+- ✓ Filters out unsupported OPAL ranks (root, no rank, unknown, cellular root, etc.)
+- ✓ Maps non-standard ranks (subspecies → strain, domain/kingdom → superkingdom)
+- ✓ Renormalizes percentages to sum to 100% after filtering
+- ✓ Fixes column count mismatches
+
+**Options**:
+- `-i, --input`: Input bioboxes file
+- `-o, --output`: Output fixed file
+- `-s, --sample-id`: Sample ID for @SampleID header (default: gold_standard)
+
+**Note**: The script works without ete3 (uses placeholder TAXPATHs) but produces better results with ete3 installed for full taxonomy lineage lookup.
 
 ### Validation Workflow
 
@@ -525,12 +560,36 @@ for f in /path/to/taxpasta/*.tsv; do
     python3 bin/validate_taxpasta.py "$f" || echo "FAILED: $f"
 done
 
-# 3. Validate gold standard
+# 3. Validate gold standard (CRITICAL - must pass before running pipeline)
 python3 bin/validate_bioboxes.py gold_standard.bioboxes
 
-# 4. Run pipeline
-nextflow run . --input samplesheet.csv --gold_standard gold_standard.bioboxes --outdir results -profile docker
+# 4. If validation fails, fix the gold standard automatically
+if [ $? -ne 0 ]; then
+    echo "Validation failed. Fixing gold standard..."
+    python3 bin/fix_gold_standard.py \
+        -i gold_standard.bioboxes \
+        -o gold_standard_fixed.bioboxes \
+        -s my_sample
+
+    # Re-validate the fixed file
+    python3 bin/validate_bioboxes.py gold_standard_fixed.bioboxes
+    GOLD_STANDARD="gold_standard_fixed.bioboxes"
+else
+    GOLD_STANDARD="gold_standard.bioboxes"
+fi
+
+# 5. Run pipeline with validated gold standard
+nextflow run . \
+    --input samplesheet.csv \
+    --gold_standard "$GOLD_STANDARD" \
+    --outdir results \
+    -profile docker
 ```
+
+**Critical validation checks added in v1.0.1**:
+- Column count mismatch detection (header vs data rows)
+- Unsupported OPAL rank detection (root, no rank, unknown, etc.)
+- These checks prevent cryptic OPAL failures during pipeline execution
 
 ### Test Coverage
 

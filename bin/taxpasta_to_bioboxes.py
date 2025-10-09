@@ -131,8 +131,19 @@ def convert_taxpasta_to_bioboxes(
             logging.warning(f"Could not initialize NCBITaxa: {e}. Using simplified mode.")
             ncbi = None
 
+    # Valid ranks for OPAL (standard CAMI ranks)
+    valid_ranks = {'superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species', 'strain'}
+
+    # Map non-standard ranks to standard ones
+    rank_mapping = {
+        'subspecies': 'strain',
+        'domain': 'superkingdom',
+        'kingdom': 'superkingdom'
+    }
+
     # Process each taxonomy entry
     results = []
+    skipped_ranks = set()
     for idx, row in df.iterrows():
         try:
             taxid = int(row['taxonomy_id'])
@@ -146,6 +157,15 @@ def convert_taxpasta_to_bioboxes(
         # Get taxonomy information
         rank, taxpath, taxpathsn = get_taxonomy_info(taxid, ncbi)
 
+        # Skip unsupported ranks (root, no rank, unknown, cellular root, etc.)
+        if rank not in valid_ranks and rank not in rank_mapping:
+            skipped_ranks.add(rank)
+            continue
+
+        # Map non-standard ranks to standard ones
+        if rank in rank_mapping:
+            rank = rank_mapping[rank]
+
         results.append({
             'TAXID': taxid,
             'RANK': rank,
@@ -153,6 +173,16 @@ def convert_taxpasta_to_bioboxes(
             'TAXPATHSN': taxpathsn,
             'PERCENTAGE': f"{percentage:.6f}"
         })
+
+    if skipped_ranks:
+        logging.info(f"Skipped {len(skipped_ranks)} unsupported ranks: {', '.join(sorted(skipped_ranks))}")
+
+    # Renormalize percentages to sum to 100%
+    total_percentage = sum(float(r['PERCENTAGE']) for r in results)
+    if total_percentage > 0 and abs(total_percentage - 100.0) > 0.01:
+        logging.info(f"Renormalizing percentages (current sum: {total_percentage:.2f}%)")
+        for result in results:
+            result['PERCENTAGE'] = f"{float(result['PERCENTAGE']) / total_percentage * 100:.6f}"
 
     # Create output file with proper Bioboxes format
     logging.info(f"Writing Bioboxes file: {output_file}")

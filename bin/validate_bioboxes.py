@@ -80,7 +80,7 @@ def validate_bioboxes(input_file: Path) -> Tuple[bool, List[str], Dict[str, any]
             data_lines.append((i, line))
 
     # Validate required headers
-    required_headers = ['SampleID', 'Version', 'Ranks']
+    required_headers = ['SampleID', 'Version', 'Ranks', 'TaxonomyID']
     for header in required_headers:
         if header not in headers:
             errors.append(f"Missing required header: @{header}")
@@ -102,14 +102,16 @@ def validate_bioboxes(input_file: Path) -> Tuple[bool, List[str], Dict[str, any]
         stats['ranks'] = rank_list
         stats['num_ranks'] = len(rank_list)
 
-        # Common rank names
-        expected_ranks = [
-            'superkingdom', 'kingdom', 'phylum', 'class', 'order',
-            'family', 'genus', 'species', 'strain'
-        ]
-        unexpected_ranks = [r for r in rank_list if r not in expected_ranks and not r.startswith('no_rank')]
-        if unexpected_ranks:
-            errors.append(f"Unexpected rank names: {unexpected_ranks}")
+        # OPAL-compatible ranks (standard CAMI ranks)
+        opal_ranks = ['superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species', 'strain']
+
+        # Check that all ranks in header are OPAL-compatible
+        unsupported_ranks = [r for r in rank_list if r not in opal_ranks]
+        if unsupported_ranks:
+            errors.append(
+                f"Header contains unsupported ranks for OPAL: {unsupported_ranks}. "
+                f"OPAL only supports: {', '.join(opal_ranks)}"
+            )
 
     # Validate TaxonomyID if present
     if 'TaxonomyID' in headers:
@@ -134,6 +136,9 @@ def validate_bioboxes(input_file: Path) -> Tuple[bool, List[str], Dict[str, any]
         errors.append(f"Missing required columns: {', '.join(missing_columns)}")
         errors.append(f"Found columns: {', '.join(found_columns)}")
 
+    # Get expected number of columns from header
+    expected_col_count = len(found_columns)
+
     # Validate data lines
     if not data_lines:
         errors.append("No data rows found")
@@ -142,13 +147,29 @@ def validate_bioboxes(input_file: Path) -> Tuple[bool, List[str], Dict[str, any]
         stats['data_rows'] = len(data_lines)
         percentages = []
         taxids = []
+        unsupported_ranks_in_data = set()
+
+        # Check first row for column count mismatch (critical issue)
+        if data_lines:
+            first_line_num, first_line = data_lines[0]
+            first_fields = first_line.split('\t')
+            if len(first_fields) != expected_col_count:
+                errors.append(
+                    f"CRITICAL: Column count mismatch! Header has {expected_col_count} columns "
+                    f"but first data row (line {first_line_num}) has {len(first_fields)} columns. "
+                    f"This will cause OPAL to fail."
+                )
 
         for line_num, line in data_lines:
             fields = line.split('\t')
 
-            if len(fields) < 5:
-                errors.append(f"Line {line_num}: Insufficient columns (expected 5, got {len(fields)})")
-                continue
+            # Check column count matches header
+            if len(fields) != expected_col_count:
+                errors.append(
+                    f"Line {line_num}: Column count mismatch (expected {expected_col_count}, got {len(fields)})"
+                )
+                if len(fields) < 5:
+                    continue
 
             taxid, rank, taxpath, taxpathsn, percentage = fields[:5]
 
@@ -161,11 +182,16 @@ def validate_bioboxes(input_file: Path) -> Tuple[bool, List[str], Dict[str, any]
             except ValueError:
                 errors.append(f"Line {line_num}: TAXID not an integer: {taxid}")
 
-            # Validate RANK
+            # Validate RANK - check OPAL compatibility
+            opal_ranks = ['superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species', 'strain']
+            if rank not in opal_ranks:
+                unsupported_ranks_in_data.add(rank)
+
+            # Also check if rank is in header ranks list
             if 'Ranks' in headers:
                 rank_list = headers['Ranks'].split('|')
-                if rank not in rank_list and rank != 'no_rank' and rank != 'unknown':
-                    errors.append(f"Line {line_num}: RANK '{rank}' not in header Ranks")
+                if rank not in rank_list and rank not in opal_ranks:
+                    errors.append(f"Line {line_num}: RANK '{rank}' not in header Ranks list")
 
             # Validate TAXPATH (pipe-separated taxids)
             if taxpath:
@@ -206,6 +232,15 @@ def validate_bioboxes(input_file: Path) -> Tuple[bool, List[str], Dict[str, any]
                 percentages.append(pct)
             except ValueError:
                 errors.append(f"Line {line_num}: PERCENTAGE not a number: {percentage}")
+
+        # Report unsupported ranks found in data
+        if unsupported_ranks_in_data:
+            errors.append(
+                f"CRITICAL: Data contains unsupported ranks for OPAL: {sorted(unsupported_ranks_in_data)}. "
+                f"OPAL only supports: superkingdom, phylum, class, order, family, genus, species, strain. "
+                f"These rows will cause OPAL to fail. Use fix_gold_standard.py to filter them out."
+            )
+            stats['unsupported_ranks'] = sorted(unsupported_ranks_in_data)
 
         # Statistics on data
         if percentages:

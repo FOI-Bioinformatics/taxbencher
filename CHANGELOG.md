@@ -3,6 +3,53 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.0.1 - 2025-10-09
+
+Critical validation enhancements to prevent OPAL failures and improve gold standard file handling.
+
+### Added
+
+- **Gold Standard Validation & Fixing**:
+  - `fix_gold_standard.py`: Automatic fixing tool for common gold standard issues
+    - Adds missing TAXPATH column
+    - Filters unsupported OPAL ranks (root, no rank, unknown, cellular root, domain, kingdom, subspecies)
+    - Maps non-standard ranks to OPAL-compatible equivalents
+    - Renormalizes percentages after filtering
+    - Fixes column count mismatches
+  - `docs/troubleshooting-gold-standard.md`: Comprehensive troubleshooting guide with examples
+
+- **Enhanced `validate_bioboxes.py`**:
+  - **CRITICAL**: Column count mismatch detection (prevents "Column not found: TAXPATH" errors)
+  - **CRITICAL**: Unsupported OPAL rank detection in data rows
+  - Header rank validation against OPAL-supported ranks
+  - Added `@TaxonomyID` to required headers
+  - Clear error messages pointing to `fix_gold_standard.py`
+  - Statistics on unsupported ranks found
+
+- **Enhanced `taxpasta_to_bioboxes.py`**:
+  - Filters unsupported OPAL ranks from prediction files
+  - Maps ranks automatically (subspecies→strain, domain/kingdom→superkingdom)
+  - Renormalizes percentages after filtering
+  - Prevents pipeline failures due to rank incompatibilities
+
+### Fixed
+
+- OPAL failures caused by unsupported taxonomic ranks in gold standard files
+- OPAL failures caused by column count mismatches between header and data
+- Cryptic error messages replaced with actionable validation feedback
+
+### Changed
+
+- Updated README.md with validation workflow and troubleshooting guide link
+- Updated CLAUDE.md with detailed validation infrastructure documentation
+- Enhanced validation workflow examples with automatic fixing
+
+### Documentation
+
+- New troubleshooting guide with real-world examples
+- Updated validation sections in README and CLAUDE.md
+- Added examples of valid vs invalid gold standard files
+
 ## v1.0.0 - 2025-10-08
 
 Initial release of FOI-Bioinformatics/taxbencher, created with the [nf-core](https://nf-core.com/) template.
