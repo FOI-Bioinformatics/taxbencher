@@ -9,8 +9,12 @@ testing*
 null/
 .nf-test*
 .nf-test.*
-test_results
-test_*
+
+# Test data directories should be committed
+!test_data/
+!testdata/
+!**/test_data/
+!**/testdata/
 
 # Python artifacts
 __pycache__/
@@ -26,6 +30,8 @@ build/
 .coverage
 htmlcov/
 .tox/
+test_results/
+test_output/
 
 # IDE files
 *.swp
