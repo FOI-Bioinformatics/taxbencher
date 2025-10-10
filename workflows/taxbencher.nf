@@ -7,6 +7,7 @@ include { TAXPASTA_STANDARDISE   } from '../modules/local/taxpasta_standardise/m
 include { TAXPASTA_TO_BIOBOXES   } from '../modules/local/taxpasta_to_bioboxes/main'
 include { OPAL                   } from '../modules/local/opal/main'
 include { OPAL_PER_SAMPLE        } from '../modules/local/opal_per_sample/main'
+include { COMPARATIVE_ANALYSIS   } from '../modules/local/comparative_analysis/main'
 include { MULTIQC                } from '../modules/nf-core/multiqc/main'
 include { paramsSummaryMap       } from 'plugin/nf-schema'
 include { paramsSummaryMultiqc   } from '../subworkflows/nf-core/utils_nfcore_pipeline'
@@ -121,6 +122,17 @@ workflow TAXBENCHER {
     )
     ch_versions = ch_versions.mix(OPAL_PER_SAMPLE.out.versions.first())
     ch_multiqc_files = ch_multiqc_files.mix(OPAL_PER_SAMPLE.out.results.map { meta, dir -> dir })
+
+    //
+    // MODULE: Comparative analysis of classifiers per sample
+    // Generates PCA plots, differential taxa analysis, and comparison reports
+    //
+    COMPARATIVE_ANALYSIS (
+        OPAL_PER_SAMPLE.out.results,
+        ch_gold_standard
+    )
+    ch_versions = ch_versions.mix(COMPARATIVE_ANALYSIS.out.versions.first())
+    ch_multiqc_files = ch_multiqc_files.mix(COMPARATIVE_ANALYSIS.out.comparison_report.map { meta, html -> html })
 
     //
     // Collate and save software versions
