@@ -40,7 +40,7 @@ workflow FOIBIOINFORMATICS_TAXBENCHER {
 
     //
     // Parse samplesheet to create input channel
-    // Samplesheet format: sample,classifier,taxpasta_file,taxonomy_db
+    // Samplesheet format: sample_id,label,classifier,taxpasta_file,taxonomy_db
     // taxpasta_file can be either:
     //   - Pre-standardized taxpasta TSV (.tsv, .txt)
     //   - Raw profiler output (will be standardized automatically based on file extension)
@@ -48,8 +48,9 @@ workflow FOIBIOINFORMATICS_TAXBENCHER {
     //
     ch_input = samplesheet.map { row ->
         def meta = [
-            id: "${row.sample}_${row.classifier}",
-            sample_id: row.sample,
+            id: row.label,
+            sample_id: row.sample_id,
+            label: row.label,
             classifier: row.classifier,
             taxonomy_db: row.taxonomy_db
         ]

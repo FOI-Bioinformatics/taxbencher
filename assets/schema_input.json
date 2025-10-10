@@ -7,10 +7,15 @@
     "items": {
         "type": "object",
         "properties": {
-            "sample": {
+            "sample_id": {
                 "type": "string",
                 "pattern": "^\\S+$",
-                "errorMessage": "Sample name must be provided and cannot contain spaces"
+                "errorMessage": "Sample ID (biological sample identifier) must be provided and cannot contain spaces"
+            },
+            "label": {
+                "type": "string",
+                "pattern": "^\\S+$",
+                "errorMessage": "Label (unique identifier for this taxonomic profile) must be provided and cannot contain spaces"
             },
             "classifier": {
                 "type": "string",
@@ -28,6 +33,6 @@
                 "errorMessage": "Taxonomy database should be specified (default: NCBI)"
             }
         },
-        "required": ["sample", "classifier", "taxpasta_file"]
+        "required": ["sample_id", "label", "classifier", "taxpasta_file"]
     }
 }

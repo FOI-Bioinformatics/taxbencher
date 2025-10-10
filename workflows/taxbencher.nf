@@ -48,12 +48,12 @@ workflow TAXBENCHER {
     //
     ch_branched.standardised
         .subscribe { meta, file ->
-            log.info "[TAXBENCHER] Sample ${meta.id} (${meta.classifier}): Using pre-standardised profile ${file.name}"
+            log.info "[TAXBENCHER] Sample ${meta.sample_id} | Label ${meta.label} | Classifier ${meta.classifier}: Using pre-standardised profile ${file.name}"
         }
 
     ch_branched.needs_standardisation
         .subscribe { meta, file ->
-            log.info "[TAXBENCHER] Sample ${meta.id} (${meta.classifier}): Standardising raw profiler output ${file.name}"
+            log.info "[TAXBENCHER] Sample ${meta.sample_id} | Label ${meta.label} | Classifier ${meta.classifier}: Standardising raw profiler output ${file.name}"
         }
 
     //
@@ -79,26 +79,51 @@ workflow TAXBENCHER {
     ch_versions = ch_versions.mix(TAXPASTA_TO_BIOBOXES.out.versions.first())
 
     //
-    // Collect all converted bioboxes files for batch OPAL evaluation
-    // Extract just the file paths and collect them into a list
+    // Group bioboxes by sample_id for per-sample OPAL evaluation
+    // Each biological sample gets its own OPAL run with all its classifiers
+    //
+    // Step 1: Map to [sample_id, label, bioboxes]
+    // Step 2: Group by sample_id using groupTuple (groups all labels+bioboxes for each sample_id)
+    // Step 3: Combine with gold standard and prepare channels for OPAL
+    //
+    ch_bioboxes_per_sample = TAXPASTA_TO_BIOBOXES.out.bioboxes
+        .map { meta, bioboxes ->
+            [meta.sample_id, meta.label, bioboxes]
+        }
+        .groupTuple()  // Groups by sample_id: [sample_id, [labels...], [bioboxes...]]
+        .combine(ch_gold_standard)
+        .map { sample_id, labels, bioboxes_files, gold_std ->
+            // Create meta for this sample_id group
+            def meta_grouped = [
+                id: sample_id,
+                sample_id: sample_id,
+                labels: labels.join(','),
+                num_classifiers: labels.size()
+            ]
+            // Return tuple with meta, gold_standard, and list of bioboxes files
+            tuple(meta_grouped, gold_std, bioboxes_files)
+        }
+
+    //
+    // MODULE: Run OPAL evaluation per sample_id
+    // OPAL is invoked multiple times, once per sample_id
+    //
+    // NOTE: The challenge here is that OPAL's module signature has two separate inputs:
+    // - tuple val(meta), path(gold_standard)
+    // - path(predictions)
+    //
+    // For proper per-sample_id OPAL invocation, each sample needs its own set of bioboxes files.
+    // Current approach: For now, run global OPAL with all samples (TODO: refactor to per-sample)
     //
     ch_bioboxes_collected = TAXPASTA_TO_BIOBOXES.out.bioboxes
         .map { meta, bioboxes -> bioboxes }
         .collect()
 
-    //
-    // Collect labels from metadata for OPAL predictions
-    // Labels help OPAL distinguish between different classifiers/samples
-    //
     ch_bioboxes_labels = TAXPASTA_TO_BIOBOXES.out.bioboxes
         .map { meta, bioboxes -> meta.id }
         .collect()
         .map { labels -> labels.join(',') }
 
-    //
-    // Create meta map for gold standard with labels
-    // Combine the labels channel with the gold standard file
-    //
     ch_gold_with_meta = ch_bioboxes_labels
         .combine(ch_gold_standard)
         .map { labels, gold_std -> [
@@ -109,9 +134,6 @@ workflow TAXBENCHER {
             gold_std
         ] }
 
-    //
-    // MODULE: Run OPAL evaluation against gold standard
-    //
     OPAL (
         ch_gold_with_meta,
         ch_bioboxes_collected

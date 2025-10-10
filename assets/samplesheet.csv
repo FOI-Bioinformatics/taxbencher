@@ -1,5 +1,5 @@
-sample,classifier,taxpasta_file,taxonomy_db
-sample1,kraken2,/path/to/sample1_kraken2.tsv,NCBI
-sample1,metaphlan,/path/to/sample1_metaphlan.tsv,NCBI
-sample2,kraken2,/path/to/sample2_kraken2.tsv,NCBI
-sample2,metaphlan,/path/to/sample2_metaphlan.tsv,NCBI
+sample_id,label,classifier,taxpasta_file,taxonomy_db
+sample1,sample1_kraken2,kraken2,/path/to/sample1_kraken2.tsv,NCBI
+sample1,sample1_metaphlan,metaphlan,/path/to/sample1_metaphlan.tsv,NCBI
+sample2,sample2_kraken2,kraken2,/path/to/sample2_kraken2.tsv,NCBI
+sample2,sample2_metaphlan,metaphlan,/path/to/sample2_metaphlan.tsv,NCBI

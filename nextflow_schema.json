@@ -20,7 +20,7 @@
                     "mimetype": "text/csv",
                     "pattern": "^\\S+\\.csv$",
                     "description": "Path to comma-separated file containing information about the samples in the experiment.",
-                    "help_text": "You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with a header row. Expected columns: sample (sample name), classifier (tool name), taxpasta_file (path to taxpasta TSV output), taxonomy_db (optional, default: NCBI).",
+                    "help_text": "You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with a header row. Expected columns: sample_id (biological sample identifier for grouping), label (unique identifier for this taxonomic profile), classifier (tool name), taxpasta_file (path to taxpasta TSV output or raw profiler output), taxonomy_db (optional, default: NCBI). Profiles with the same sample_id will be evaluated together in a single OPAL run.",
                     "fa_icon": "fas fa-file-csv"
                 },
                 "gold_standard": {
