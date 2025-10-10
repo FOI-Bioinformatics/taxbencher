@@ -1,0 +1,4 @@
+sample,classifier,taxpasta_file,taxonomy_db
+test_sample,kraken2,assets/test_data/taxpasta/sample1_kraken2.tsv,NCBI
+test_sample,metaphlan,assets/test_data/taxpasta/sample1_metaphlan.tsv,NCBI
+test_sample,centrifuge,assets/test_data/taxpasta/sample2_kraken2.tsv,NCBI
