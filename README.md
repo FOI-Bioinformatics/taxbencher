@@ -72,10 +72,52 @@ Now, you can run the pipeline using:
 
 ```bash
 nextflow run FOI-Bioinformatics/taxbencher \
-   -profile <docker/singularity/.../institute> \
+   -profile <docker/singularity/conda/.../institute> \
    --input samplesheet.csv \
    --gold_standard gold_standard.bioboxes \
    --outdir <OUTDIR>
+```
+
+### Recommended Profiles
+
+| Platform | Recommended Profile | Notes |
+|----------|-------------------|-------|
+| **Linux x86_64** | `docker,wave` or `singularity,wave` | Best performance, full functionality |
+| **Linux ARM64** | `conda` | Docker/Singularity containers are AMD64 only |
+| **macOS (Intel)** | `docker,wave` or `conda` | Full functionality |
+| **macOS (Apple Silicon)** | `conda` | ⚠️ **Docker has limitations** (see below) |
+| **HPC/Cluster** | `singularity` or `conda` | Depends on cluster configuration |
+
+> [!WARNING]
+> **Apple Silicon (M1/M2/M3) Limitations**: When using `-profile docker,wave` on Apple Silicon Macs, the MultiQC step may fail with "Illegal instruction" errors due to AMD64/ARM64 architecture incompatibility. The core benchmarking processes (TAXPASTA_STANDARDISE, TAXPASTA_TO_BIOBOXES, OPAL) work correctly and produce all evaluation metrics. **Recommended solution**: Use `-profile conda` on Apple Silicon for full compatibility.
+
+### Profile Details
+
+**Conda** (Recommended for macOS):
+```bash
+nextflow run FOI-Bioinformatics/taxbencher \
+   -profile conda \
+   --input samplesheet.csv \
+   --gold_standard gold_standard.bioboxes \
+   --outdir results
+```
+
+**Docker with Wave** (Linux/Intel Mac):
+```bash
+nextflow run FOI-Bioinformatics/taxbencher \
+   -profile docker,wave \
+   --input samplesheet.csv \
+   --gold_standard gold_standard.bioboxes \
+   --outdir results
+```
+
+**Singularity with Wave** (HPC/Linux):
+```bash
+nextflow run FOI-Bioinformatics/taxbencher \
+   -profile singularity,wave \
+   --input samplesheet.csv \
+   --gold_standard gold_standard.bioboxes \
+   --outdir results
 ```
 
 > [!WARNING]
