@@ -74,40 +74,81 @@ Input: Raw profiler outputs OR taxpasta TSV files + gold standard bioboxes
     ↓
 [TAXPASTA_TO_BIOBOXES] - Convert to CAMI format
     ↓
-[OPAL] - Evaluate predictions
+[Group by sample_id] - Group classifiers by biological sample
+    ↓
+[OPAL_PER_SAMPLE] - Per-sample evaluation (one OPAL run per biological sample)
+    ↓
+[COMPARATIVE_ANALYSIS] - Per-sample classifier comparison (PCA, differential taxa)
     ↓
 [MULTIQC] - Aggregate reports
     ↓
-Output: HTML reports + metrics
+Output: Per-sample reports + comparative analysis + aggregated metrics
 ```
+
+### Sample-Level Architecture
+
+**Core Concept**: The pipeline now supports **per-sample comparative analysis**, where profiles from the same biological sample are evaluated together.
+
+**Key Terminology**:
+- **`sample_id`**: Biological sample identifier (grouping key)
+  - Profiles with the same `sample_id` are evaluated together in one OPAL run
+  - Example: `sample1` → evaluates kraken2, metaphlan, centrifuge together
+- **`label`**: Unique identifier for each taxonomic profile
+  - Each classifier-sample combination needs a unique label
+  - Example: `sample1_kraken2`, `sample1_metaphlan`
+
+**Example Samplesheet**:
+```csv
+sample_id,label,classifier,taxpasta_file,taxonomy_db
+sample1,sample1_kraken2,kraken2,/path/to/sample1_kraken2.tsv,NCBI
+sample1,sample1_metaphlan,metaphlan,/path/to/sample1_metaphlan.tsv,NCBI
+sample1,sample1_centrifuge,centrifuge,/path/to/sample1_centrifuge.tsv,NCBI
+sample2,sample2_kraken2,kraken2,/path/to/sample2_kraken2.tsv,NCBI
+sample2,sample2_metaphlan,metaphlan,/path/to/sample2_metaphlan.tsv,NCBI
+```
+
+**Result**:
+- `sample1`: 1 OPAL run comparing 3 classifiers + 1 comparative analysis report
+- `sample2`: 1 OPAL run comparing 2 classifiers + 1 comparative analysis report
+
+**Why This Design**:
+- Enables fair classifier comparison (same biological sample, different tools)
+- Produces per-sample metrics and visualizations
+- Supports PCA and statistical analysis across classifiers
+- Allows identification of classifier-specific biases per sample
 
 ### Directory Structure
 
 ```
 .
 ├── workflows/
-│   └── taxbencher.nf          # Main workflow logic
+│   └── taxbencher.nf               # Main workflow logic
 ├── modules/
 │   ├── local/
-│   │   ├── taxpasta_standardise/   # Standardization module (optional)
-│   │   ├── taxpasta_to_bioboxes/   # Format conversion module
-│   │   └── opal/                    # OPAL evaluation module
+│   │   ├── taxpasta_standardise/      # Standardization module (optional)
+│   │   ├── taxpasta_to_bioboxes/      # Format conversion module
+│   │   ├── opal_per_sample/           # Per-sample OPAL evaluation
+│   │   └── comparative_analysis/      # Per-sample classifier comparison
 │   └── nf-core/
-│       └── multiqc/                # Report aggregation
+│       └── multiqc/                   # Report aggregation
 ├── subworkflows/
-│   ├── local/                      # Local subworkflows
-│   └── nf-core/                    # nf-core utils
+│   ├── local/                         # Local subworkflows
+│   └── nf-core/                       # nf-core utils
 ├── bin/
-│   └── taxpasta_to_bioboxes.py    # Python conversion script
+│   ├── taxpasta_to_bioboxes.py       # CAMI format conversion
+│   ├── comparative_analysis.py        # Classifier comparison script
+│   ├── validate_taxpasta.py           # Taxpasta validation
+│   ├── validate_bioboxes.py           # Bioboxes validation
+│   └── fix_gold_standard.py           # Gold standard auto-fixer
 ├── conf/
-│   ├── base.config                 # Resource configs
-│   ├── test.config                 # Test profile
-│   └── modules.config              # Module-specific configs
+│   ├── base.config                    # Resource configs
+│   ├── test.config                    # Test profile
+│   └── modules.config                 # Module-specific configs
 ├── assets/
-│   ├── test_data/                  # Test datasets
-│   ├── schema_input.json           # Samplesheet schema
-│   └── samplesheet.csv             # Example samplesheet
-└── tests/                          # nf-test suites
+│   ├── test_data/                     # Test datasets
+│   ├── schema_input.json              # Samplesheet schema
+│   └── samplesheet.csv                # Example samplesheet
+└── tests/                             # nf-test suites
 ```
 
 ### Key Modules
@@ -157,47 +198,101 @@ Output: HTML reports + metrics
 
 **Container**: `biocontainers/python:3.11` (with conda env for ete3)
 
-#### OPAL
+#### OPAL_PER_SAMPLE
 
-**Location**: `modules/local/opal/`
+**Location**: `modules/local/opal_per_sample/`
 
-**Purpose**: Runs CAMI OPAL evaluation framework
+**Purpose**: Runs CAMI OPAL evaluation framework for a single biological sample with all its classifiers
 
 **Inputs**:
-- `tuple val(meta), path(gold_standard)` - Ground truth bioboxes
-- `path(predictions)` - Collected prediction bioboxes files
-- Meta optional: `labels`, `filter`, `normalize`, `rank`
+- `tuple val(meta), path(gold_standard), path(predictions)` - All components bundled in tuple
+  - `meta`: Sample metadata (id, sample_id, labels, num_classifiers)
+  - `gold_standard`: Ground truth bioboxes
+  - `predictions`: List of prediction bioboxes files for this sample_id
 
 **Outputs**:
-- `tuple val(meta), path(output_dir)` - OPAL results directory
+- `tuple val(meta), path(output_dir)` - OPAL results directory per sample_id
 - `path("versions.yml")` - Version tracking
 
 **Container**: `quay.io/biocontainers/cami-opal:1.0.13--pyhdfd78af_0`
 
 **Metrics produced**: Precision, Recall, F1, UniFrac, L1 norm, Jaccard, Shannon diversity, Bray-Curtis
 
+**Why tuple-embedded predictions?**
+This module solves a Nextflow channel cardinality problem. The original OPAL module had separate inputs:
+```groovy
+// Original (problematic for per-sample invocation)
+input:
+tuple val(meta), path(gold_standard)
+path(predictions)  // Separate channel
+```
+
+With separate inputs, Nextflow's cardinality matching would send ALL predictions to each OPAL invocation, not just files for that sample_id. The solution is tuple-embedded predictions:
+```groovy
+// New OPAL_PER_SAMPLE (enables per-sample invocation)
+input:
+tuple val(meta), path(gold_standard), path(predictions)
+```
+
+This allows groupTuple() to create one tuple per sample_id containing only that sample's files.
+
+#### COMPARATIVE_ANALYSIS
+
+**Location**: `modules/local/comparative_analysis/`
+
+**Purpose**: Performs statistical and visual comparison of classifiers within a biological sample
+
+**Inputs**:
+- `tuple val(meta), path(opal_dir)` - OPAL results directory for this sample_id
+- `path(gold_standard)` - Gold standard bioboxes for differential analysis
+
+**Outputs**:
+- `tuple val(meta), path("*_pca.html")` - PCA visualization of classifier performance
+- `tuple val(meta), path("*_diff_taxa.tsv")` - Taxa significantly different from gold standard
+- `tuple val(meta), path("*_comparison.html")` - Comprehensive comparison report
+- `path("versions.yml")` - Version tracking
+
+**Implementation**: Python script `bin/comparative_analysis.py`
+
+**Current Status**: Placeholder infrastructure ready for enhancement
+- Defined output formats and specifications
+- Creates placeholder HTML/TSV files with correct structure
+- Full implementation requires: pandas, scikit-learn, plotly, scipy, statsmodels
+
+**Future Enhancement Roadmap**:
+1. **PCA Analysis**: Plot classifiers in PC space based on performance metrics
+2. **Statistical Testing**: Chi-square or similar tests for differential abundance
+3. **Interactive Visualizations**: Plotly-based HTML reports
+4. **Jaccard Similarity**: Heatmap of classifier agreement
+5. **Top Misclassifications**: Identify commonly misclassified taxa
+
+**Container**: Uses base Python container (future: add statistical libraries)
+
 ### Workflow Logic
 
 **File**: `workflows/taxbencher.nf`
 
-**Key Architecture Pattern: Automatic Format Detection & Branching**
+**Key Architecture Pattern 1: Automatic Format Detection & Branching**
 
 The pipeline automatically detects whether inputs need standardization based on file extensions:
 
 ```groovy
 // Branch input channel based on file extension
-ch_samplesheet
+ch_input
     .branch { meta, file ->
-        raw: !(file.toString().endsWith('.tsv') || file.toString().endsWith('.txt'))
-        standardised: file.toString().endsWith('.tsv') || file.toString().endsWith('.txt')
+        standardised: file.name.endsWith('.tsv') || file.name.endsWith('.txt')
+            return [meta, file]
+        needs_standardisation: true
+            return [meta, file]
     }
     .set { ch_branched }
 
 // Standardize raw profiler outputs
-TAXPASTA_STANDARDISE(ch_branched.raw)
+TAXPASTA_STANDARDISE(ch_branched.needs_standardisation)
 
 // Mix standardized outputs with already-standardized files
-ch_taxpasta = TAXPASTA_STANDARDISE.out.tsv.mix(ch_branched.standardised)
+ch_taxpasta = ch_branched.standardised
+    .mix(TAXPASTA_STANDARDISE.out.standardised)
 ```
 
 **Why this pattern matters**:
@@ -209,19 +304,67 @@ ch_taxpasta = TAXPASTA_STANDARDISE.out.tsv.mix(ch_branched.standardised)
 **Supported extensions triggering standardization**:
 - `.kreport` - Kraken2/Bracken reports
 - `.report` - Centrifuge reports
-- `.out` - Generic profiler outputs
-- `.profile`, `.mpa` - MetaPhlAn profiles
+- `.out` - Generic profiler outputs (ganon, kaiju, kmcp, mOTUs)
+- `.profile`, `.mpa`, `.mpa3` - MetaPhlAn profiles
 - `.kaiju` - Kaiju outputs
+- `.bracken` - Bracken outputs
 - Others: See `schema_input.json` for complete list
+
+**Key Architecture Pattern 2: Per-Sample Grouping with groupTuple()**
+
+The pipeline groups classifiers by biological sample for per-sample OPAL evaluation:
+
+```groovy
+// Group bioboxes by sample_id for per-sample OPAL evaluation
+// Each biological sample gets its own OPAL run with all its classifiers
+ch_bioboxes_per_sample = TAXPASTA_TO_BIOBOXES.out.bioboxes
+    .map { meta, bioboxes ->
+        [meta.sample_id, meta.label, bioboxes]
+    }
+    .groupTuple()  // Groups by sample_id: [sample_id, [labels...], [bioboxes...]]
+    .combine(ch_gold_standard)
+    .map { sample_id, labels, bioboxes_files, gold_std ->
+        // Create meta for this sample_id group
+        def meta_grouped = [
+            id: sample_id,
+            sample_id: sample_id,
+            labels: labels.join(','),
+            num_classifiers: labels.size()
+        ]
+        // Return: [meta, gold_standard, [bioboxes_files]]
+        tuple(meta_grouped, gold_std, bioboxes_files)
+    }
+
+// Run OPAL once per sample_id with that sample's bioboxes files
+OPAL_PER_SAMPLE(ch_bioboxes_per_sample)
+```
+
+**Why this pattern matters**:
+- **Fair Comparison**: All classifiers evaluated together for the same biological sample
+- **Proper Grouping**: groupTuple() automatically groups by the first element (sample_id)
+- **Tuple Embedding**: Predictions embedded in tuple solves Nextflow cardinality matching
+- **One OPAL per sample**: Each biological sample gets independent evaluation
+
+**Example Input**:
+```
+[meta: [sample_id:'sample1', label:'sample1_kraken2'], bioboxes1]
+[meta: [sample_id:'sample1', label:'sample1_metaphlan'], bioboxes2]
+[meta: [sample_id:'sample2', label:'sample2_kraken2'], bioboxes3]
+```
+
+**After groupTuple()**:
+```
+['sample1', ['sample1_kraken2','sample1_metaphlan'], [bioboxes1, bioboxes2]]
+['sample2', ['sample2_kraken2'], [bioboxes3]]
+```
 
 **Key operations**:
 
 1. **Branch and standardize if needed**:
    ```groovy
-   // Automatic format detection
-   ch_samplesheet.branch { ... }
-   TAXPASTA_STANDARDISE(ch_branched.raw)
-   ch_taxpasta = TAXPASTA_STANDARDISE.out.tsv.mix(ch_branched.standardised)
+   ch_input.branch { ... }
+   TAXPASTA_STANDARDISE(ch_branched.needs_standardisation)
+   ch_taxpasta = ch_branched.standardised.mix(TAXPASTA_STANDARDISE.out.standardised)
    ```
 
 2. **Convert taxpasta profiles to CAMI Bioboxes**:
@@ -229,32 +372,36 @@ ch_taxpasta = TAXPASTA_STANDARDISE.out.tsv.mix(ch_branched.standardised)
    TAXPASTA_TO_BIOBOXES(ch_taxpasta)
    ```
 
-3. **Collect bioboxes files for OPAL**:
+3. **Group by sample_id**:
    ```groovy
-   ch_bioboxes_collected = TAXPASTA_TO_BIOBOXES.out.bioboxes
-       .map { meta, bioboxes -> bioboxes }
-       .collect()
+   ch_bioboxes_per_sample = TAXPASTA_TO_BIOBOXES.out.bioboxes
+       .map { meta, bioboxes -> [meta.sample_id, meta.label, bioboxes] }
+       .groupTuple()
+       .combine(ch_gold_standard)
+       .map { /* create meta_grouped */ }
    ```
 
-4. **Collect labels for OPAL**:
+4. **Run per-sample OPAL evaluation**:
    ```groovy
-   ch_bioboxes_labels = TAXPASTA_TO_BIOBOXES.out.bioboxes
-       .map { meta, bioboxes -> meta.id }
-       .collect()
-       .map { labels -> labels.join(',') }
+   OPAL_PER_SAMPLE(ch_bioboxes_per_sample)
    ```
 
-5. **Run OPAL evaluation**:
+5. **Comparative analysis per sample**:
    ```groovy
-   OPAL(ch_gold_with_meta, ch_bioboxes_collected)
+   COMPARATIVE_ANALYSIS(
+       OPAL_PER_SAMPLE.out.results,
+       ch_gold_standard
+   )
    ```
 
 **Channel operations explained**:
 - `.branch { }` - Split channel into multiple paths based on condition
 - `.map { }` - Transform channel items
-- `.collect()` - Gather all items into a single list
+- `.groupTuple()` - Group by first element, collecting rest into lists
+- `.combine()` - Cartesian product with another channel
 - `.mix()` - Combine multiple channels into one
 - `.first()` - Take only the first emission
+- `.collect()` - Gather all items into a single list
 
 ## Development Workflow
 
@@ -407,35 +554,59 @@ nf-test test --update-snapshot
 **File**: CSV with header
 
 **Columns**:
-- `sample` - Sample identifier (required)
+- `sample_id` - **Biological sample identifier** (required, grouping key for per-sample OPAL)
+- `label` - **Unique identifier for this taxonomic profile** (required, distinguishes individual classifier outputs)
 - `classifier` - Tool name (required, e.g., kraken2, metaphlan, centrifuge)
 - `taxpasta_file` - Path to taxpasta TSV OR raw profiler output (required)
 - `taxonomy_db` - Taxonomy DB, default NCBI (optional)
+
+**Key Distinction: sample_id vs label**:
+- **sample_id**: Groups profiles from the same biological sample
+  - All profiles with the same `sample_id` are evaluated together in one OPAL run
+  - Example: `sample1` → combines `sample1_kraken2`, `sample1_metaphlan`, `sample1_centrifuge`
+- **label**: Unique identifier for each individual profile
+  - Must be unique across the entire samplesheet
+  - Used for labeling in OPAL reports and output files
+  - Example: `sample1_kraken2`, `sample1_metaphlan`, `sample2_kraken2`
 
 **Input Options**:
 The pipeline accepts two input types:
 
 1. **Pre-standardized taxpasta TSV** (.tsv or .txt extension):
 ```csv
-sample,classifier,taxpasta_file,taxonomy_db
-sample1,kraken2,results/sample1_kraken2.tsv,NCBI
-sample1,metaphlan,results/sample1_metaphlan.tsv,NCBI
+sample_id,label,classifier,taxpasta_file,taxonomy_db
+sample1,sample1_kraken2,kraken2,results/sample1_kraken2.tsv,NCBI
+sample1,sample1_metaphlan,metaphlan,results/sample1_metaphlan.tsv,NCBI
+sample1,sample1_centrifuge,centrifuge,results/sample1_centrifuge.tsv,NCBI
+sample2,sample2_kraken2,kraken2,results/sample2_kraken2.tsv,NCBI
 ```
+
+**Result**: 2 OPAL runs (sample1 with 3 classifiers, sample2 with 1 classifier)
 
 2. **Raw profiler outputs** (automatically standardized):
 ```csv
-sample,classifier,taxpasta_file,taxonomy_db
-sample1,kraken2,results/sample1_kraken2.kreport,NCBI
-sample1,metaphlan,results/sample1_metaphlan.profile,NCBI
-sample1,centrifuge,results/sample1_centrifuge.out,NCBI
+sample_id,label,classifier,taxpasta_file,taxonomy_db
+sample1,sample1_kraken2,kraken2,results/sample1.kreport,NCBI
+sample1,sample1_metaphlan,metaphlan,results/sample1.profile,NCBI
+sample1,sample1_centrifuge,centrifuge,results/sample1.report,NCBI
+sample2,sample2_kraken2,kraken2,results/sample2.kreport,NCBI
 ```
 
+**Result**: Same - 2 OPAL runs, but files are auto-standardized first
+
 **Supported file extensions**:
-- Taxpasta: `.tsv`, `.txt`
-- Kraken2/KrakenUniq: `.kreport`
-- MetaPhlAn: `.profile`, `.mpa`
-- Centrifuge: `.out`
-- Other profilers: `.kaiju`, `.bracken`, `.ganon`, `.motus`, `.megan`, `.rma6`
+- Taxpasta: `.tsv`, `.txt` (already standardized)
+- Kraken2: `.kreport`, `.kreport2`
+- Bracken: `.kreport`, `.bracken`
+- MetaPhlAn: `.profile`, `.mpa`, `.mpa3`
+- Centrifuge: `.report`
+- Kaiju: `.kaiju`, `.out`
+- ganon: `.ganon`, `.out`
+- kmcp: `.kmcp`, `.out`
+- mOTUs: `.motus`, `.out`
+- DIAMOND: `.diamond`
+- MEGAN6/MALT: `.megan`, `.rma6`
+- KrakenUniq: `.krakenuniq`
 
 **Validation**: `assets/schema_input.json`
 
@@ -461,17 +632,40 @@ sample1,centrifuge,results/sample1_centrifuge.out,NCBI
 results/
 ├── taxpasta_to_bioboxes/
 │   ├── sample1_kraken2.bioboxes
-│   └── sample1_metaphlan.bioboxes
+│   ├── sample1_metaphlan.bioboxes
+│   ├── sample1_centrifuge.bioboxes
+│   └── sample2_kraken2.bioboxes
 ├── opal/
-│   └── benchmark/
+│   ├── sample1/                      # Per-sample OPAL results
+│   │   ├── results.html             # Interactive HTML report
+│   │   ├── results.tsv              # Metrics table
+│   │   ├── confusion.tsv            # Confusion matrix
+│   │   └── by_rank/                 # Per-rank breakdowns
+│   └── sample2/
 │       ├── results.html
-│       └── metrics.txt
+│       └── ...
+├── comparative_analysis/
+│   ├── sample1/
+│   │   ├── sample1_pca.html         # PCA plot of classifiers
+│   │   ├── sample1_diff_taxa.tsv    # Differential taxa analysis
+│   │   └── sample1_comparison.html  # Comprehensive comparison
+│   └── sample2/
+│       └── ...
 ├── multiqc/
-│   └── multiqc_report.html
+│   └── multiqc_report.html           # Aggregated report
 └── pipeline_info/
     ├── execution_report.html
+    ├── execution_timeline.html
+    ├── execution_trace.txt
+    ├── pipeline_dag.svg
     └── taxbencher_software_mqc_versions.yml
 ```
+
+**Per-Sample Organization**:
+- Each biological sample (`sample_id`) gets its own subdirectory in `opal/` and `comparative_analysis/`
+- OPAL results contain metrics comparing all classifiers for that sample
+- Comparative analysis provides statistical comparison and visualizations
+- MultiQC aggregates metrics across all samples
 
 ## Integration Points
 
@@ -673,6 +867,30 @@ ch_grouped = ch_input.groupTuple()
 ```groovy
 ch_combined = ch_input.combine(ch_value)
 ```
+
+**Per-sample grouping pattern** (NEW):
+```groovy
+// Group by sample_id for per-sample processing
+ch_grouped = ch_input
+    .map { meta, file -> [meta.sample_id, meta.label, file] }
+    .groupTuple()  // Groups by first element (sample_id)
+    .combine(ch_reference)
+    .map { sample_id, labels, files, ref ->
+        def meta_grouped = [
+            id: sample_id,
+            sample_id: sample_id,
+            labels: labels.join(','),
+            num_items: labels.size()
+        ]
+        tuple(meta_grouped, ref, files)
+    }
+```
+
+**Why this pattern is important**:
+- Enables per-sample processing (e.g., one OPAL run per biological sample)
+- groupTuple() automatically groups by the first element in the tuple
+- Creates a new meta map with aggregated information (labels, count)
+- Embedding files in tuple solves Nextflow cardinality matching issues
 
 ### Version Tracking
 

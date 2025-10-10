@@ -51,7 +51,7 @@ process COMPARATIVE_ANALYSIS {
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         python: 3.11.0
-        comparative_analysis: 1.0.0
+        comparative_analysis: 1.1.0
     END_VERSIONS
     """
 }

@@ -4,9 +4,10 @@ channels:
   - defaults
 dependencies:
   - python=3.11
-  # TODO: Add when implementing full analysis
-  # - pandas>=2.0
-  # - scikit-learn>=1.3
-  # - plotly>=5.0
-  # - scipy>=1.11
-  # - statsmodels>=0.14
+  - pandas>=2.0
+  - scikit-learn>=1.3
+  - plotly>=5.0
+  - scipy>=1.11
+  - statsmodels>=0.14
+  - numpy>=1.24
+  - kaleido  # For plotly static image export
