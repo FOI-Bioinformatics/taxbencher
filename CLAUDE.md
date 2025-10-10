@@ -180,21 +180,63 @@ Output: HTML reports + metrics
 
 **File**: `workflows/taxbencher.nf`
 
+**Key Architecture Pattern: Automatic Format Detection & Branching**
+
+The pipeline automatically detects whether inputs need standardization based on file extensions:
+
+```groovy
+// Branch input channel based on file extension
+ch_samplesheet
+    .branch { meta, file ->
+        raw: !(file.toString().endsWith('.tsv') || file.toString().endsWith('.txt'))
+        standardised: file.toString().endsWith('.tsv') || file.toString().endsWith('.txt')
+    }
+    .set { ch_branched }
+
+// Standardize raw profiler outputs
+TAXPASTA_STANDARDISE(ch_branched.raw)
+
+// Mix standardized outputs with already-standardized files
+ch_taxpasta = TAXPASTA_STANDARDISE.out.tsv.mix(ch_branched.standardised)
+```
+
+**Why this pattern matters**:
+- **User convenience**: Users can provide either format without changing parameters
+- **Efficiency**: Only runs standardization when needed
+- **Flexibility**: Supports mixed samplesheets (some raw, some standardized)
+- **Transparency**: File extension determines behavior (explicit, predictable)
+
+**Supported extensions triggering standardization**:
+- `.kreport` - Kraken2/Bracken reports
+- `.report` - Centrifuge reports
+- `.out` - Generic profiler outputs
+- `.profile`, `.mpa` - MetaPhlAn profiles
+- `.kaiju` - Kaiju outputs
+- Others: See `schema_input.json` for complete list
+
 **Key operations**:
 
-1. **Convert taxpasta profiles** (lines 34-37):
+1. **Branch and standardize if needed**:
+   ```groovy
+   // Automatic format detection
+   ch_samplesheet.branch { ... }
+   TAXPASTA_STANDARDISE(ch_branched.raw)
+   ch_taxpasta = TAXPASTA_STANDARDISE.out.tsv.mix(ch_branched.standardised)
+   ```
+
+2. **Convert taxpasta profiles to CAMI Bioboxes**:
    ```groovy
    TAXPASTA_TO_BIOBOXES(ch_taxpasta)
    ```
 
-2. **Collect bioboxes files** (lines 43-45):
+3. **Collect bioboxes files for OPAL**:
    ```groovy
    ch_bioboxes_collected = TAXPASTA_TO_BIOBOXES.out.bioboxes
        .map { meta, bioboxes -> bioboxes }
        .collect()
    ```
 
-3. **Collect labels** (lines 51-54):
+4. **Collect labels for OPAL**:
    ```groovy
    ch_bioboxes_labels = TAXPASTA_TO_BIOBOXES.out.bioboxes
        .map { meta, bioboxes -> meta.id }
@@ -202,16 +244,17 @@ Output: HTML reports + metrics
        .map { labels -> labels.join(',') }
    ```
 
-4. **Run OPAL evaluation** (lines 71-74):
+5. **Run OPAL evaluation**:
    ```groovy
    OPAL(ch_gold_with_meta, ch_bioboxes_collected)
    ```
 
 **Channel operations explained**:
+- `.branch { }` - Split channel into multiple paths based on condition
 - `.map { }` - Transform channel items
 - `.collect()` - Gather all items into a single list
+- `.mix()` - Combine multiple channels into one
 - `.first()` - Take only the first emission
-- `.mix()` - Combine channels
 
 ## Development Workflow
 

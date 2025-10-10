@@ -3,6 +3,44 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.0.2 - Unreleased
+
+Enhanced test coverage and documentation for raw profiler input feature.
+
+### Added
+
+- **Test Coverage Enhancements (Sprint 1)**:
+  - Added Centrifuge test to TAXPASTA_STANDARDISE module with correct report format
+  - Added MetaPhlAn test to TAXPASTA_STANDARDISE module with 4-column profile format
+  - Created `test_raw` profile configuration for end-to-end testing with raw inputs
+  - Added pipeline-level nf-test for test_raw profile validation
+  - New test data files for Centrifuge and MetaPhlAn raw formats
+
+- **Documentation (Sprint 1)**:
+  - Comprehensive raw profiler input documentation in `docs/usage.md`
+  - Table of supported formats (Kraken2, Centrifuge, MetaPhlAn, Kaiju, Bracken, etc.)
+  - Example samplesheet for raw profiler outputs
+  - Updated workflow overview to include standardization step
+  - Updated samplesheet column descriptions for dual format support
+
+### Fixed
+
+- `.gitignore` pattern that was blocking test data directories from being committed
+- Schema validation now accepts `.report` extension for Centrifuge files
+- Removed nested profile from `test.config` (moved to separate `test_raw.config`)
+
+### Changed
+
+- Updated MetaPhlAn test data to include `additional_species` column (4 columns total)
+- Added Centrifuge report format test data (6-column format)
+- Enhanced test data now matches actual taxpasta expected formats
+
+### Testing
+
+- All TAXPASTA_STANDARDISE module tests pass (4/4: Kraken2, Centrifuge, MetaPhlAn, Stub)
+- Pipeline test structure in place for test_raw profile
+- Test fixtures now properly tracked in git repository
+
 ## v1.0.1 - 2025-10-09
 
 Critical validation enhancements to prevent OPAL failures and improve gold standard file handling.

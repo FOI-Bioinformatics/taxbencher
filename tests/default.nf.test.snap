@@ -4,7 +4,7 @@
             0,
             {
                 "Workflow": {
-                    "FOI-Bioinformatics/taxbencher": "v1.0.0dev"
+                    "FOI-Bioinformatics/taxbencher": "v1.0.0"
                 }
             },
             [
@@ -19,6 +19,31 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.7"
         },
-        "timestamp": "2025-10-08T20:38:56.689367"
+        "timestamp": "2025-10-10T08:38:27.027127"
+    },
+    "-profile test_raw with raw profiler inputs": {
+        "content": [
+            3,
+            {
+                "TAXPASTA_STANDARDISE": {
+                    "taxpasta": "0.7.0"
+                },
+                "Workflow": {
+                    "FOI-Bioinformatics/taxbencher": "v1.0.0"
+                }
+            },
+            [
+                "pipeline_info",
+                "pipeline_info/taxbencher_software_mqc_versions.yml"
+            ],
+            [
+                
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.7"
+        },
+        "timestamp": "2025-10-10T08:38:40.246773"
     }
 }
