@@ -28,7 +28,26 @@ Enhanced test coverage, comprehensive profiler support, and documentation for ra
   - Schema validation enhanced with descriptive error messages mapping extensions to profilers
   - Support for KMCP, ganon, DIAMOND, mOTUs, MEGAN6/MALT, and KrakenUniq raw outputs
 
-- **Documentation (Sprints 1-3)**:
+- **Production Hardening (Sprint 4)**:
+  - Enhanced error handling in TAXPASTA_STANDARDISE module
+    - Validates profiler names against taxpasta-supported list before execution
+    - Captures and displays detailed error messages when standardization fails
+    - Provides actionable troubleshooting hints (format mismatch, file extension, malformed input)
+    - Verifies output file was created successfully
+  - Informative logging throughout pipeline execution
+    - Automatic detection logging: Shows which files are pre-standardised vs. need standardisation
+    - Per-sample processing logs with classifier and file extension information
+    - Success confirmations with output file statistics (line counts)
+  - **NEW**: `validate_profiler_format.py` - Pre-flight validation tool for raw profiler outputs
+    - Validates file format matches profiler expectations (column counts, delimiters)
+    - Supports all 11 profilers with format specifications
+    - Provides detailed error messages and format documentation
+    - `--show-spec` flag displays format requirements for each profiler
+  - `--save_standardised_profiles` parameter already implemented
+    - Optionally saves intermediate taxpasta TSV files to output directory
+    - Useful for inspection, troubleshooting, and reuse across analyses
+
+- **Documentation (Sprints 1-4)**:
   - Comprehensive raw profiler input documentation in `docs/usage.md`
   - **NEW**: Dedicated `docs/raw-inputs.md` with detailed format specifications for all 11 profilers
   - Format examples, troubleshooting guide, and integration workflows
@@ -37,6 +56,8 @@ Enhanced test coverage, comprehensive profiler support, and documentation for ra
   - Updated workflow overview to include standardization step
   - Updated samplesheet column descriptions for dual format support
   - Enhanced CLAUDE.md with architecture documentation for developers
+  - Validation workflow documentation with new `validate_profiler_format.py` tool
+  - Usage examples for `--save_standardised_profiles` parameter
 
 ### Fixed
 

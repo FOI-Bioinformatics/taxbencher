@@ -294,6 +294,17 @@ sample1,centrifuge,taxprofiler_results/centrifuge/sample1.report,NCBI
 
 Before running the pipeline, validate your files:
 
+**For raw profiler outputs** (NEW in v1.0.2):
+```bash
+# Validate file format matches profiler expectations
+python3 bin/validate_profiler_format.py kraken2 /path/to/sample.kreport
+python3 bin/validate_profiler_format.py metaphlan /path/to/sample.profile
+python3 bin/validate_profiler_format.py centrifuge /path/to/sample.report
+
+# Show format specification for a profiler
+python3 bin/validate_profiler_format.py kraken2 --show-spec
+```
+
 **For standardized files**:
 ```bash
 python3 bin/validate_taxpasta.py /path/to/sample.tsv
@@ -355,6 +366,18 @@ nextflow run . \
   --outdir results \
   -profile docker
 ```
+
+**Save standardised profiles** (optional):
+```bash
+nextflow run . \
+  --input samplesheet_raw.csv \
+  --gold_standard gold_standard.bioboxes \
+  --save_standardised_profiles \
+  --outdir results \
+  -profile docker
+```
+
+When `--save_standardised_profiles` is used, the intermediate taxpasta TSV files will be saved to `results/taxpasta_standardise/` for inspection or reuse.
 
 ## Performance Considerations
 

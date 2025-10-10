@@ -44,6 +44,19 @@ workflow TAXBENCHER {
         .set { ch_branched }
 
     //
+    // Log format detection for user visibility
+    //
+    ch_branched.standardised
+        .subscribe { meta, file ->
+            log.info "[TAXBENCHER] Sample ${meta.id} (${meta.classifier}): Using pre-standardised profile ${file.name}"
+        }
+
+    ch_branched.needs_standardisation
+        .subscribe { meta, file ->
+            log.info "[TAXBENCHER] Sample ${meta.id} (${meta.classifier}): Standardising raw profiler output ${file.name}"
+        }
+
+    //
     // MODULE: Standardise raw profiler outputs (optional)
     // Only runs for files that are not already in taxpasta TSV format
     //
