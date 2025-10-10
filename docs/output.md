@@ -19,7 +19,8 @@ The pipeline processes data using the following steps:
 ```
 results/
 ├── taxpasta_to_bioboxes/     # Converted bioboxes files
-├── opal/                      # OPAL evaluation results
+├── opal/                      # Per-sample OPAL evaluation results
+├── comparative_analysis/      # Per-sample comparative analysis reports
 ├── multiqc/                   # Aggregated reports
 └── pipeline_info/             # Pipeline execution info
 ```
@@ -32,7 +33,7 @@ results/
 <summary>Output files</summary>
 
 - `taxpasta_to_bioboxes/`
-  - `<sample>_<classifier>.bioboxes` - Converted profiles in CAMI Bioboxes format
+  - `<label>.bioboxes` - Converted profiles in CAMI Bioboxes format (one per taxonomic profile)
 
 </details>
 
@@ -64,7 +65,7 @@ Taxpasta TSV files are converted to CAMI profiling Bioboxes format, which is req
 <details markdown="1">
 <summary>Output files</summary>
 
-- `opal/<benchmark_name>/`
+- `opal/<sample_id>/`
   - `results.html` - Interactive HTML report with plots and metrics
   - `results.tsv` - Tab-separated metrics table
   - `confusion.tsv` - Confusion matrix data
@@ -77,7 +78,9 @@ Taxpasta TSV files are converted to CAMI profiling Bioboxes format, which is req
 
 **Description:**
 
-OPAL computes comprehensive benchmarking metrics for each classifier:
+OPAL runs once per biological sample (sample_id), evaluating all classifiers for that sample together. Each sample gets its own OPAL results directory.
+
+OPAL computes comprehensive benchmarking metrics for each classifier within the sample:
 
 #### Accuracy Metrics
 
@@ -110,6 +113,58 @@ The interactive HTML report includes:
 - Beta diversity plots
 - Rank-specific performance tables
 - Tool-specific detailed breakdowns
+
+### Comparative Analysis
+
+<details markdown="1">
+<parameter name="file_path">Output files</summary>
+
+- `comparative_analysis/<sample_id>/`
+  - `<sample_id>_pca.html` - PCA visualization of classifier performance metrics
+  - `<sample_id>_diff_taxa.tsv` - Taxa significantly different from gold standard
+  - `<sample_id>_comparison.html` - Comprehensive classifier comparison report
+
+</details>
+
+**Description:**
+
+Comparative analysis is performed for each biological sample, comparing all classifiers evaluated for that sample:
+
+#### PCA Analysis (`*_pca.html`)
+
+- Principal Component Analysis of classifier performance metrics
+- Visualizes similarity/differences between classifiers
+- Based on precision, recall, F1 scores across taxonomic ranks
+- **Current status**: Placeholder (requires pandas/sklearn/plotly for full implementation)
+
+#### Differential Taxa (`*_diff_taxa.tsv`)
+
+Tab-separated table identifying taxa that show significant differences from the gold standard:
+
+| Column | Description |
+|--------|-------------|
+| taxid | NCBI/GTDB taxonomy ID |
+| rank | Taxonomic rank |
+| taxname | Taxon name |
+| observed_pct | Observed percentage in prediction |
+| expected_pct | Expected percentage from gold standard |
+| p_value | Statistical significance (chi-square or similar) |
+| classifier | Classifier name |
+
+**Current status**: Placeholder structure (requires scipy/statsmodels for statistical testing)
+
+#### Comparison Report (`*_comparison.html`)
+
+Comprehensive HTML report including:
+
+- Classifier agreement heatmap (Jaccard similarity)
+- Per-rank performance bar charts
+- Top misclassified taxa tables
+- Summary statistics
+
+**Current status**: Placeholder with defined structure for future implementation
+
+> **Note**: The comparative_analysis module is currently implemented as a placeholder demonstrating the output structure. Full statistical analysis and visualizations require additional dependencies (pandas, scikit-learn, plotly, scipy, statsmodels) which will be added in future versions.
 
 ### MultiQC
 

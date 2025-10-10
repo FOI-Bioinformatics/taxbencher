@@ -29,7 +29,8 @@ The samplesheet has the following required columns:
 
 | Column          | Description                                                                                                                                                        |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `sample`        | Sample identifier. Can have multiple rows with the same sample if evaluating multiple classifiers.                                                                |
+| `sample_id`     | Biological sample identifier. Profiles with the same sample_id are evaluated together in per-sample OPAL analysis.                                               |
+| `label`         | Unique identifier for this taxonomic profile. Used for distinguishing profiles in reports.                                                                        |
 | `classifier`    | Name of the taxonomic classifier (e.g., kraken2, metaphlan, centrifuge). Used for labeling in reports and for automatic format detection.                       |
 | `taxpasta_file` | Full path to taxonomic profile file. Can be either taxpasta standardized TSV format OR raw profiler output (e.g., .kreport, .report, .profile). See formats below. |
 | `taxonomy_db`   | Taxonomy database used (e.g., NCBI, GTDB). Optional, defaults to NCBI.                                                                                            |
@@ -37,13 +38,18 @@ The samplesheet has the following required columns:
 ### Example samplesheet
 
 ```csv title="samplesheet.csv"
-sample,classifier,taxpasta_file,taxonomy_db
-sample1,kraken2,/path/to/taxprofiler_results/sample1_kraken2.tsv,NCBI
-sample1,metaphlan,/path/to/taxprofiler_results/sample1_metaphlan.tsv,NCBI
-sample1,centrifuge,/path/to/taxprofiler_results/sample1_centrifuge.tsv,NCBI
-sample2,kraken2,/path/to/taxprofiler_results/sample2_kraken2.tsv,NCBI
-sample2,metaphlan,/path/to/taxprofiler_results/sample2_metaphlan.tsv,NCBI
+sample_id,label,classifier,taxpasta_file,taxonomy_db
+sample1,sample1_kraken2,kraken2,/path/to/taxprofiler_results/sample1_kraken2.tsv,NCBI
+sample1,sample1_metaphlan,metaphlan,/path/to/taxprofiler_results/sample1_metaphlan.tsv,NCBI
+sample1,sample1_centrifuge,centrifuge,/path/to/taxprofiler_results/sample1_centrifuge.tsv,NCBI
+sample2,sample2_kraken2,kraken2,/path/to/taxprofiler_results/sample2_kraken2.tsv,NCBI
+sample2,sample2_metaphlan,metaphlan,/path/to/taxprofiler_results/sample2_metaphlan.tsv,NCBI
 ```
+
+In this example:
+- `sample1` has 3 classifiers → 1 OPAL evaluation comparing kraken2 vs metaphlan vs centrifuge
+- `sample2` has 2 classifiers → 1 OPAL evaluation comparing kraken2 vs metaphlan
+- Each sample_id gets its own comparative analysis report
 
 An [example samplesheet](../assets/test_data/samplesheet_test.csv) has been provided with the pipeline.
 
@@ -85,12 +91,12 @@ When using raw profiler outputs:
 **Example with raw outputs:**
 
 ```csv title="samplesheet_raw.csv"
-sample,classifier,taxpasta_file,taxonomy_db
-sample1,kraken2,/path/to/sample1.kreport,NCBI
-sample1,metaphlan,/path/to/sample1.profile,NCBI
-sample1,centrifuge,/path/to/sample1.report,NCBI
-sample1,kaiju,/path/to/sample1.kaiju.out,NCBI
-sample1,bracken,/path/to/sample1.bracken,NCBI
+sample_id,label,classifier,taxpasta_file,taxonomy_db
+sample1,sample1_kraken2,kraken2,/path/to/sample1.kreport,NCBI
+sample1,sample1_metaphlan,metaphlan,/path/to/sample1.profile,NCBI
+sample1,sample1_centrifuge,centrifuge,/path/to/sample1.report,NCBI
+sample1,sample1_kaiju,kaiju,/path/to/sample1.kaiju.out,NCBI
+sample1,sample1_bracken,bracken,/path/to/sample1.bracken,NCBI
 ```
 
 > [!TIP]
