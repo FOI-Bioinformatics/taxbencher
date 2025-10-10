@@ -3,12 +3,11 @@ process TAXPASTA_TO_BIOBOXES {
     label 'process_single'
 
     conda "${moduleDir}/environment.yml"
-    // Container automatically built by Wave from environment.yml (use -profile wave)
-    // For Docker/Singularity without Wave: requires custom container with pandas and ete3
-    // Conda profile recommended for this module
+    // NOTE: Docker/Singularity requires -profile wave to auto-build container from conda env
+    // Without Wave, conda profile is recommended as python:3.11 lacks pandas/ete3
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'oras://community.wave.seqera.io/library/pandas_python_pip:d3ab4533ebd816a9' :
-        'community.wave.seqera.io/library/pandas_python_pip:d3ab4533ebd816a9' }"
+        'https://depot.galaxyproject.org/singularity/python:3.11' :
+        'biocontainers/python:3.11' }"
 
     input:
     tuple val(meta), path(taxpasta_tsv)
