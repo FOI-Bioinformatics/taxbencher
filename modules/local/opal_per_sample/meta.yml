@@ -1,0 +1,49 @@
+name: "opal_per_sample"
+description: Run CAMI OPAL evaluation per biological sample (sample_id grouping)
+keywords:
+  - metagenomics
+  - taxonomic profiling
+  - benchmarking
+  - evaluation
+  - CAMI
+tools:
+  - opal:
+      description: OPAL is a reference-independent accuracy metrics for taxonomic profiling developed for the CAMI challenge
+      homepage: https://github.com/CAMI-challenge/OPAL
+      documentation: https://github.com/CAMI-challenge/OPAL/blob/master/README.md
+      licence: ["Apache-2.0"]
+
+input:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. `[ id:'sample1', sample_id:'sample1', labels:'sample1_kraken2,sample1_metaphlan', num_classifiers:2 ]`
+  - gold_standard:
+      type: file
+      description: Gold standard bioboxes file containing ground truth taxonomic composition
+      pattern: "*.bioboxes"
+  - predictions:
+      type: file
+      description: List of bioboxes prediction files from classifiers for this biological sample
+      pattern: "*.bioboxes"
+
+output:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. `[ id:'sample1', sample_id:'sample1', labels:'sample1_kraken2,sample1_metaphlan', num_classifiers:2 ]`
+  - results:
+      type: directory
+      description: Directory containing OPAL results including HTML reports and metrics TSV files
+      pattern: "*/"
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+
+authors:
+  - "@andreassjodin"
+maintainers:
+  - "@andreassjodin"

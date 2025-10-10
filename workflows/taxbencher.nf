@@ -6,6 +6,7 @@
 include { TAXPASTA_STANDARDISE   } from '../modules/local/taxpasta_standardise/main'
 include { TAXPASTA_TO_BIOBOXES   } from '../modules/local/taxpasta_to_bioboxes/main'
 include { OPAL                   } from '../modules/local/opal/main'
+include { OPAL_PER_SAMPLE        } from '../modules/local/opal_per_sample/main'
 include { MULTIQC                } from '../modules/nf-core/multiqc/main'
 include { paramsSummaryMap       } from 'plugin/nf-schema'
 include { paramsSummaryMultiqc   } from '../subworkflows/nf-core/utils_nfcore_pipeline'
@@ -83,8 +84,9 @@ workflow TAXBENCHER {
     // Each biological sample gets its own OPAL run with all its classifiers
     //
     // Step 1: Map to [sample_id, label, bioboxes]
-    // Step 2: Group by sample_id using groupTuple (groups all labels+bioboxes for each sample_id)
-    // Step 3: Combine with gold standard and prepare channels for OPAL
+    // Step 2: Group by sample_id using groupTuple
+    // Step 3: Combine with gold standard
+    // Step 4: Transpose to expand bioboxes list while keeping meta+gold together
     //
     ch_bioboxes_per_sample = TAXPASTA_TO_BIOBOXES.out.bioboxes
         .map { meta, bioboxes ->
@@ -100,46 +102,25 @@ workflow TAXBENCHER {
                 labels: labels.join(','),
                 num_classifiers: labels.size()
             ]
-            // Return tuple with meta, gold_standard, and list of bioboxes files
+            // Return: [meta, gold_standard, [bioboxes_files]]
             tuple(meta_grouped, gold_std, bioboxes_files)
         }
 
     //
     // MODULE: Run OPAL evaluation per sample_id
-    // OPAL is invoked multiple times, once per sample_id
+    // OPAL_PER_SAMPLE is invoked once per sample_id with that sample's bioboxes files
     //
-    // NOTE: The challenge here is that OPAL's module signature has two separate inputs:
-    // - tuple val(meta), path(gold_standard)
-    // - path(predictions)
+    // The ch_bioboxes_per_sample channel already contains:
+    // [meta_grouped, gold_standard, [bioboxes_files]]
     //
-    // For proper per-sample_id OPAL invocation, each sample needs its own set of bioboxes files.
-    // Current approach: For now, run global OPAL with all samples (TODO: refactor to per-sample)
+    // This matches OPAL_PER_SAMPLE signature:
+    // tuple val(meta), path(gold_standard), path(predictions)
     //
-    ch_bioboxes_collected = TAXPASTA_TO_BIOBOXES.out.bioboxes
-        .map { meta, bioboxes -> bioboxes }
-        .collect()
-
-    ch_bioboxes_labels = TAXPASTA_TO_BIOBOXES.out.bioboxes
-        .map { meta, bioboxes -> meta.id }
-        .collect()
-        .map { labels -> labels.join(',') }
-
-    ch_gold_with_meta = ch_bioboxes_labels
-        .combine(ch_gold_standard)
-        .map { labels, gold_std -> [
-            [
-                id: 'benchmark',
-                labels: labels
-            ],
-            gold_std
-        ] }
-
-    OPAL (
-        ch_gold_with_meta,
-        ch_bioboxes_collected
+    OPAL_PER_SAMPLE (
+        ch_bioboxes_per_sample
     )
-    ch_versions = ch_versions.mix(OPAL.out.versions)
-    ch_multiqc_files = ch_multiqc_files.mix(OPAL.out.results.map { meta, dir -> dir })
+    ch_versions = ch_versions.mix(OPAL_PER_SAMPLE.out.versions.first())
+    ch_multiqc_files = ch_multiqc_files.mix(OPAL_PER_SAMPLE.out.results.map { meta, dir -> dir })
 
     //
     // Collate and save software versions
@@ -194,7 +175,7 @@ workflow TAXBENCHER {
     )
 
     emit:
-    opal_results   = OPAL.out.results            // channel: [ [meta], path(opal_results/) ]
+    opal_results   = OPAL_PER_SAMPLE.out.results // channel: [ [meta], path(opal_results/) ]
     multiqc_report = MULTIQC.out.report.toList() // channel: /path/to/multiqc_report.html
     versions       = ch_versions                 // channel: [ path(versions.yml) ]
 
