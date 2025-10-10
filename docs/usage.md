@@ -61,16 +61,21 @@ For more information on generating taxpasta files, see the [taxpasta documentati
 
 #### 2. Raw profiler outputs (automatically standardized)
 
-The pipeline can also accept raw profiler outputs and will automatically standardize them using taxpasta. Supported formats include:
+The pipeline can also accept raw profiler outputs and will automatically standardize them using taxpasta. Supported profilers:
 
-| Profiler     | File Extension(s)       | Format Description                                      |
-| ------------ | ----------------------- | ------------------------------------------------------- |
-| Kraken2      | `.kreport`              | Kraken2 report format (6 tab-separated columns)         |
-| Centrifuge   | `.report`               | Centrifuge report format (6 tab-separated columns)      |
-| MetaPhlAn    | `.profile`, `.mpa`      | MetaPhlAn profile format (hierarchical taxonomy)        |
-| Kaiju        | `.kaiju`                | Kaiju output format                                     |
-| Bracken      | `.bracken`              | Bracken abundance estimation format                     |
-| Other        | `.txt`, `.tsv`          | Generic text/TSV (must be taxpasta-compatible)          |
+| Profiler     | File Extension(s)                    | Format Description                                      |
+| ------------ | ------------------------------------ | ------------------------------------------------------- |
+| Bracken      | `.kreport`, `.bracken`               | Bracken abundance re-estimation format                  |
+| Centrifuge   | `.report`                            | Centrifuge report format (6 tab-separated columns)      |
+| DIAMOND      | `.diamond`                           | DIAMOND taxonomic assignment output                     |
+| ganon        | `.ganon`, `.out`                     | ganon profiling output                                  |
+| Kaiju        | `.kaiju`, `.out`                     | Kaiju taxonomic classification summary                  |
+| KMCP         | `.kmcp`, `.out`                      | KMCP profiling results                                  |
+| Kraken2      | `.kreport`, `.kreport2`              | Kraken2 report format (6 tab-separated columns)         |
+| KrakenUniq   | `.krakenuniq`                        | KrakenUniq-specific report format                       |
+| MEGAN6/MALT  | `.megan`, `.rma6`                    | MEGAN6 taxonomic summary files                          |
+| MetaPhlAn    | `.profile`, `.mpa`, `.mpa3`          | MetaPhlAn profile format (4 tab-separated columns)      |
+| mOTUs        | `.motus`, `.out`                     | mOTUs profiling output                                  |
 
 When using raw profiler outputs:
 - The `classifier` column in the samplesheet must match the profiler name (e.g., "kraken2", "metaphlan", "centrifuge")
@@ -84,7 +89,12 @@ sample,classifier,taxpasta_file,taxonomy_db
 sample1,kraken2,/path/to/sample1.kreport,NCBI
 sample1,metaphlan,/path/to/sample1.profile,NCBI
 sample1,centrifuge,/path/to/sample1.report,NCBI
+sample1,kaiju,/path/to/sample1.kaiju.out,NCBI
+sample1,bracken,/path/to/sample1.bracken,NCBI
 ```
+
+> [!TIP]
+> **Detailed format specifications**: See [docs/raw-inputs.md](raw-inputs.md) for comprehensive information about supported profilers, file formats, and troubleshooting.
 
 ## Running the pipeline
 

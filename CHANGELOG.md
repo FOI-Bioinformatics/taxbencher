@@ -5,7 +5,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## v1.0.2 - Unreleased
 
-Enhanced test coverage and documentation for raw profiler input feature.
+Enhanced test coverage, comprehensive profiler support, and documentation for raw profiler input feature.
 
 ### Added
 
@@ -16,12 +16,27 @@ Enhanced test coverage and documentation for raw profiler input feature.
   - Added pipeline-level nf-test for test_raw profile validation
   - New test data files for Centrifuge and MetaPhlAn raw formats
 
-- **Documentation (Sprint 1)**:
+- **Pipeline Testing Infrastructure (Sprint 2)**:
+  - Added end-to-end pipeline test for test_raw profile in `tests/default.nf.test`
+  - Pipeline tests verify TAXPASTA_STANDARDISE execution in full workflow context
+  - Tests validate channel branching and format detection logic
+  - Snapshot-based validation of pipeline outputs and task counts
+
+- **Extended Profiler Support (Sprint 3)**:
+  - Comprehensive file extension support for all 11 taxpasta-supported profilers
+  - Added extensions: `.kreport2`, `.mpa3`, `.krakenuniq`, `.diamond`, `.kmcp`, `.ganon`, `.motus`, `.megan`
+  - Schema validation enhanced with descriptive error messages mapping extensions to profilers
+  - Support for KMCP, ganon, DIAMOND, mOTUs, MEGAN6/MALT, and KrakenUniq raw outputs
+
+- **Documentation (Sprints 1-3)**:
   - Comprehensive raw profiler input documentation in `docs/usage.md`
-  - Table of supported formats (Kraken2, Centrifuge, MetaPhlAn, Kaiju, Bracken, etc.)
-  - Example samplesheet for raw profiler outputs
+  - **NEW**: Dedicated `docs/raw-inputs.md` with detailed format specifications for all 11 profilers
+  - Format examples, troubleshooting guide, and integration workflows
+  - Table of supported formats with file extensions and format descriptions
+  - Example samplesheets for raw profiler outputs, pre-standardized files, and mixed formats
   - Updated workflow overview to include standardization step
   - Updated samplesheet column descriptions for dual format support
+  - Enhanced CLAUDE.md with architecture documentation for developers
 
 ### Fixed
 
@@ -34,12 +49,15 @@ Enhanced test coverage and documentation for raw profiler input feature.
 - Updated MetaPhlAn test data to include `additional_species` column (4 columns total)
 - Added Centrifuge report format test data (6-column format)
 - Enhanced test data now matches actual taxpasta expected formats
+- Schema input validation pattern expanded to support all taxpasta-compatible extensions
+- Improved schema error messages with profiler-specific extension mappings
 
 ### Testing
 
 - All TAXPASTA_STANDARDISE module tests pass (4/4: Kraken2, Centrifuge, MetaPhlAn, Stub)
-- Pipeline test structure in place for test_raw profile
+- Pipeline-level tests for both standard and raw input profiles
 - Test fixtures now properly tracked in git repository
+- Comprehensive test coverage for format detection and standardization workflow
 
 ## v1.0.1 - 2025-10-09
 
