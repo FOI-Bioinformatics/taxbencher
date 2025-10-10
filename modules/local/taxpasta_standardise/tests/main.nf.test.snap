@@ -77,16 +77,30 @@
         "content": [
             {
                 "0": [
-                    
+                    [
+                        {
+                            "id": "test_centrifuge",
+                            "classifier": "centrifuge",
+                            "taxonomy_db": "NCBI"
+                        },
+                        "test_centrifuge.tsv:md5,76c7c2744a1acb01b9e13a8d017b5efc"
+                    ]
                 ],
                 "1": [
-                    
+                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
                 ],
                 "standardised": [
-                    
+                    [
+                        {
+                            "id": "test_centrifuge",
+                            "classifier": "centrifuge",
+                            "taxonomy_db": "NCBI"
+                        },
+                        "test_centrifuge.tsv:md5,76c7c2744a1acb01b9e13a8d017b5efc"
+                    ]
                 ],
                 "versions": [
-                    
+                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
                 ]
             }
         ],
@@ -94,22 +108,36 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.7"
         },
-        "timestamp": "2025-10-09T06:42:16.998644"
+        "timestamp": "2025-10-10T07:37:31.035195"
     },
     "taxpasta standardise - metaphlan": {
         "content": [
             {
                 "0": [
-                    
+                    [
+                        {
+                            "id": "test_metaphlan",
+                            "classifier": "metaphlan",
+                            "taxonomy_db": "NCBI"
+                        },
+                        "test_metaphlan.tsv:md5,15260ed0e313e397ecae9704df6fa87f"
+                    ]
                 ],
                 "1": [
-                    
+                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
                 ],
                 "standardised": [
-                    
+                    [
+                        {
+                            "id": "test_metaphlan",
+                            "classifier": "metaphlan",
+                            "taxonomy_db": "NCBI"
+                        },
+                        "test_metaphlan.tsv:md5,15260ed0e313e397ecae9704df6fa87f"
+                    ]
                 ],
                 "versions": [
-                    
+                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
                 ]
             }
         ],
@@ -117,6 +145,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.7"
         },
-        "timestamp": "2025-10-09T06:42:10.801521"
+        "timestamp": "2025-10-10T07:36:48.603781"
     }
 }

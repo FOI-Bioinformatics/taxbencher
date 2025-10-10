@@ -19,8 +19,8 @@
             },
             "taxpasta_file": {
                 "type": "string",
-                "pattern": "^\\S+\\.(tsv|txt|kreport|out|profile|mpa|kraken|centrifuge|kaiju|bracken|ganon|motus|megan|rma6)$",
-                "errorMessage": "Input file must be provided and have a valid extension (.tsv/.txt for taxpasta format, or .kreport/.out/.profile/.mpa for raw profiler outputs)"
+                "pattern": "^\\S+\\.(tsv|txt|kreport|report|out|profile|mpa|kraken|centrifuge|kaiju|bracken|ganon|motus|megan|rma6)$",
+                "errorMessage": "Input file must be provided and have a valid extension (.tsv/.txt for taxpasta format, or .kreport/.report/.out/.profile/.mpa for raw profiler outputs)"
             },
             "taxonomy_db": {
                 "type": "string",
