@@ -132,11 +132,20 @@ Checks:
 ### Test individual modules
 
 ```bash
+# Test taxpasta_standardise
+nf-test test modules/local/taxpasta_standardise/tests/main.nf.test
+
 # Test taxpasta_to_bioboxes
 nf-test test modules/local/taxpasta_to_bioboxes/tests/main.nf.test
 
 # Test OPAL (uses container, should work)
 nf-test test modules/local/opal/tests/main.nf.test
+
+# Test OPAL_PER_SAMPLE (stub tests due to known OPAL HTML bug)
+nf-test test modules/local/opal_per_sample/tests/main.nf.test
+
+# Test COMPARATIVE_ANALYSIS (stub tests)
+nf-test test modules/local/comparative_analysis/tests/main.nf.test
 ```
 
 ### Test full pipeline
@@ -156,8 +165,11 @@ nf-test test tests/default.nf.test -profile test,conda
 
 ```bash
 # Update all snapshots after changes
+nf-test test --update-snapshot modules/local/taxpasta_standardise/tests/
 nf-test test --update-snapshot modules/local/taxpasta_to_bioboxes/tests/
 nf-test test --update-snapshot modules/local/opal/tests/
+nf-test test --update-snapshot modules/local/opal_per_sample/tests/
+nf-test test --update-snapshot modules/local/comparative_analysis/tests/
 nf-test test --update-snapshot tests/
 ```
 
