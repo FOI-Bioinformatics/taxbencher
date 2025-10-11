@@ -1,0 +1,121 @@
+nextflow_process {
+
+    name "Test Process COMPARATIVE_ANALYSIS"
+    script "../main.nf"
+    process "COMPARATIVE_ANALYSIS"
+
+    tag "modules"
+    tag "modules_local"
+    tag "comparative_analysis"
+
+    // NOTE: COMPARATIVE_ANALYSIS requires pandas, scikit-learn, plotly, scipy, and statsmodels
+    // for full statistical analysis. These dependencies may not be available in all test environments.
+    // Stub tests verify module structure and output channels without requiring the full dependency stack.
+
+    test("comparative_analysis - stub - basic") {
+
+        options "-stub"
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id: 'sample1' ],
+                    file('${moduleDir}/testdata/opal_results', checkIfExists: true)
+                ]
+                input[1] = file('${moduleDir}/testdata/gold_standard.bioboxes', checkIfExists: true)
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("comparative_analysis - stub - with sample_id") {
+
+        options "-stub"
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [
+                        id: 'sample1',
+                        sample_id: 'test_sample'
+                    ],
+                    file('${moduleDir}/testdata/opal_results', checkIfExists: true)
+                ]
+                input[1] = file('${moduleDir}/testdata/gold_standard.bioboxes', checkIfExists: true)
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("comparative_analysis - stub - with labels") {
+
+        options "-stub"
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [
+                        id: 'sample1',
+                        sample_id: 'test_sample',
+                        labels: 'Kraken2,MetaPhlAn'
+                    ],
+                    file('${moduleDir}/testdata/opal_results', checkIfExists: true)
+                ]
+                input[1] = file('${moduleDir}/testdata/gold_standard.bioboxes', checkIfExists: true)
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("comparative_analysis - stub - custom prefix") {
+
+        options "-stub"
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id: 'custom_id' ],
+                    file('${moduleDir}/testdata/opal_results', checkIfExists: true)
+                ]
+                input[1] = file('${moduleDir}/testdata/gold_standard.bioboxes', checkIfExists: true)
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+}

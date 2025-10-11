@@ -1,0 +1,28 @@
+tool	rank	metric	sample	value
+Gold standard	species	Bray-Curtis distance	test_sample	0.0
+Gold standard	species	Shannon diversity	test_sample	1.0296530140645737
+Gold standard	species	Completeness	test_sample	1.0
+Gold standard	species	Purity	test_sample	1.0
+Gold standard	species	F1 score	test_sample	1.0
+Gold standard	species	Jaccard index	test_sample	1.0
+Gold standard	species	L1 norm error	test_sample	0.0
+Gold standard	na	Weighted UniFrac error	test_sample	0.0
+Gold standard	na	Unweighted UniFrac error	test_sample	0.0
+prediction1	species	Bray-Curtis distance	test_sample	0.05
+prediction1	species	Shannon diversity	test_sample	1.0486537893593546
+prediction1	species	Completeness	test_sample	0.95
+prediction1	species	Purity	test_sample	0.97
+prediction1	species	F1 score	test_sample	0.96
+prediction1	species	Jaccard index	test_sample	0.92
+prediction1	species	L1 norm error	test_sample	0.05
+prediction1	na	Weighted UniFrac error	test_sample	0.02
+prediction1	na	Unweighted UniFrac error	test_sample	0.03
+prediction2	species	Bray-Curtis distance	test_sample	0.08
+prediction2	species	Shannon diversity	test_sample	1.0586537893593546
+prediction2	species	Completeness	test_sample	0.92
+prediction2	species	Purity	test_sample	0.94
+prediction2	species	F1 score	test_sample	0.93
+prediction2	species	Jaccard index	test_sample	0.89
+prediction2	species	L1 norm error	test_sample	0.08
+prediction2	na	Weighted UniFrac error	test_sample	0.04
+prediction2	na	Unweighted UniFrac error	test_sample	0.05
