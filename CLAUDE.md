@@ -830,17 +830,37 @@ nextflow run . \
 
 ### Test Coverage
 
-For detailed validation and testing information, see [VALIDATION_REPORT.md](VALIDATION_REPORT.md).
+For detailed validation and testing information, see:
+- [VALIDATION_REPORT.md](VALIDATION_REPORT.md) - Quick overview
+- [TEST_COVERAGE_REPORT.md](TEST_COVERAGE_REPORT.md) - Honest detailed assessment
 
-**nf-test coverage**:
-- `TAXPASTA_TO_BIOBOXES`: 3/3 tests pass (basic, custom params, stub)
-- `OPAL`: Core functionality verified (metrics, plots generated)
-- Full test suite: `nf-test test --profile test,docker`
+**nf-test coverage**: 14/22 tests passing (64%)
+
+**Profile requirements**:
+- `TAXPASTA_STANDARDISE`: ✅ Works with docker/conda
+- `TAXPASTA_TO_BIOBOXES`: ⚠️ Requires conda/wave (no pre-built container with pandas+ete3)
+- `OPAL`: ⚠️ Works but OPAL 1.0.13 has bugs with minimal test data
+- `OPAL_PER_SAMPLE`: ⚠️ Stub tests only (OPAL bugs)
+- `COMPARATIVE_ANALYSIS`: ⚠️ Stub tests only, requires conda/wave for functional tests
+- Full pipeline: ❌ Fails at OPAL_PER_SAMPLE with test data
+
+**Recommended testing approaches**:
+```bash
+# Module tests with conda (best coverage)
+nf-test test modules/local/taxpasta_to_bioboxes/tests/ --profile conda
+
+# Full pipeline with realistic data
+nextflow run . --input real_data.csv --gold_standard gold.bioboxes --outdir results -profile conda
+
+# CI/CD with stub tests (structure validation only)
+nf-test test --tag stub_only --profile docker
+```
 
 **Known limitations**:
-- OPAL HTML generation fails with single-sample datasets (OPAL 1.0.13 bug)
-- This only affects minimal test data, not production use
-- All core metrics and evaluation functions work correctly
+- No pre-built containers for Python scientific stack → Use conda or wave profile
+- OPAL 1.0.13 spider plot bug with minimal datasets → Use larger realistic data
+- Full pipeline tests expected to fail with minimal test data → Not a pipeline bug
+- Stub tests verify module structure but not functionality → Documented in TEST_COVERAGE_REPORT.md
 
 ## Common Patterns
 

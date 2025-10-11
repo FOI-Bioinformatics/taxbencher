@@ -2,6 +2,8 @@ process COMPARATIVE_ANALYSIS {
     tag "$meta.id"
     label 'process_single'
 
+    // NOTE: No suitable pre-built container exists with pandas + scikit-learn + plotly + scipy + statsmodels
+    // Use conda profile or wave for this module
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/python:3.11' :

@@ -2,9 +2,9 @@ process TAXPASTA_TO_BIOBOXES {
     tag "$meta.id"
     label 'process_single'
 
+    // NOTE: No suitable pre-built container exists with pandas + ete3
+    // Use conda profile or wave for this module
     conda "${moduleDir}/environment.yml"
-    // NOTE: Docker/Singularity requires -profile wave to auto-build container from conda env
-    // Without Wave, conda profile is recommended as python:3.11 lacks pandas/ete3
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/python:3.11' :
         'biocontainers/python:3.11' }"
