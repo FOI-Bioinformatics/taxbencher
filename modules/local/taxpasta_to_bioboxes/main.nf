@@ -2,12 +2,11 @@ process TAXPASTA_TO_BIOBOXES {
     tag "$meta.id"
     label 'process_single'
 
-    // NOTE: No suitable pre-built container exists with pandas + ete3
-    // Use conda profile or wave for this module
+    // Custom Seqera Wave container with pandas + ete3 dependencies
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/python:3.11' :
-        'biocontainers/python:3.11' }"
+        'https://community.wave.seqera.io/library/pip_ete3_pandas:3d986008f4614a7f' :
+        'community.wave.seqera.io/library/pip_ete3_pandas:3d986008f4614a7f' }"
 
     input:
     tuple val(meta), path(taxpasta_tsv)
