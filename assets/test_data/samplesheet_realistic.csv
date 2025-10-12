@@ -1,2 +1,2 @@
-sample,sample_id,classifier,label,taxpasta_file,taxonomy_db
-realistic,realistic_sample,kraken2,realistic_kraken2,${projectDir}/assets/test_data/taxpasta/realistic_kraken2.tsv,NCBI
+sample_id,label,classifier,taxpasta_file,taxonomy_db
+realistic_sample,realistic_kraken2,kraken2,assets/test_data/taxpasta/realistic_kraken2.tsv,NCBI

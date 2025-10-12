@@ -1,0 +1,4 @@
+task_id	hash	native_id	name	status	exit	submit	duration	realtime	%cpu	peak_rss	peak_vmem	rchar	wchar
+1	02/4a9ac5	37991	FOIBIOINFORMATICS_TAXBENCHER:TAXBENCHER:TAXPASTA_TO_BIOBOXES (test_sample_kraken2)	FAILED	1	2025-10-10 15:20:20.453	2.5s	2.4s	-	-	-	-	-
+3	cc/bb081c	37985	FOIBIOINFORMATICS_TAXBENCHER:TAXBENCHER:TAXPASTA_TO_BIOBOXES (test_sample_centrifuge)	FAILED	1	2025-10-10 15:20:20.446	2.5s	2.5s	-	-	-	-	-
+2	b7/f398df	37999	FOIBIOINFORMATICS_TAXBENCHER:TAXBENCHER:TAXPASTA_TO_BIOBOXES (test_sample_metaphlan)	FAILED	1	2025-10-10 15:20:20.459	2.5s	2.5s	-	-	-	-	-
