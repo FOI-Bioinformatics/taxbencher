@@ -8,26 +8,19 @@ nextflow_process {
     tag "modules_local"
     tag "opal_per_sample"
 
-    // NOTE: OPAL 1.0.13 has a known bug with HTML generation when using minimal test datasets
-    // The process fails during HTML report generation (spider plot) even though:
-    // - Metrics are computed successfully
-    // - TSV output files are created
-    // - All core functionality works
-    // This is documented in CLAUDE.md and only affects minimal test data, not production use.
-    // Therefore, we use stub tests to verify module structure and output channels.
+    // Functional tests using realistic data (36+ taxa) to avoid OPAL 1.0.13 visualization bugs
+    // Realistic data allows OPAL to generate all outputs including HTML reports
 
-    test("opal_per_sample - stub - single classifier") {
-
-        options "-stub"
+    test("opal_per_sample - single classifier - realistic") {
 
         when {
             process {
                 """
                 input[0] = [
                     [ id: 'sample1' ],
-                    file('${moduleDir}/testdata/gold_standard.bioboxes', checkIfExists: true),
+                    file('${moduleDir}/testdata/gold_standard_realistic.bioboxes', checkIfExists: true),
                     [
-                        file('${moduleDir}/testdata/prediction1.bioboxes', checkIfExists: true)
+                        file('${moduleDir}/testdata/prediction_realistic1.bioboxes', checkIfExists: true)
                     ]
                 ]
                 """
@@ -37,25 +30,26 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
-                { assert snapshot(process.out).match() }
+                { assert process.out.results.size() == 1 },
+                { assert process.out.versions.size() == 1 },
+                // OPAL creates results directory with metrics
+                { assert path(process.out.results.get(0).get(1)).resolve('results.tsv').exists() }
             )
         }
 
     }
 
-    test("opal_per_sample - stub - two classifiers") {
-
-        options "-stub"
+    test("opal_per_sample - two classifiers - realistic") {
 
         when {
             process {
                 """
                 input[0] = [
                     [ id: 'sample1' ],
-                    file('${moduleDir}/testdata/gold_standard.bioboxes', checkIfExists: true),
+                    file('${moduleDir}/testdata/gold_standard_realistic.bioboxes', checkIfExists: true),
                     [
-                        file('${moduleDir}/testdata/prediction1.bioboxes', checkIfExists: true),
-                        file('${moduleDir}/testdata/prediction2.bioboxes', checkIfExists: true)
+                        file('${moduleDir}/testdata/prediction_realistic1.bioboxes', checkIfExists: true),
+                        file('${moduleDir}/testdata/prediction_realistic2.bioboxes', checkIfExists: true)
                     ]
                 ]
                 """
@@ -65,26 +59,27 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
-                { assert snapshot(process.out).match() }
+                { assert process.out.results.size() == 1 },
+                { assert process.out.versions.size() == 1 },
+                { assert path(process.out.results.get(0).get(1)).resolve('results.tsv').exists() },
+                { assert path(process.out.results.get(0).get(1)).resolve('confusion.tsv').exists() }
             )
         }
 
     }
 
-    test("opal_per_sample - stub - three classifiers") {
-
-        options "-stub"
+    test("opal_per_sample - three classifiers - realistic") {
 
         when {
             process {
                 """
                 input[0] = [
                     [ id: 'sample1' ],
-                    file('${moduleDir}/testdata/gold_standard.bioboxes', checkIfExists: true),
+                    file('${moduleDir}/testdata/gold_standard_realistic.bioboxes', checkIfExists: true),
                     [
-                        file('${moduleDir}/testdata/prediction1.bioboxes', checkIfExists: true),
-                        file('${moduleDir}/testdata/prediction2.bioboxes', checkIfExists: true),
-                        file('${moduleDir}/testdata/prediction3.bioboxes', checkIfExists: true)
+                        file('${moduleDir}/testdata/prediction_realistic1.bioboxes', checkIfExists: true),
+                        file('${moduleDir}/testdata/prediction_realistic2.bioboxes', checkIfExists: true),
+                        file('${moduleDir}/testdata/prediction_realistic3.bioboxes', checkIfExists: true)
                     ]
                 ]
                 """
@@ -94,15 +89,16 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
-                { assert snapshot(process.out).match() }
+                { assert process.out.results.size() == 1 },
+                { assert process.out.versions.size() == 1 },
+                { assert path(process.out.results.get(0).get(1)).resolve('results.tsv').exists() },
+                { assert path(process.out.results.get(0).get(1)).resolve('by_rank').exists() }
             )
         }
 
     }
 
-    test("opal_per_sample - stub - custom labels") {
-
-        options "-stub"
+    test("opal_per_sample - custom labels - realistic") {
 
         when {
             process {
@@ -112,10 +108,10 @@ nextflow_process {
                         id: 'sample1',
                         labels: 'Kraken2,MetaPhlAn'
                     ],
-                    file('${moduleDir}/testdata/gold_standard.bioboxes', checkIfExists: true),
+                    file('${moduleDir}/testdata/gold_standard_realistic.bioboxes', checkIfExists: true),
                     [
-                        file('${moduleDir}/testdata/prediction1.bioboxes', checkIfExists: true),
-                        file('${moduleDir}/testdata/prediction2.bioboxes', checkIfExists: true)
+                        file('${moduleDir}/testdata/prediction_realistic1.bioboxes', checkIfExists: true),
+                        file('${moduleDir}/testdata/prediction_realistic2.bioboxes', checkIfExists: true)
                     ]
                 ]
                 """
@@ -125,15 +121,14 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
-                { assert snapshot(process.out).match() }
+                { assert process.out.results.size() == 1 },
+                { assert process.out.versions.size() == 1 }
             )
         }
 
     }
 
-    test("opal_per_sample - stub - with optional parameters") {
-
-        options "-stub"
+    test("opal_per_sample - with optional parameters - realistic") {
 
         when {
             process {
@@ -145,10 +140,39 @@ nextflow_process {
                         normalize: true,
                         rank: 'species'
                     ],
+                    file('${moduleDir}/testdata/gold_standard_realistic.bioboxes', checkIfExists: true),
+                    [
+                        file('${moduleDir}/testdata/prediction_realistic1.bioboxes', checkIfExists: true),
+                        file('${moduleDir}/testdata/prediction_realistic2.bioboxes', checkIfExists: true)
+                    ]
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.results.size() == 1 },
+                { assert process.out.versions.size() == 1 }
+            )
+        }
+
+    }
+
+    // Stub test for CI/CD environments where full OPAL execution is not needed
+    test("opal_per_sample - stub") {
+
+        options "-stub"
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id: 'sample1' ],
                     file('${moduleDir}/testdata/gold_standard.bioboxes', checkIfExists: true),
                     [
-                        file('${moduleDir}/testdata/prediction1.bioboxes', checkIfExists: true),
-                        file('${moduleDir}/testdata/prediction2.bioboxes', checkIfExists: true)
+                        file('${moduleDir}/testdata/prediction1.bioboxes', checkIfExists: true)
                     ]
                 ]
                 """
