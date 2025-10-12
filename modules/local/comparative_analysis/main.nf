@@ -2,12 +2,11 @@ process COMPARATIVE_ANALYSIS {
     tag "$meta.id"
     label 'process_single'
 
-    // NOTE: No suitable pre-built container exists with pandas + scikit-learn + plotly + scipy + statsmodels
-    // Use conda profile or wave for this module
+    // Custom Seqera Wave container with pandas + scikit-learn + plotly + scipy + statsmodels + python-kaleido
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/python:3.11' :
-        'biocontainers/python:3.11' }"
+        'https://wave.seqera.io/wt/722b2c677e9b/wave/build:comparative_analysis--8970105c926ac527' :
+        'wave.seqera.io/wt/722b2c677e9b/wave/build:comparative_analysis--8970105c926ac527' }"
 
     input:
     tuple val(meta), path(opal_dir)

@@ -1,3 +1,4 @@
+name: comparative_analysis
 channels:
   - conda-forge
   - bioconda
@@ -10,4 +11,4 @@ dependencies:
   - scipy>=1.11
   - statsmodels>=0.14
   - numpy>=1.24
-  - kaleido  # For plotly static image export
+  - python-kaleido>=1.0  # For plotly static image export (conda-forge package)
