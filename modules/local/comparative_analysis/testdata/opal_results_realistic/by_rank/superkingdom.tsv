@@ -1,0 +1,2 @@
+tool	sample	Sum of abundances	Weighted UniFrac error	Unweighted UniFrac error	L1 norm error	Completeness	Purity	F1 score	True positives	False positives	False negatives	Taxon counts	Jaccard index	Shannon diversity	Shannon equitability	Bray-Curtis distance
+test1_kraken2	test1	0.01285477	0.08685552347955268	42.31955155040036	0.14653847	1.0	0.3333333333333333	0.5	1.0	2.0	0.0	3.0	0.3333333333333333	0.06394949767176328	0.05820934130392054	0.8921731657153769

@@ -1,0 +1,217 @@
+tool	rank	metric	sample	value
+Gold standard	superkingdom	Bray-Curtis distance	test1	0.0
+Gold standard	phylum	Bray-Curtis distance	test1	0.0
+Gold standard	class	Bray-Curtis distance	test1	0.0
+Gold standard	order	Bray-Curtis distance	test1	0.0
+Gold standard	family	Bray-Curtis distance	test1	0.0
+Gold standard	genus	Bray-Curtis distance	test1	0.0
+Gold standard	species	Bray-Curtis distance	test1	0.0
+Gold standard	strain	Bray-Curtis distance	test1	0.0
+Gold standard	superkingdom	Shannon diversity	test1	0.28581224981314374
+Gold standard	superkingdom	Shannon equitability	test1	0.0
+Gold standard	phylum	Shannon diversity	test1	0.283720569973831
+Gold standard	phylum	Shannon equitability	test1	0.0
+Gold standard	class	Shannon diversity	test1	0.283720569973831
+Gold standard	class	Shannon equitability	test1	0.0
+Gold standard	order	Shannon diversity	test1	0.2828315121787224
+Gold standard	order	Shannon equitability	test1	0.0
+Gold standard	family	Shannon diversity	test1	0.28281528553712865
+Gold standard	family	Shannon equitability	test1	0.0
+Gold standard	genus	Shannon diversity	test1	0.28182003584571275
+Gold standard	genus	Shannon equitability	test1	0.4065803681377597
+Gold standard	species	Shannon diversity	test1	0.24093925914243586
+Gold standard	species	Shannon equitability	test1	0.17380093716012654
+Gold standard	strain	Shannon diversity	test1	0.0034815576499238375
+Gold standard	strain	Shannon equitability	test1	0.003169050342723423
+Gold standard	superkingdom	True positives	test1	1.0
+Gold standard	superkingdom	False negatives	test1	0.0
+Gold standard	superkingdom	False positives	test1	0.0
+Gold standard	superkingdom	Completeness	test1	1.0
+Gold standard	superkingdom	Purity	test1	1.0
+Gold standard	superkingdom	F1 score	test1	1.0
+Gold standard	superkingdom	Jaccard index	test1	1.0
+Gold standard	phylum	True positives	test1	1.0
+Gold standard	phylum	False negatives	test1	0.0
+Gold standard	phylum	False positives	test1	0.0
+Gold standard	phylum	Completeness	test1	1.0
+Gold standard	phylum	Purity	test1	1.0
+Gold standard	phylum	F1 score	test1	1.0
+Gold standard	phylum	Jaccard index	test1	1.0
+Gold standard	class	True positives	test1	1.0
+Gold standard	class	False negatives	test1	0.0
+Gold standard	class	False positives	test1	0.0
+Gold standard	class	Completeness	test1	1.0
+Gold standard	class	Purity	test1	1.0
+Gold standard	class	F1 score	test1	1.0
+Gold standard	class	Jaccard index	test1	1.0
+Gold standard	order	True positives	test1	1.0
+Gold standard	order	False negatives	test1	0.0
+Gold standard	order	False positives	test1	0.0
+Gold standard	order	Completeness	test1	1.0
+Gold standard	order	Purity	test1	1.0
+Gold standard	order	F1 score	test1	1.0
+Gold standard	order	Jaccard index	test1	1.0
+Gold standard	family	True positives	test1	1.0
+Gold standard	family	False negatives	test1	0.0
+Gold standard	family	False positives	test1	0.0
+Gold standard	family	Completeness	test1	1.0
+Gold standard	family	Purity	test1	1.0
+Gold standard	family	F1 score	test1	1.0
+Gold standard	family	Jaccard index	test1	1.0
+Gold standard	genus	True positives	test1	2.0
+Gold standard	genus	False negatives	test1	0.0
+Gold standard	genus	False positives	test1	0.0
+Gold standard	genus	Completeness	test1	1.0
+Gold standard	genus	Purity	test1	1.0
+Gold standard	genus	F1 score	test1	1.0
+Gold standard	genus	Jaccard index	test1	1.0
+Gold standard	species	True positives	test1	4.0
+Gold standard	species	False negatives	test1	0.0
+Gold standard	species	False positives	test1	0.0
+Gold standard	species	Completeness	test1	1.0
+Gold standard	species	Purity	test1	1.0
+Gold standard	species	F1 score	test1	1.0
+Gold standard	species	Jaccard index	test1	1.0
+Gold standard	strain	True positives	test1	3.0
+Gold standard	strain	False negatives	test1	0.0
+Gold standard	strain	False positives	test1	0.0
+Gold standard	strain	Completeness	test1	1.0
+Gold standard	strain	Purity	test1	1.0
+Gold standard	strain	F1 score	test1	1.0
+Gold standard	strain	Jaccard index	test1	1.0
+Gold standard	superkingdom	L1 norm error	test1	0.0
+Gold standard	phylum	L1 norm error	test1	0.0
+Gold standard	class	L1 norm error	test1	0.0
+Gold standard	order	L1 norm error	test1	0.0
+Gold standard	family	L1 norm error	test1	0.0
+Gold standard	genus	L1 norm error	test1	0.0
+Gold standard	species	L1 norm error	test1	0.0
+Gold standard	strain	L1 norm error	test1	0.0
+Gold standard	na	Weighted UniFrac error	test1	0.0
+Gold standard	na	Unweighted UniFrac error	test1	0.0
+Gold standard	na	Weighted UniFrac (CAMI)	test1	0.0
+Gold standard	na	Unweighted UniFrac (CAMI)	test1	0.0
+Gold standard	superkingdom	Sum of abundances	test1	0.15139414
+Gold standard	phylum	Sum of abundances	test1	0.14905869
+Gold standard	class	Sum of abundances	test1	0.14905869
+Gold standard	order	Sum of abundances	test1	0.14807816000000001
+Gold standard	family	Sum of abundances	test1	0.14806033
+Gold standard	genus	Sum of abundances	test1	0.14677673
+Gold standard	species	Sum of abundances	test1	0.10716323000000001
+Gold standard	strain	Sum of abundances	test1	0.00041003999999999997
+Gold standard	superkingdom	Taxon counts	test1	1.0
+Gold standard	phylum	Taxon counts	test1	1.0
+Gold standard	class	Taxon counts	test1	1.0
+Gold standard	order	Taxon counts	test1	1.0
+Gold standard	family	Taxon counts	test1	1.0
+Gold standard	genus	Taxon counts	test1	2.0
+Gold standard	species	Taxon counts	test1	4.0
+Gold standard	strain	Taxon counts	test1	3.0
+test1_kraken2	superkingdom	Bray-Curtis distance	test1	0.8921731657153769
+test1_kraken2	phylum	Bray-Curtis distance	test1	0.9724466373501962
+test1_kraken2	class	Bray-Curtis distance	test1	0.9193612682445216
+test1_kraken2	order	Bray-Curtis distance	test1	0.9983804737107648
+test1_kraken2	family	Bray-Curtis distance	test1	0.890882658094092
+test1_kraken2	genus	Bray-Curtis distance	test1	0.29329313486470976
+test1_kraken2	species	Bray-Curtis distance	test1	0.7340587645842515
+test1_kraken2	strain	Bray-Curtis distance	test1	0.7692164819640578
+test1_kraken2	superkingdom	Shannon diversity	test1	0.06394949767176328
+test1_kraken2	superkingdom	Shannon equitability	test1	0.05820934130392054
+test1_kraken2	phylum	Shannon diversity	test1	0.012920188513678349
+test1_kraken2	phylum	Shannon equitability	test1	0.011760462400563528
+test1_kraken2	class	Shannon diversity	test1	0.03190210792976051
+test1_kraken2	class	Shannon equitability	test1	0.017804905444984153
+test1_kraken2	order	Shannon diversity	test1	0.001311425496223489
+test1_kraken2	order	Shannon equitability	test1	0.0006306623532989919
+test1_kraken2	family	Shannon diversity	test1	0.04093058023617094
+test1_kraken2	family	Shannon equitability	test1	0.01647167721156162
+test1_kraken2	genus	Shannon diversity	test1	0.35427939427063637
+test1_kraken2	genus	Shannon equitability	test1	0.0954012438447302
+test1_kraken2	species	Shannon diversity	test1	0.26926555494342885
+test1_kraken2	species	Shannon equitability	test1	0.04657974431971012
+test1_kraken2	strain	Shannon diversity	test1	0.02374667161545503
+test1_kraken2	strain	Shannon equitability	test1	0.006101687589990575
+test1_kraken2	superkingdom	True positives	test1	1.0
+test1_kraken2	superkingdom	False negatives	test1	0.0
+test1_kraken2	superkingdom	False positives	test1	2.0
+test1_kraken2	superkingdom	Completeness	test1	1.0
+test1_kraken2	superkingdom	Purity	test1	0.3333333333333333
+test1_kraken2	superkingdom	F1 score	test1	0.5
+test1_kraken2	superkingdom	Jaccard index	test1	0.3333333333333333
+test1_kraken2	phylum	True positives	test1	1.0
+test1_kraken2	phylum	False negatives	test1	0.0
+test1_kraken2	phylum	False positives	test1	2.0
+test1_kraken2	phylum	Completeness	test1	1.0
+test1_kraken2	phylum	Purity	test1	0.3333333333333333
+test1_kraken2	phylum	F1 score	test1	0.5
+test1_kraken2	phylum	Jaccard index	test1	0.3333333333333333
+test1_kraken2	class	True positives	test1	1.0
+test1_kraken2	class	False negatives	test1	0.0
+test1_kraken2	class	False positives	test1	5.0
+test1_kraken2	class	Completeness	test1	1.0
+test1_kraken2	class	Purity	test1	0.16666666666666666
+test1_kraken2	class	F1 score	test1	0.2857142857142857
+test1_kraken2	class	Jaccard index	test1	0.16666666666666666
+test1_kraken2	order	True positives	test1	1.0
+test1_kraken2	order	False negatives	test1	0.0
+test1_kraken2	order	False positives	test1	7.0
+test1_kraken2	order	Completeness	test1	1.0
+test1_kraken2	order	Purity	test1	0.125
+test1_kraken2	order	F1 score	test1	0.2222222222222222
+test1_kraken2	order	Jaccard index	test1	0.125
+test1_kraken2	family	True positives	test1	1.0
+test1_kraken2	family	False negatives	test1	0.0
+test1_kraken2	family	False positives	test1	11.0
+test1_kraken2	family	Completeness	test1	1.0
+test1_kraken2	family	Purity	test1	0.08333333333333333
+test1_kraken2	family	F1 score	test1	0.15384615384615385
+test1_kraken2	family	Jaccard index	test1	0.08333333333333333
+test1_kraken2	genus	True positives	test1	2.0
+test1_kraken2	genus	False negatives	test1	0.0
+test1_kraken2	genus	False positives	test1	39.0
+test1_kraken2	genus	Completeness	test1	1.0
+test1_kraken2	genus	Purity	test1	0.04878048780487805
+test1_kraken2	genus	F1 score	test1	0.09302325581395349
+test1_kraken2	genus	Jaccard index	test1	0.04878048780487805
+test1_kraken2	species	True positives	test1	3.0
+test1_kraken2	species	False negatives	test1	1.0
+test1_kraken2	species	False positives	test1	321.0
+test1_kraken2	species	Completeness	test1	0.75
+test1_kraken2	species	Purity	test1	0.009259259259259259
+test1_kraken2	species	F1 score	test1	0.018292682926829267
+test1_kraken2	species	Jaccard index	test1	0.009230769230769232
+test1_kraken2	strain	True positives	test1	3.0
+test1_kraken2	strain	False negatives	test1	0.0
+test1_kraken2	strain	False positives	test1	46.0
+test1_kraken2	strain	Completeness	test1	1.0
+test1_kraken2	strain	Purity	test1	0.061224489795918366
+test1_kraken2	strain	F1 score	test1	0.11538461538461538
+test1_kraken2	strain	Jaccard index	test1	0.061224489795918366
+test1_kraken2	superkingdom	L1 norm error	test1	0.14653847
+test1_kraken2	phylum	L1 norm error	test1	0.1469814
+test1_kraken2	class	L1 norm error	test1	0.14280582
+test1_kraken2	order	L1 norm error	test1	0.14797614
+test1_kraken2	family	L1 norm error	test1	0.13953315999999996
+test1_kraken2	genus	L1 norm error	test1	0.12182391999999995
+test1_kraken2	species	L1 norm error	test1	0.5912949200000047
+test1_kraken2	strain	L1 norm error	test1	0.0027333799999999997
+test1_kraken2	na	Weighted UniFrac error	test1	0.08685552347955268
+test1_kraken2	na	Unweighted UniFrac error	test1	42.31955155040036
+test1_kraken2	na	Weighted UniFrac (CAMI)	test1	155.87355120390203
+test1_kraken2	na	Unweighted UniFrac (CAMI)	test1	2836.592088584812
+test1_kraken2	superkingdom	Sum of abundances	test1	0.01285477
+test1_kraken2	phylum	Sum of abundances	test1	0.00208729
+test1_kraken2	class	Sum of abundances	test1	0.006272869999999999
+test1_kraken2	order	Sum of abundances	test1	0.00013802
+test1_kraken2	family	Sum of abundances	test1	0.008563169999999998
+test1_kraken2	genus	Sum of abundances	test1	0.26858900999999985
+test1_kraken2	species	Sum of abundances	test1	0.69835119000001
+test1_kraken2	strain	Sum of abundances	test1	0.0031434199999999957
+test1_kraken2	superkingdom	Taxon counts	test1	3.0
+test1_kraken2	phylum	Taxon counts	test1	3.0
+test1_kraken2	class	Taxon counts	test1	6.0
+test1_kraken2	order	Taxon counts	test1	8.0
+test1_kraken2	family	Taxon counts	test1	12.0
+test1_kraken2	genus	Taxon counts	test1	41.0
+test1_kraken2	species	Taxon counts	test1	324.0
+test1_kraken2	strain	Taxon counts	test1	49.0

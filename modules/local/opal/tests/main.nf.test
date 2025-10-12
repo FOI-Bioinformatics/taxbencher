@@ -8,17 +8,19 @@ nextflow_process {
     tag "modules_local"
     tag "opal"
 
-    test("opal - single prediction") {
+    // Functional tests using realistic data (36+ taxa) to avoid OPAL 1.0.13 visualization bugs
+
+    test("opal - single prediction - realistic") {
 
         when {
             process {
                 """
                 input[0] = [
                     [ id: 'test_single' ],
-                    file('${moduleDir}/testdata/gold_standard.bioboxes', checkIfExists: true)
+                    file('${moduleDir}/testdata/gold_standard_realistic.bioboxes', checkIfExists: true)
                 ]
                 input[1] = [
-                    file('${moduleDir}/testdata/prediction1.bioboxes', checkIfExists: true)
+                    file('${moduleDir}/testdata/prediction_realistic1.bioboxes', checkIfExists: true)
                 ]
                 """
             }
@@ -33,7 +35,7 @@ nextflow_process {
 
     }
 
-    test("opal - multiple predictions") {
+    test("opal - multiple predictions - realistic") {
 
         when {
             process {
@@ -43,11 +45,11 @@ nextflow_process {
                         id: 'test_multi',
                         labels: 'Classifier1,Classifier2'
                     ],
-                    file('${moduleDir}/testdata/gold_standard.bioboxes', checkIfExists: true)
+                    file('${moduleDir}/testdata/gold_standard_realistic.bioboxes', checkIfExists: true)
                 ]
                 input[1] = [
-                    file('${moduleDir}/testdata/prediction1.bioboxes', checkIfExists: true),
-                    file('${moduleDir}/testdata/prediction2.bioboxes', checkIfExists: true)
+                    file('${moduleDir}/testdata/prediction_realistic1.bioboxes', checkIfExists: true),
+                    file('${moduleDir}/testdata/prediction_realistic2.bioboxes', checkIfExists: true)
                 ]
                 """
             }
@@ -62,7 +64,7 @@ nextflow_process {
 
     }
 
-    test("opal - with filtering and normalization") {
+    test("opal - with filtering and normalization - realistic") {
 
         when {
             process {
@@ -74,10 +76,10 @@ nextflow_process {
                         normalize: true,
                         rank: 'species'
                     ],
-                    file('${moduleDir}/testdata/gold_standard.bioboxes', checkIfExists: true)
+                    file('${moduleDir}/testdata/gold_standard_realistic.bioboxes', checkIfExists: true)
                 ]
                 input[1] = [
-                    file('${moduleDir}/testdata/prediction1.bioboxes', checkIfExists: true)
+                    file('${moduleDir}/testdata/prediction_realistic1.bioboxes', checkIfExists: true)
                 ]
                 """
             }

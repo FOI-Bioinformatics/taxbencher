@@ -141,6 +141,41 @@
         },
         "timestamp": "2025-10-11T10:10:48.207345"
     },
+    "comparative_analysis - stub": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    
+                ],
+                "3": [
+                    
+                ],
+                "comparison_report": [
+                    
+                ],
+                "diff_taxa": [
+                    
+                ],
+                "pca_plot": [
+                    
+                ],
+                "versions": [
+                    
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.7"
+        },
+        "timestamp": "2025-10-12T10:56:46.080066"
+    },
     "comparative_analysis - stub - basic": {
         "content": [
             {
