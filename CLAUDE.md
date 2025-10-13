@@ -196,7 +196,9 @@ sample2,sample2_metaphlan,metaphlan,/path/to/sample2_metaphlan.tsv,NCBI
 - Handles lineage path construction
 - Calculates percentage from counts
 
-**Container**: `biocontainers/python:3.11` (with conda env for ete3)
+**Container**: Seqera Wave container with pandas + ete3 (commit 7cae708)
+- Wave URL: `wave.seqera.io/wt/.../wave/build:taxpasta_to_bioboxes--...`
+- Fallback: `biocontainers/python:3.11` with conda environment
 
 #### OPAL_PER_SAMPLE
 
@@ -254,10 +256,10 @@ This allows groupTuple() to create one tuple per sample_id containing only that 
 
 **Implementation**: Python script `bin/comparative_analysis.py`
 
-**Current Status**: Placeholder infrastructure ready for enhancement
+**Current Status**: Infrastructure complete with Wave container support
 - Defined output formats and specifications
-- Creates placeholder HTML/TSV files with correct structure
-- Full implementation requires: pandas, scikit-learn, plotly, scipy, statsmodels
+- Full Docker support via Wave containers (commit a76ca48)
+- All dependencies available: pandas, scikit-learn, plotly, scipy, statsmodels
 
 **Future Enhancement Roadmap**:
 1. **PCA Analysis**: Plot classifiers in PC space based on performance metrics
@@ -266,7 +268,10 @@ This allows groupTuple() to create one tuple per sample_id containing only that 
 4. **Jaccard Similarity**: Heatmap of classifier agreement
 5. **Top Misclassifications**: Identify commonly misclassified taxa
 
-**Container**: Uses base Python container (future: add statistical libraries)
+**Container**: Seqera Wave container with full scipy stack (commit a76ca48)
+- Wave URL: `wave.seqera.io/wt/722b2c677e9b/wave/build:comparative_analysis--8970105c926ac527`
+- Dependencies: pandas, scikit-learn, plotly, scipy, statsmodels, numpy, python-kaleido
+- Fallback: conda environment when Wave not available
 
 ### Workflow Logic
 

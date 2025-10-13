@@ -32,42 +32,42 @@
                         },
                         [
                             [
-                                "class.tsv:md5,9d86ee5e8974157f6b1f165fa833c9d9",
-                                "family.tsv:md5,e3d39b641eddb0bdd6a3e5d82c084806",
-                                "genus.tsv:md5,55283cfb5e9ef721cc88c5ac8c7792c6",
-                                "order.tsv:md5,2a81588315b937e59cd10bcaf4f731ab",
-                                "phylum.tsv:md5,133709fa2cd644dd715631c9d8ff8d03",
-                                "species.tsv:md5,80b50fd18aaa7c5cf8c4a60fc8833379",
-                                "strain.tsv:md5,12809c0cca04f362a737f1665c461557",
-                                "superkingdom.tsv:md5,84c9db757b61f1832731f904b1e529b0"
+                                "class.tsv:md5,4d82d19b76ed75befc55ef232358e74f",
+                                "family.tsv:md5,93e911df55df08a42b9c53e403891525",
+                                "genus.tsv:md5,3643df62c2f9280a8b22c40b9b28c77a",
+                                "order.tsv:md5,f53749a7c902554f9acaeee2fa5c0ab3",
+                                "phylum.tsv:md5,b8b2aa67ce98c6b61f469a2678e180d4",
+                                "species.tsv:md5,376b34f4cd5b089439c452743264d7f8",
+                                "strain.tsv:md5,030aa0d8cd51533abd3329b555daf80b",
+                                "superkingdom.tsv:md5,967ffa53a6766d32108075e6d205c193"
                             ],
                             [
                                 [
-                                    "purity_completeness_per_rank.pdf:md5,df2fd686a63175e8ce7595dbd7f74341",
+                                    "purity_completeness_per_rank.pdf:md5,2556a2a151de6a28d70a47d02dc5f7f9",
                                     "purity_completeness_per_rank.png:md5,8b93db043d71ee287ab441bab98ecb69"
                                 ],
-                                "prediction_realistic1.tsv:md5,ec6e9973b9ee54a396fa0547e4e2cd40"
+                                "prediction_realistic1.tsv:md5,7d9a0cf53e4a1f09ab20f731734b32e2"
                             ],
                             "confusion.tsv:md5,9400a8631aca19528230f80a36f8ac09",
                             [
-                                "rarefaction_curves.pdf:md5,aff7b61d1c969c1f3139e33fcdb442b1",
+                                "rarefaction_curves.pdf:md5,b6be0fe7172e6d8906f11c3a1f193424",
                                 "rarefaction_curves.png:md5,7de42c7576cfd56521c68d2c11f9b0f6",
-                                "rarefaction_curves_log_scale.pdf:md5,e41c2b2e3543f394d94e71b3a4e061fe",
+                                "rarefaction_curves_log_scale.pdf:md5,764a4db85a911a8b3f47e6543c2f7113",
                                 "rarefaction_curves_log_scale.png:md5,a5b41eb7e29e2e04a77a5428654e85f4"
                             ],
                             "heatmap_bar.png:md5,113155c9314c551df67812d0abefae8b",
-                            "log.txt:md5,3b9261b7fda78320bc1d82d58d7e1b77",
-                            "plot_shannon.pdf:md5,085afe0ec63f97315aa3e48b2711618f",
+                            "log.txt:md5,6c9785f6c509837f510634dbc2222e65",
+                            "plot_shannon.pdf:md5,d2b90e7875d5e5aa1d9f9f550549ee15",
                             "plot_shannon.png:md5,914ef07bfe52ab0ce6f2c947c548fab3",
-                            "plot_shannon_diff.pdf:md5,ee5e632e74ebc3d55f08df504dc18adf",
+                            "plot_shannon_diff.pdf:md5,38bb768bb04624e40f41324a5ace50da",
                             "plot_shannon_diff.png:md5,4ca6d63372652b06a958e9c1031ea50d",
-                            "results.html:md5,2b60950dc2e4c0924a99c60e217a9099",
-                            "results.tsv:md5,d6515d0f706600329d5002e64931e21b"
+                            "results.html:md5,60b1d15ca855ce18117355fd761284b0",
+                            "results.tsv:md5,ae1860e31843182f57f94f60d517a439"
                         ]
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,4d2afa88d1a4166f56e8a22ec2c4aac9"
+                    "versions.yml:md5,b7ab293758781d9d833e7fc4241e6cc8"
                 ],
                 "results": [
                     [
@@ -76,42 +76,42 @@
                         },
                         [
                             [
-                                "class.tsv:md5,9d86ee5e8974157f6b1f165fa833c9d9",
-                                "family.tsv:md5,e3d39b641eddb0bdd6a3e5d82c084806",
-                                "genus.tsv:md5,55283cfb5e9ef721cc88c5ac8c7792c6",
-                                "order.tsv:md5,2a81588315b937e59cd10bcaf4f731ab",
-                                "phylum.tsv:md5,133709fa2cd644dd715631c9d8ff8d03",
-                                "species.tsv:md5,80b50fd18aaa7c5cf8c4a60fc8833379",
-                                "strain.tsv:md5,12809c0cca04f362a737f1665c461557",
-                                "superkingdom.tsv:md5,84c9db757b61f1832731f904b1e529b0"
+                                "class.tsv:md5,4d82d19b76ed75befc55ef232358e74f",
+                                "family.tsv:md5,93e911df55df08a42b9c53e403891525",
+                                "genus.tsv:md5,3643df62c2f9280a8b22c40b9b28c77a",
+                                "order.tsv:md5,f53749a7c902554f9acaeee2fa5c0ab3",
+                                "phylum.tsv:md5,b8b2aa67ce98c6b61f469a2678e180d4",
+                                "species.tsv:md5,376b34f4cd5b089439c452743264d7f8",
+                                "strain.tsv:md5,030aa0d8cd51533abd3329b555daf80b",
+                                "superkingdom.tsv:md5,967ffa53a6766d32108075e6d205c193"
                             ],
                             [
                                 [
-                                    "purity_completeness_per_rank.pdf:md5,df2fd686a63175e8ce7595dbd7f74341",
+                                    "purity_completeness_per_rank.pdf:md5,2556a2a151de6a28d70a47d02dc5f7f9",
                                     "purity_completeness_per_rank.png:md5,8b93db043d71ee287ab441bab98ecb69"
                                 ],
-                                "prediction_realistic1.tsv:md5,ec6e9973b9ee54a396fa0547e4e2cd40"
+                                "prediction_realistic1.tsv:md5,7d9a0cf53e4a1f09ab20f731734b32e2"
                             ],
                             "confusion.tsv:md5,9400a8631aca19528230f80a36f8ac09",
                             [
-                                "rarefaction_curves.pdf:md5,aff7b61d1c969c1f3139e33fcdb442b1",
+                                "rarefaction_curves.pdf:md5,b6be0fe7172e6d8906f11c3a1f193424",
                                 "rarefaction_curves.png:md5,7de42c7576cfd56521c68d2c11f9b0f6",
-                                "rarefaction_curves_log_scale.pdf:md5,e41c2b2e3543f394d94e71b3a4e061fe",
+                                "rarefaction_curves_log_scale.pdf:md5,764a4db85a911a8b3f47e6543c2f7113",
                                 "rarefaction_curves_log_scale.png:md5,a5b41eb7e29e2e04a77a5428654e85f4"
                             ],
                             "heatmap_bar.png:md5,113155c9314c551df67812d0abefae8b",
-                            "log.txt:md5,3b9261b7fda78320bc1d82d58d7e1b77",
-                            "plot_shannon.pdf:md5,085afe0ec63f97315aa3e48b2711618f",
+                            "log.txt:md5,6c9785f6c509837f510634dbc2222e65",
+                            "plot_shannon.pdf:md5,d2b90e7875d5e5aa1d9f9f550549ee15",
                             "plot_shannon.png:md5,914ef07bfe52ab0ce6f2c947c548fab3",
-                            "plot_shannon_diff.pdf:md5,ee5e632e74ebc3d55f08df504dc18adf",
+                            "plot_shannon_diff.pdf:md5,38bb768bb04624e40f41324a5ace50da",
                             "plot_shannon_diff.png:md5,4ca6d63372652b06a958e9c1031ea50d",
-                            "results.html:md5,2b60950dc2e4c0924a99c60e217a9099",
-                            "results.tsv:md5,d6515d0f706600329d5002e64931e21b"
+                            "results.html:md5,60b1d15ca855ce18117355fd761284b0",
+                            "results.tsv:md5,ae1860e31843182f57f94f60d517a439"
                         ]
                     ]
                 ],
                 "versions": [
-                    "versions.yml:md5,4d2afa88d1a4166f56e8a22ec2c4aac9"
+                    "versions.yml:md5,b7ab293758781d9d833e7fc4241e6cc8"
                 ]
             }
         ],
@@ -119,7 +119,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.7"
         },
-        "timestamp": "2025-10-12T11:06:10.197441"
+        "timestamp": "2025-10-13T08:10:42.303587"
     },
     "opal - stub": {
         "content": [
@@ -171,47 +171,47 @@
                         },
                         [
                             [
-                                "class.tsv:md5,e28d381c7536edd5dc4edb526ca321d5",
-                                "family.tsv:md5,ddf3c266d4ce5e274355957d6ed68af6",
-                                "genus.tsv:md5,3940085d547fdb9a5ca865c0cba50b77",
-                                "order.tsv:md5,f238fdea397ec83b8cdac51ee0a0620e",
-                                "phylum.tsv:md5,e25fd854f738a62372ea9f227312eeea",
-                                "species.tsv:md5,6b836bb96174cc6b2b18ab45034aece6",
-                                "strain.tsv:md5,83588dff47f4ec1087b3fe54ebe6f76c",
-                                "superkingdom.tsv:md5,6b87f1ad8999efdd03c23e8fd4b6dce5"
+                                "class.tsv:md5,25819567c37c1164d4430411fdee2304",
+                                "family.tsv:md5,f339c72a7c1465c2fb6db62c25b9c08e",
+                                "genus.tsv:md5,ea049c1a7708bcf3586858ca9bcc0185",
+                                "order.tsv:md5,4af4d4eaa35181bf5fd2d1cd7727f54b",
+                                "phylum.tsv:md5,81a6c8648e0620b603030a26de52f755",
+                                "species.tsv:md5,40366f6ceb47b7ad5fa3e13b15aeb605",
+                                "strain.tsv:md5,94a3b6aa5497936645fb632d6448df8f",
+                                "superkingdom.tsv:md5,668b556724882d147e2c0adad5700ad8"
                             ],
                             [
                                 [
-                                    "purity_completeness_per_rank.pdf:md5,eb92672f5212f4f42c921fdb31d326c7",
+                                    "purity_completeness_per_rank.pdf:md5,28029b9ba5f84bd081522b79d0368abf",
                                     "purity_completeness_per_rank.png:md5,aa39b42b0953e67976d627451d4e8d49"
                                 ],
-                                "Classifier1.tsv:md5,0e0cbe210c22e6650bb1ff82863b742f",
+                                "Classifier1.tsv:md5,61d4308db68319248a283be60746dac2",
                                 [
-                                    "purity_completeness_per_rank.pdf:md5,025d7df9a23bfc50bfc2dbb11bb7cd03",
+                                    "purity_completeness_per_rank.pdf:md5,19656cc177ff69672ea84b70a69aadc6",
                                     "purity_completeness_per_rank.png:md5,df5991f2e2244ecc0cd2b2baceb5d5f5"
                                 ],
-                                "Classifier2.tsv:md5,f74ecdf9099bf50936f508d06b6bb347"
+                                "Classifier2.tsv:md5,7df1f01049d86838532cd09f0b681493"
                             ],
                             "confusion.tsv:md5,9c446648db0fa68febfb6bfffc9128e8",
                             [
-                                "rarefaction_curves.pdf:md5,619fe24391a90b16650bb388cfdbe9a8",
+                                "rarefaction_curves.pdf:md5,11f176243d6f2b47aa126f20e8b21384",
                                 "rarefaction_curves.png:md5,7de42c7576cfd56521c68d2c11f9b0f6",
-                                "rarefaction_curves_log_scale.pdf:md5,9f5087c4a9fc4b031ab04422c46b77da",
+                                "rarefaction_curves_log_scale.pdf:md5,3875c55b787d0efa889e1d4a0a1729ec",
                                 "rarefaction_curves_log_scale.png:md5,a5b41eb7e29e2e04a77a5428654e85f4"
                             ],
                             "heatmap_bar.png:md5,113155c9314c551df67812d0abefae8b",
-                            "log.txt:md5,e87e22e69d1edee9517d002c60bd4d44",
-                            "plot_shannon.pdf:md5,da50d736be4f0c426aa3f0e5cbef4318",
+                            "log.txt:md5,7b82e8ae914d059e33dd0cddeb586e3f",
+                            "plot_shannon.pdf:md5,4d5bc298e0bf80a52020c6e0aac41fcb",
                             "plot_shannon.png:md5,fc9bac89968d552ae5f5c96f76238e61",
-                            "plot_shannon_diff.pdf:md5,b8bc67fb3521f79cc3c9478a0001aa26",
+                            "plot_shannon_diff.pdf:md5,cb06fa9bc9877897c67c07f72e8dc8a7",
                             "plot_shannon_diff.png:md5,8d856559d4449031a856f0ce9f87d053",
-                            "results.html:md5,34db6002419554b003b94506306b293e",
-                            "results.tsv:md5,dcafa788d2041285b689adf15ec0c975"
+                            "results.html:md5,5ef22ca5f65a82d08601f8b0dd48e8cd",
+                            "results.tsv:md5,d9ad0bace3485028a125e6d241c5e079"
                         ]
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,ab17fdc2761ec5ee68052a23f85baece"
+                    "versions.yml:md5,1d6e443c2ba4281dac29ace85242f60a"
                 ],
                 "results": [
                     [
@@ -221,47 +221,47 @@
                         },
                         [
                             [
-                                "class.tsv:md5,e28d381c7536edd5dc4edb526ca321d5",
-                                "family.tsv:md5,ddf3c266d4ce5e274355957d6ed68af6",
-                                "genus.tsv:md5,3940085d547fdb9a5ca865c0cba50b77",
-                                "order.tsv:md5,f238fdea397ec83b8cdac51ee0a0620e",
-                                "phylum.tsv:md5,e25fd854f738a62372ea9f227312eeea",
-                                "species.tsv:md5,6b836bb96174cc6b2b18ab45034aece6",
-                                "strain.tsv:md5,83588dff47f4ec1087b3fe54ebe6f76c",
-                                "superkingdom.tsv:md5,6b87f1ad8999efdd03c23e8fd4b6dce5"
+                                "class.tsv:md5,25819567c37c1164d4430411fdee2304",
+                                "family.tsv:md5,f339c72a7c1465c2fb6db62c25b9c08e",
+                                "genus.tsv:md5,ea049c1a7708bcf3586858ca9bcc0185",
+                                "order.tsv:md5,4af4d4eaa35181bf5fd2d1cd7727f54b",
+                                "phylum.tsv:md5,81a6c8648e0620b603030a26de52f755",
+                                "species.tsv:md5,40366f6ceb47b7ad5fa3e13b15aeb605",
+                                "strain.tsv:md5,94a3b6aa5497936645fb632d6448df8f",
+                                "superkingdom.tsv:md5,668b556724882d147e2c0adad5700ad8"
                             ],
                             [
                                 [
-                                    "purity_completeness_per_rank.pdf:md5,eb92672f5212f4f42c921fdb31d326c7",
+                                    "purity_completeness_per_rank.pdf:md5,28029b9ba5f84bd081522b79d0368abf",
                                     "purity_completeness_per_rank.png:md5,aa39b42b0953e67976d627451d4e8d49"
                                 ],
-                                "Classifier1.tsv:md5,0e0cbe210c22e6650bb1ff82863b742f",
+                                "Classifier1.tsv:md5,61d4308db68319248a283be60746dac2",
                                 [
-                                    "purity_completeness_per_rank.pdf:md5,025d7df9a23bfc50bfc2dbb11bb7cd03",
+                                    "purity_completeness_per_rank.pdf:md5,19656cc177ff69672ea84b70a69aadc6",
                                     "purity_completeness_per_rank.png:md5,df5991f2e2244ecc0cd2b2baceb5d5f5"
                                 ],
-                                "Classifier2.tsv:md5,f74ecdf9099bf50936f508d06b6bb347"
+                                "Classifier2.tsv:md5,7df1f01049d86838532cd09f0b681493"
                             ],
                             "confusion.tsv:md5,9c446648db0fa68febfb6bfffc9128e8",
                             [
-                                "rarefaction_curves.pdf:md5,619fe24391a90b16650bb388cfdbe9a8",
+                                "rarefaction_curves.pdf:md5,11f176243d6f2b47aa126f20e8b21384",
                                 "rarefaction_curves.png:md5,7de42c7576cfd56521c68d2c11f9b0f6",
-                                "rarefaction_curves_log_scale.pdf:md5,9f5087c4a9fc4b031ab04422c46b77da",
+                                "rarefaction_curves_log_scale.pdf:md5,3875c55b787d0efa889e1d4a0a1729ec",
                                 "rarefaction_curves_log_scale.png:md5,a5b41eb7e29e2e04a77a5428654e85f4"
                             ],
                             "heatmap_bar.png:md5,113155c9314c551df67812d0abefae8b",
-                            "log.txt:md5,e87e22e69d1edee9517d002c60bd4d44",
-                            "plot_shannon.pdf:md5,da50d736be4f0c426aa3f0e5cbef4318",
+                            "log.txt:md5,7b82e8ae914d059e33dd0cddeb586e3f",
+                            "plot_shannon.pdf:md5,4d5bc298e0bf80a52020c6e0aac41fcb",
                             "plot_shannon.png:md5,fc9bac89968d552ae5f5c96f76238e61",
-                            "plot_shannon_diff.pdf:md5,b8bc67fb3521f79cc3c9478a0001aa26",
+                            "plot_shannon_diff.pdf:md5,cb06fa9bc9877897c67c07f72e8dc8a7",
                             "plot_shannon_diff.png:md5,8d856559d4449031a856f0ce9f87d053",
-                            "results.html:md5,34db6002419554b003b94506306b293e",
-                            "results.tsv:md5,dcafa788d2041285b689adf15ec0c975"
+                            "results.html:md5,5ef22ca5f65a82d08601f8b0dd48e8cd",
+                            "results.tsv:md5,d9ad0bace3485028a125e6d241c5e079"
                         ]
                     ]
                 ],
                 "versions": [
-                    "versions.yml:md5,ab17fdc2761ec5ee68052a23f85baece"
+                    "versions.yml:md5,1d6e443c2ba4281dac29ace85242f60a"
                 ]
             }
         ],
@@ -269,7 +269,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.7"
         },
-        "timestamp": "2025-10-12T11:06:21.455706"
+        "timestamp": "2025-10-13T08:10:53.645816"
     },
     "opal - multiple predictions": {
         "content": [
@@ -307,42 +307,42 @@
                         },
                         [
                             [
-                                "class.tsv:md5,8a9c83c824b7f407fa661a7ca043d3c1",
-                                "family.tsv:md5,5387d138af9525c15fb545d4e1b3b0ec",
-                                "genus.tsv:md5,027c72064e171cc936bf5bc28f124b6d",
-                                "order.tsv:md5,07cc273957a537a3ba887028b4ae5a36",
-                                "phylum.tsv:md5,c11bf52f6608093fa7535fb908bb9627",
-                                "species.tsv:md5,58b7418dba1c3b2bf073851663343477",
-                                "strain.tsv:md5,e6a1e655196f9c3d893c3f80179ea1fd",
-                                "superkingdom.tsv:md5,bd338476e4aa150a100d24df54df1503"
+                                "class.tsv:md5,be975faad7d228b940b71471c2de4753",
+                                "family.tsv:md5,286f8bbf9184a5d7f4175d138cf83e0f",
+                                "genus.tsv:md5,c1cc43fd1c7f3e0c9dcccec2ce2fce4b",
+                                "order.tsv:md5,ae7175bc2e35d8ca1255acadd73b5583",
+                                "phylum.tsv:md5,988f2674c37fd1c0acaef63a459bc257",
+                                "species.tsv:md5,77c39f771f31abeb3b98e76f7198c53d",
+                                "strain.tsv:md5,7cb91bf3e4243846b4104b4a625735f6",
+                                "superkingdom.tsv:md5,7b4d082738ff448bf8148c66a6a5d908"
                             ],
                             [
                                 [
-                                    "purity_completeness_per_rank.pdf:md5,fd6258bb48778edc334d55bd0a8bbc5d",
+                                    "purity_completeness_per_rank.pdf:md5,bf9dd2d4244f41c8b39377f5d627ece6",
                                     "purity_completeness_per_rank.png:md5,2c668f6316114ca372744faba94936ee"
                                 ],
-                                "prediction_realistic1.tsv:md5,f494b5eacd079cea0b18dd2667490c05"
+                                "prediction_realistic1.tsv:md5,19321709112c57e180a2afa0c0701fc5"
                             ],
                             "confusion.tsv:md5,64951b56bf88d61448fb4d32dc0d97cd",
                             [
-                                "rarefaction_curves.pdf:md5,1d337771fde3a2e1176e1b4cb42aded5",
+                                "rarefaction_curves.pdf:md5,3b6c70ebfe20f6412b97dff7259b1a16",
                                 "rarefaction_curves.png:md5,7de42c7576cfd56521c68d2c11f9b0f6",
-                                "rarefaction_curves_log_scale.pdf:md5,3ed7fe2e21ba092be79c8aad33de1368",
+                                "rarefaction_curves_log_scale.pdf:md5,a99dce5ff8efb4cbd8cd0d9e5475bdb7",
                                 "rarefaction_curves_log_scale.png:md5,a5b41eb7e29e2e04a77a5428654e85f4"
                             ],
                             "heatmap_bar.png:md5,113155c9314c551df67812d0abefae8b",
-                            "log.txt:md5,5603c1f8b7b6374ff04e563ed62ab52d",
-                            "plot_shannon.pdf:md5,3e7bb3e1b11125e6db8052699dc73c25",
+                            "log.txt:md5,dc7137901744915ae17b19abfdfd020a",
+                            "plot_shannon.pdf:md5,a44c1c850fe8bc8a871922ea7507efdf",
                             "plot_shannon.png:md5,f632038298d4877c2d3f81dbaeec659d",
-                            "plot_shannon_diff.pdf:md5,a158857b71ea7c142cf9e8c03b8aa4dd",
+                            "plot_shannon_diff.pdf:md5,8d5d7e173b79d2c5718b2dc4d602c174",
                             "plot_shannon_diff.png:md5,710464858a98e8479ea775e15ffa0e40",
-                            "results.html:md5,80f70ffaedfc7ae1bbccf33a649f18a5",
-                            "results.tsv:md5,e093d5200d1f66e671a8d3204227f6d9"
+                            "results.html:md5,bb2b312500647d92b6910155f9b2bcba",
+                            "results.tsv:md5,7682358791dbf4d0e7a97853f0f1754b"
                         ]
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,aeedb0b1e775ec28b8bea4ce5c0ec642"
+                    "versions.yml:md5,b8adf07b2281efddaf31391ea0ba975b"
                 ],
                 "results": [
                     [
@@ -354,42 +354,42 @@
                         },
                         [
                             [
-                                "class.tsv:md5,8a9c83c824b7f407fa661a7ca043d3c1",
-                                "family.tsv:md5,5387d138af9525c15fb545d4e1b3b0ec",
-                                "genus.tsv:md5,027c72064e171cc936bf5bc28f124b6d",
-                                "order.tsv:md5,07cc273957a537a3ba887028b4ae5a36",
-                                "phylum.tsv:md5,c11bf52f6608093fa7535fb908bb9627",
-                                "species.tsv:md5,58b7418dba1c3b2bf073851663343477",
-                                "strain.tsv:md5,e6a1e655196f9c3d893c3f80179ea1fd",
-                                "superkingdom.tsv:md5,bd338476e4aa150a100d24df54df1503"
+                                "class.tsv:md5,be975faad7d228b940b71471c2de4753",
+                                "family.tsv:md5,286f8bbf9184a5d7f4175d138cf83e0f",
+                                "genus.tsv:md5,c1cc43fd1c7f3e0c9dcccec2ce2fce4b",
+                                "order.tsv:md5,ae7175bc2e35d8ca1255acadd73b5583",
+                                "phylum.tsv:md5,988f2674c37fd1c0acaef63a459bc257",
+                                "species.tsv:md5,77c39f771f31abeb3b98e76f7198c53d",
+                                "strain.tsv:md5,7cb91bf3e4243846b4104b4a625735f6",
+                                "superkingdom.tsv:md5,7b4d082738ff448bf8148c66a6a5d908"
                             ],
                             [
                                 [
-                                    "purity_completeness_per_rank.pdf:md5,fd6258bb48778edc334d55bd0a8bbc5d",
+                                    "purity_completeness_per_rank.pdf:md5,bf9dd2d4244f41c8b39377f5d627ece6",
                                     "purity_completeness_per_rank.png:md5,2c668f6316114ca372744faba94936ee"
                                 ],
-                                "prediction_realistic1.tsv:md5,f494b5eacd079cea0b18dd2667490c05"
+                                "prediction_realistic1.tsv:md5,19321709112c57e180a2afa0c0701fc5"
                             ],
                             "confusion.tsv:md5,64951b56bf88d61448fb4d32dc0d97cd",
                             [
-                                "rarefaction_curves.pdf:md5,1d337771fde3a2e1176e1b4cb42aded5",
+                                "rarefaction_curves.pdf:md5,3b6c70ebfe20f6412b97dff7259b1a16",
                                 "rarefaction_curves.png:md5,7de42c7576cfd56521c68d2c11f9b0f6",
-                                "rarefaction_curves_log_scale.pdf:md5,3ed7fe2e21ba092be79c8aad33de1368",
+                                "rarefaction_curves_log_scale.pdf:md5,a99dce5ff8efb4cbd8cd0d9e5475bdb7",
                                 "rarefaction_curves_log_scale.png:md5,a5b41eb7e29e2e04a77a5428654e85f4"
                             ],
                             "heatmap_bar.png:md5,113155c9314c551df67812d0abefae8b",
-                            "log.txt:md5,5603c1f8b7b6374ff04e563ed62ab52d",
-                            "plot_shannon.pdf:md5,3e7bb3e1b11125e6db8052699dc73c25",
+                            "log.txt:md5,dc7137901744915ae17b19abfdfd020a",
+                            "plot_shannon.pdf:md5,a44c1c850fe8bc8a871922ea7507efdf",
                             "plot_shannon.png:md5,f632038298d4877c2d3f81dbaeec659d",
-                            "plot_shannon_diff.pdf:md5,a158857b71ea7c142cf9e8c03b8aa4dd",
+                            "plot_shannon_diff.pdf:md5,8d5d7e173b79d2c5718b2dc4d602c174",
                             "plot_shannon_diff.png:md5,710464858a98e8479ea775e15ffa0e40",
-                            "results.html:md5,80f70ffaedfc7ae1bbccf33a649f18a5",
-                            "results.tsv:md5,e093d5200d1f66e671a8d3204227f6d9"
+                            "results.html:md5,bb2b312500647d92b6910155f9b2bcba",
+                            "results.tsv:md5,7682358791dbf4d0e7a97853f0f1754b"
                         ]
                     ]
                 ],
                 "versions": [
-                    "versions.yml:md5,aeedb0b1e775ec28b8bea4ce5c0ec642"
+                    "versions.yml:md5,b8adf07b2281efddaf31391ea0ba975b"
                 ]
             }
         ],
@@ -397,7 +397,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.7"
         },
-        "timestamp": "2025-10-12T11:06:33.336194"
+        "timestamp": "2025-10-13T08:11:04.83467"
     },
     "opal - single prediction": {
         "content": [

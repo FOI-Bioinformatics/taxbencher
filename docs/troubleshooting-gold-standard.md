@@ -39,6 +39,8 @@ CRITICAL: Data contains unsupported ranks for OPAL: ['cellular root', 'domain', 
 **Cause:** OPAL only supports standard CAMI ranks: `superkingdom`, `phylum`, `class`, `order`, `family`, `genus`, `species`, `strain`
 
 **Fix:** The `fix_gold_standard.py` script automatically:
+- Reconstructs full TAXPATH lineages from NCBI taxonomy database using ete3
+- Generates matching TAXPATHSN with all intermediate scientific names
 - Filters out unsupported ranks (root, no rank, unknown, cellular root, etc.)
 - Maps `subspecies` → `strain` and `domain`/`kingdom` → `superkingdom`
 - Renormalizes percentages to sum to 100%

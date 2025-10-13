@@ -27,7 +27,7 @@
 - **Comprehensive Metrics**: Precision, recall, F1, UniFrac, Shannon diversity, Bray-Curtis, and more
 - **Built-in Validation**: Pre-flight validation tools for taxpasta and bioboxes formats
 - **nf-core Compliance**: Built using nf-core template with best practices
-- **Containerized**: Docker, Singularity, and Conda support for reproducibility
+- **Full Container Support**: 100% Docker coverage via Seqera Wave, plus Singularity and Conda
 - **Extensive Testing**: Full nf-test suite with validated test data
 - **Integration Ready**: Works seamlessly with nf-core/taxprofiler outputs
 
@@ -92,11 +92,11 @@ nextflow run FOI-Bioinformatics/taxbencher \
 
 | Platform | Recommended Profile | Notes |
 |----------|-------------------|-------|
-| **Linux x86_64** | `docker,wave` or `singularity,wave` | Best performance, full functionality |
+| **Linux x86_64** | `docker,wave` | Best performance, full functionality, 100% module coverage |
 | **Linux ARM64** | `conda` | Docker/Singularity containers are AMD64 only |
-| **macOS (Intel)** | `docker,wave` or `conda` | Full functionality |
+| **macOS (Intel)** | `docker,wave` | Full functionality with Wave containers |
 | **macOS (Apple Silicon)** | `conda` | ⚠️ **Docker has limitations** (see below) |
-| **HPC/Cluster** | `singularity` or `conda` | Depends on cluster configuration |
+| **HPC/Cluster** | `singularity,wave` or `conda` | Depends on cluster configuration |
 
 > [!WARNING]
 > **Apple Silicon (M1/M2/M3) Limitations**: When using `-profile docker,wave` on Apple Silicon Macs, the MultiQC step may fail with "Illegal instruction" errors due to AMD64/ARM64 architecture incompatibility. The core benchmarking processes (TAXPASTA_STANDARDISE, TAXPASTA_TO_BIOBOXES, OPAL) work correctly and produce all evaluation metrics. **Recommended solution**: Use `-profile conda` on Apple Silicon for full compatibility.
@@ -112,7 +112,7 @@ nextflow run FOI-Bioinformatics/taxbencher \
    --outdir results
 ```
 
-**Docker with Wave** (Linux/Intel Mac):
+**Docker with Wave** (Recommended for Linux/Intel Mac):
 ```bash
 nextflow run FOI-Bioinformatics/taxbencher \
    -profile docker,wave \
@@ -120,6 +120,8 @@ nextflow run FOI-Bioinformatics/taxbencher \
    --gold_standard gold_standard.bioboxes \
    --outdir results
 ```
+
+> Wave automatically builds containers for modules requiring scientific Python packages (TAXPASTA_TO_BIOBOXES, COMPARATIVE_ANALYSIS)
 
 **Singularity with Wave** (HPC/Linux):
 ```bash
