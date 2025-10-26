@@ -1,0 +1,7 @@
+# KrakenUniq v1.0.0 DATE:2025-01-01T00:00:00Z DB:testdb/
+# CL:krakenuniq --db testdb/ --threads 1 --output test.out --report-file test.report test.fq
+
+%	reads	taxReads	kmers	dup	cov	taxID	rank	taxName
+50.00	50	50	100	1.00	0.95	562	S	  Escherichia coli
+30.00	30	30	60	1.00	0.90	1280	S	  Staphylococcus aureus
+20.00	20	20	40	1.00	0.85	272631	S	  Burkholderia pseudomallei

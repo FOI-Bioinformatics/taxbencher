@@ -1,0 +1,5 @@
+escherichia_coli_1/1	562	1.0e-10
+staphylococcus_aureus_1/1	1280	2.0e-10
+burkholderia_pseudomallei_1/1	272631	3.0e-10
+escherichia_coli_2/1	562	1.5e-10
+staphylococcus_aureus_2/1	1280	2.5e-10

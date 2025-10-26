@@ -1,0 +1,4 @@
+#consensus_taxonomy	NCBI_tax_id	sample1
+Escherichia coli [ref_mOTU_v3_00095]	562	50
+Staphylococcus aureus [ref_mOTU_v3_00123]	1280	30
+Burkholderia pseudomallei [ref_mOTU_v3_00456]	272631	20

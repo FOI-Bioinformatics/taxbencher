@@ -74,6 +74,182 @@ nextflow_process {
 
     }
 
+    test("taxpasta standardise - bracken") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id: 'test_bracken', classifier: 'bracken', taxonomy_db: 'NCBI' ],
+                    file('${moduleDir}/testdata/test_bracken.bracken', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("taxpasta standardise - kaiju") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id: 'test_kaiju', classifier: 'kaiju', taxonomy_db: 'NCBI' ],
+                    file('${moduleDir}/testdata/test_kaiju.out', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("taxpasta standardise - motus") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id: 'test_motus', classifier: 'motus', taxonomy_db: 'NCBI' ],
+                    file('${moduleDir}/testdata/test_motus.out', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("taxpasta standardise - ganon") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id: 'test_ganon', classifier: 'ganon', taxonomy_db: 'NCBI' ],
+                    file('${moduleDir}/testdata/test_ganon.tre', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("taxpasta standardise - krakenuniq") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id: 'test_krakenuniq', classifier: 'krakenuniq', taxonomy_db: 'NCBI' ],
+                    file('${moduleDir}/testdata/test_krakenuniq.report', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("taxpasta standardise - megan6") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id: 'test_megan6', classifier: 'megan6', taxonomy_db: 'NCBI' ],
+                    file('${moduleDir}/testdata/test_megan6.txt', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("taxpasta standardise - diamond") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id: 'test_diamond', classifier: 'diamond', taxonomy_db: 'NCBI' ],
+                    file('${moduleDir}/testdata/test_diamond.txt', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("taxpasta standardise - kmcp") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id: 'test_kmcp', classifier: 'kmcp', taxonomy_db: 'NCBI' ],
+                    file('${moduleDir}/testdata/test_kmcp.profile', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
     test("taxpasta standardise - stub") {
 
         options "-stub"

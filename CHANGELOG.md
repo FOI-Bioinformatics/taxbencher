@@ -3,32 +3,43 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## v1.0.2 - Unreleased
+## v1.1.0 - 2025-10-26
 
-Enhanced test coverage, comprehensive profiler support, and documentation for raw profiler input feature.
+Wave container support, 100% test coverage for all classifiers, and comprehensive profiler support enhancements.
 
-### Added
+### New Features
 
-- **Test Coverage Enhancements (Sprint 1)**:
-  - Added Centrifuge test to TAXPASTA_STANDARDISE module with correct report format
-  - Added MetaPhlAn test to TAXPASTA_STANDARDISE module with 4-column profile format
-  - Created `test_raw` profile configuration for end-to-end testing with raw inputs
-  - Added pipeline-level nf-test for test_raw profile validation
-  - New test data files for Centrifuge and MetaPhlAn raw formats
+- **Wave Container Integration**:
+  - Added Seqera Wave container support for TAXPASTA_TO_BIOBOXES module (commit 7cae708)
+    - Includes pandas + ete3 for robust taxonomy processing
+    - Automatic NCBI taxonomy database integration
+  - Added Seqera Wave container support for COMPARATIVE_ANALYSIS module (commit a76ca48)
+    - Full scipy stack: pandas, scikit-learn, plotly, scipy, statsmodels, numpy, python-kaleido
+    - Infrastructure ready for PCA analysis, statistical testing, and interactive visualizations
+  - Automatic fallback to biocontainers when Wave is unavailable
+  - Enhanced reproducibility across different compute environments
 
-- **Pipeline Testing Infrastructure (Sprint 2)**:
-  - Added end-to-end pipeline test for test_raw profile in `tests/default.nf.test`
-  - Pipeline tests verify TAXPASTA_STANDARDISE execution in full workflow context
-  - Tests validate channel branching and format detection logic
-  - Snapshot-based validation of pipeline outputs and task counts
+- **100% Test Coverage for All Classifiers**:
+  - **Complete functional test suite** for all 11 taxpasta-supported classifiers in TAXPASTA_STANDARDISE
+  - New comprehensive nf-tests for: Bracken, DIAMOND, ganon, Kaiju, KMCP, KrakenUniq, MEGAN6, mOTUs
+  - All 12 TAXPASTA_STANDARDISE tests passing (11 functional + 1 stub)
+  - Authentic test data files matching exact taxpasta format requirements:
+    - Bracken: 7-column `.bracken` format with read estimations
+    - DIAMOND: 3-column sequence alignment format
+    - ganon: 9-column `.tre` format with lineage paths and dtype handling
+    - Kaiju: 5-column summary table format
+    - KMCP: 17-column comprehensive profiling format
+    - KrakenUniq: 9-column format with metadata headers
+    - MEGAN6: 2-column taxid/count format
+    - mOTUs: 3-column format with NCBI taxonomy IDs
 
-- **Extended Profiler Support (Sprint 3)**:
+- **Extended Profiler Support**:
   - Comprehensive file extension support for all 11 taxpasta-supported profilers
   - Added extensions: `.kreport2`, `.mpa3`, `.krakenuniq`, `.diamond`, `.kmcp`, `.ganon`, `.motus`, `.megan`
   - Schema validation enhanced with descriptive error messages mapping extensions to profilers
   - Support for KMCP, ganon, DIAMOND, mOTUs, MEGAN6/MALT, and KrakenUniq raw outputs
 
-- **Production Hardening (Sprint 4)**:
+- **Production Hardening**:
   - Enhanced error handling in TAXPASTA_STANDARDISE module
     - Validates profiler names against taxpasta-supported list before execution
     - Captures and displays detailed error messages when standardization fails
@@ -38,26 +49,32 @@ Enhanced test coverage, comprehensive profiler support, and documentation for ra
     - Automatic detection logging: Shows which files are pre-standardised vs. need standardisation
     - Per-sample processing logs with classifier and file extension information
     - Success confirmations with output file statistics (line counts)
-  - **NEW**: `validate_profiler_format.py` - Pre-flight validation tool for raw profiler outputs
-    - Validates file format matches profiler expectations (column counts, delimiters)
-    - Supports all 11 profilers with format specifications
-    - Provides detailed error messages and format documentation
-    - `--show-spec` flag displays format requirements for each profiler
-  - `--save_standardised_profiles` parameter already implemented
-    - Optionally saves intermediate taxpasta TSV files to output directory
-    - Useful for inspection, troubleshooting, and reuse across analyses
+  - `--save_standardised_profiles` parameter for optional intermediate file saving
 
-- **Documentation (Sprints 1-4)**:
-  - Comprehensive raw profiler input documentation in `docs/usage.md`
-  - **NEW**: Dedicated `docs/raw-inputs.md` with detailed format specifications for all 11 profilers
-  - Format examples, troubleshooting guide, and integration workflows
-  - Table of supported formats with file extensions and format descriptions
-  - Example samplesheets for raw profiler outputs, pre-standardized files, and mixed formats
-  - Updated workflow overview to include standardization step
-  - Updated samplesheet column descriptions for dual format support
-  - Enhanced CLAUDE.md with architecture documentation for developers
-  - Validation workflow documentation with new `validate_profiler_format.py` tool
-  - Usage examples for `--save_standardised_profiles` parameter
+### Testing Infrastructure
+
+- **Test Coverage Enhancements**:
+  - Added Centrifuge test to TAXPASTA_STANDARDISE module with correct report format
+  - Added MetaPhlAn test to TAXPASTA_STANDARDISE module with 4-column profile format
+  - Created `test_raw` profile configuration for end-to-end testing with raw inputs
+  - Added pipeline-level nf-test for test_raw profile validation
+  - New test data files for all 11 classifiers covering all supported raw formats
+
+- **Pipeline Testing**:
+  - Added end-to-end pipeline test for test_raw profile in `tests/default.nf.test`
+  - Pipeline tests verify TAXPASTA_STANDARDISE execution in full workflow context
+  - Tests validate channel branching and format detection logic
+  - Snapshot-based validation of pipeline outputs and task counts
+
+### Documentation
+
+- Comprehensive raw profiler input documentation in `docs/usage.md`
+- Dedicated `docs/raw-inputs.md` with detailed format specifications for all 11 profilers
+- Format examples, troubleshooting guide, and integration workflows
+- Table of supported formats with file extensions and format descriptions
+- Example samplesheets for raw profiler outputs, pre-standardized files, and mixed formats
+- Updated workflow overview to include standardization step
+- Enhanced CLAUDE.md with architecture documentation and complete test coverage matrix
 
 ### Fixed
 

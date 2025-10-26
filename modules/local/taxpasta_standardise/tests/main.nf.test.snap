@@ -36,6 +36,154 @@
         },
         "timestamp": "2025-10-09T06:42:04.339714"
     },
+    "taxpasta standardise - megan6": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test_megan6",
+                            "classifier": "megan6",
+                            "taxonomy_db": "NCBI"
+                        },
+                        "test_megan6.tsv:md5,bf678859b81858fc5ce160f1182f50b8"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                ],
+                "standardised": [
+                    [
+                        {
+                            "id": "test_megan6",
+                            "classifier": "megan6",
+                            "taxonomy_db": "NCBI"
+                        },
+                        "test_megan6.tsv:md5,bf678859b81858fc5ce160f1182f50b8"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.7"
+        },
+        "timestamp": "2025-10-26T07:01:43.449186"
+    },
+    "taxpasta standardise - diamond": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test_diamond",
+                            "classifier": "diamond",
+                            "taxonomy_db": "NCBI"
+                        },
+                        "test_diamond.tsv:md5,e3988da6d98e6be209314334f56bb794"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                ],
+                "standardised": [
+                    [
+                        {
+                            "id": "test_diamond",
+                            "classifier": "diamond",
+                            "taxonomy_db": "NCBI"
+                        },
+                        "test_diamond.tsv:md5,e3988da6d98e6be209314334f56bb794"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.7"
+        },
+        "timestamp": "2025-10-26T07:51:24.110356"
+    },
+    "taxpasta standardise - kmcp": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test_kmcp",
+                            "classifier": "kmcp",
+                            "taxonomy_db": "NCBI"
+                        },
+                        "test_kmcp.tsv:md5,f3e3d6c8bab97f06ad9da59c532523bb"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                ],
+                "standardised": [
+                    [
+                        {
+                            "id": "test_kmcp",
+                            "classifier": "kmcp",
+                            "taxonomy_db": "NCBI"
+                        },
+                        "test_kmcp.tsv:md5,f3e3d6c8bab97f06ad9da59c532523bb"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.7"
+        },
+        "timestamp": "2025-10-26T07:02:00.373649"
+    },
+    "taxpasta standardise - motus": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test_motus",
+                            "classifier": "motus",
+                            "taxonomy_db": "NCBI"
+                        },
+                        "test_motus.tsv:md5,6b61bfc50acd6208b520b4ab7dd02b7b"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                ],
+                "standardised": [
+                    [
+                        {
+                            "id": "test_motus",
+                            "classifier": "motus",
+                            "taxonomy_db": "NCBI"
+                        },
+                        "test_motus.tsv:md5,6b61bfc50acd6208b520b4ab7dd02b7b"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.7"
+        },
+        "timestamp": "2025-10-26T06:49:19.776587"
+    },
     "taxpasta standardise - stub": {
         "content": [
             {
@@ -110,6 +258,80 @@
         },
         "timestamp": "2025-10-10T07:37:31.035195"
     },
+    "taxpasta standardise - bracken": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test_bracken",
+                            "classifier": "bracken",
+                            "taxonomy_db": "NCBI"
+                        },
+                        "test_bracken.tsv:md5,bf678859b81858fc5ce160f1182f50b8"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                ],
+                "standardised": [
+                    [
+                        {
+                            "id": "test_bracken",
+                            "classifier": "bracken",
+                            "taxonomy_db": "NCBI"
+                        },
+                        "test_bracken.tsv:md5,bf678859b81858fc5ce160f1182f50b8"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.7"
+        },
+        "timestamp": "2025-10-26T06:34:40.198541"
+    },
+    "taxpasta standardise - kaiju": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test_kaiju",
+                            "classifier": "kaiju",
+                            "taxonomy_db": "NCBI"
+                        },
+                        "test_kaiju.tsv:md5,f3e3d6c8bab97f06ad9da59c532523bb"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                ],
+                "standardised": [
+                    [
+                        {
+                            "id": "test_kaiju",
+                            "classifier": "kaiju",
+                            "taxonomy_db": "NCBI"
+                        },
+                        "test_kaiju.tsv:md5,f3e3d6c8bab97f06ad9da59c532523bb"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.7"
+        },
+        "timestamp": "2025-10-26T06:34:51.514697"
+    },
     "taxpasta standardise - metaphlan": {
         "content": [
             {
@@ -146,5 +368,79 @@
             "nextflow": "25.04.7"
         },
         "timestamp": "2025-10-10T07:36:48.603781"
+    },
+    "taxpasta standardise - ganon": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test_ganon",
+                            "classifier": "ganon",
+                            "taxonomy_db": "NCBI"
+                        },
+                        "test_ganon.tsv:md5,8ebe09a3aa5691667afab7cc957accb5"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                ],
+                "standardised": [
+                    [
+                        {
+                            "id": "test_ganon",
+                            "classifier": "ganon",
+                            "taxonomy_db": "NCBI"
+                        },
+                        "test_ganon.tsv:md5,8ebe09a3aa5691667afab7cc957accb5"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.7"
+        },
+        "timestamp": "2025-10-26T07:50:52.876782"
+    },
+    "taxpasta standardise - krakenuniq": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test_krakenuniq",
+                            "classifier": "krakenuniq",
+                            "taxonomy_db": "NCBI"
+                        },
+                        "test_krakenuniq.tsv:md5,bf678859b81858fc5ce160f1182f50b8"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                ],
+                "standardised": [
+                    [
+                        {
+                            "id": "test_krakenuniq",
+                            "classifier": "krakenuniq",
+                            "taxonomy_db": "NCBI"
+                        },
+                        "test_krakenuniq.tsv:md5,bf678859b81858fc5ce160f1182f50b8"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.7"
+        },
+        "timestamp": "2025-10-26T07:51:02.659356"
     }
 }

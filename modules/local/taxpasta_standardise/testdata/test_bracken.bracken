@@ -1,0 +1,4 @@
+name	taxonomy_id	taxonomy_lvl	kraken_assigned_reads	added_reads	new_est_reads	fraction_total_reads
+Escherichia coli	562	S	50	0	50	0.50000
+Staphylococcus aureus	1280	S	30	0	30	0.30000
+Burkholderia pseudomallei	272631	S	20	0	20	0.20000

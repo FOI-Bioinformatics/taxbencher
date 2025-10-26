@@ -1,0 +1,4 @@
+file	percent	reads	taxon_id	taxon_name
+kaiju.out	50.00	50	562	Escherichia coli
+kaiju.out	30.00	30	1280	Staphylococcus aureus
+kaiju.out	20.00	20	272631	Burkholderia pseudomallei
