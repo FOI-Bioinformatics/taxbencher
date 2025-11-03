@@ -1,8 +1,17 @@
 @SampleID:test_sample
 @Version:0.9.1
-@Ranks:superkingdom|phylum|class|order|family|genus|species
+@Ranks:superkingdom|phylum|class|family|genus|species
 @TaxonomyID:NCBI
 @@TAXID	RANK	TAXPATH	TAXPATHSN	PERCENTAGE
-562	species	131567|2|1224|1236|135622|543|561|562	Biota|Bacteria|Pseudomonadota|Gammaproteobacteria|Enterobacterales|Enterobacteriaceae|Escherichia|Escherichia coli	50.0
-1280	species	131567|2|1239|90964|1385|81852|1279|1280	Biota|Bacteria|Bacillota|Bacilli|Bacillales|Staphylococcaceae|Staphylococcus|Staphylococcus aureus	30.0
-1613	species	131567|2|1239|91061|186826|33958|1578|1613	Biota|Bacteria|Bacillota|Bacilli|Lactobacillales|Lactobacillaceae|Lactobacillus|Lacticaseibacillus rhamnosus	20.0
+2	superkingdom	1|131567|2	root|cellular organisms|Bacteria	2.5
+1224	phylum	1|131567|2|1224	root|cellular organisms|Bacteria|Pseudomonadota	1.8
+1236	class	1|131567|2|1224|1236	root|cellular organisms|Bacteria|Pseudomonadota|Gammaproteobacteria	1.5
+34064	family	1|131567|2|1224|1236|72273|34064	root|cellular organisms|Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae	2.0
+262	genus	1|131567|2|1224|1236|72273|34064|262	root|cellular organisms|Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella	32.0
+263	species	1|131567|2|1224|1236|72273|34064|262|263	root|cellular organisms|Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella tularensis	55.0
+264	species	1|131567|2|1224|1236|72273|34064|262|263|264	root|cellular organisms|Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella tularensis|Francisella tularensis subsp. novicida	0.3
+119857	species	1|131567|2|1224|1236|72273|34064|262|263|119857	root|cellular organisms|Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella tularensis|Francisella tularensis subsp. holarctica	0.08
+622488	species	1|131567|2|1224|1236|72273|34064|262|622488	root|cellular organisms|Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella hispaniensis	0.15
+28110	species	1|131567|2|1224|1236|72273|34064|262|28110	root|cellular organisms|Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella philomiragia	0.02
+1869285	genus	1|131567|2|1224|1236|72273|34064|1869285	root|cellular organisms|Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Allofrancisella	0.03
+1085647	species	1|131567|2|1224|1236|72273|34064|1869285|1085647	root|cellular organisms|Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Allofrancisella|Allofrancisella inopinata	0.04
