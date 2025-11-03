@@ -13,6 +13,13 @@ tools:
         Custom Python script to convert taxpasta standardized taxonomic profiling
         format to CAMI Bioboxes profiling format for use with OPAL evaluation tool.
         Uses ete3 for NCBI taxonomy lookups to obtain lineage information.
+
+        Container Requirements:
+        - Uses Seqera Wave container with pandas + ete3 dependencies
+        - Container URL: community.wave.seqera.io/library/pip_ete3_pandas:3d986008f4614a7f
+        - Wave access required (free for non-commercial use)
+        - Fallback: Use conda profile with environment.yml for local dependency installation
+        - Dependencies: python>=3.11, pandas>=2.0, ete3>=3.1.3
       homepage: https://github.com/nf-core/taxbencher
       documentation: https://github.com/nf-core/taxbencher
       licence: ["MIT"]

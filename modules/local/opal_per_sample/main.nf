@@ -19,7 +19,7 @@ process OPAL_PER_SAMPLE {
 
     script:
     def args = task.ext.args ?: ''
-    prefix = task.ext.prefix ?: "${meta.id}"
+    def prefix = task.ext.prefix ?: "${meta.id}"
 
     // Handle labels for predictions
     def labels = meta.labels ?: predictions.collect { it.baseName }.join(',')
@@ -53,7 +53,7 @@ process OPAL_PER_SAMPLE {
     """
 
     stub:
-    prefix = task.ext.prefix ?: "${meta.id}"
+    def prefix = task.ext.prefix ?: "${meta.id}"
     """
     mkdir -p ${prefix}
     touch ${prefix}/results.html

@@ -13,17 +13,17 @@ process COMPARATIVE_ANALYSIS {
     path(gold_standard)
 
     output:
-    tuple val(meta), path("${prefix}_pca.html")          , emit: pca_plot
-    tuple val(meta), path("${prefix}_diff_taxa.tsv")     , emit: diff_taxa
-    tuple val(meta), path("${prefix}_comparison.html")   , emit: comparison_report
-    path "versions.yml"                                   , emit: versions
+    tuple val(meta), path("*_pca.html")          , emit: pca_plot
+    tuple val(meta), path("*_diff_taxa.tsv")     , emit: diff_taxa
+    tuple val(meta), path("*_comparison.html")   , emit: comparison_report
+    path "versions.yml"                          , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
     def args = task.ext.args ?: ''
-    prefix = task.ext.prefix ?: "${meta.id}"
+    def prefix = task.ext.prefix ?: "${meta.id}"
     def sample_id = meta.sample_id ?: meta.id
     def labels = meta.labels ?: ''
 
@@ -43,7 +43,7 @@ process COMPARATIVE_ANALYSIS {
     """
 
     stub:
-    prefix = task.ext.prefix ?: "${meta.id}"
+    def prefix = task.ext.prefix ?: "${meta.id}"
     """
     touch ${prefix}_pca.html
     touch ${prefix}_diff_taxa.tsv

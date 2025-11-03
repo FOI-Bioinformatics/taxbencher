@@ -5,7 +5,7 @@
 */
 include { TAXPASTA_STANDARDISE   } from '../modules/local/taxpasta_standardise/main'
 include { TAXPASTA_TO_BIOBOXES   } from '../modules/local/taxpasta_to_bioboxes/main'
-include { OPAL                   } from '../modules/local/opal/main'
+// NOTE: OPAL module deprecated in favor of OPAL_PER_SAMPLE which handles per-sample evaluation
 include { OPAL_PER_SAMPLE        } from '../modules/local/opal_per_sample/main'
 include { COMPARATIVE_ANALYSIS   } from '../modules/local/comparative_analysis/main'
 include { MULTIQC                } from '../modules/nf-core/multiqc/main'
@@ -63,6 +63,7 @@ workflow TAXBENCHER {
     // Only runs for files that are not already in taxpasta TSV format
     //
     TAXPASTA_STANDARDISE(ch_branched.needs_standardisation)
+    // NOTE: .first() optimization - versions.yml content is identical across all invocations
     ch_versions = ch_versions.mix(TAXPASTA_STANDARDISE.out.versions.first())
 
     //
@@ -78,6 +79,7 @@ workflow TAXBENCHER {
     TAXPASTA_TO_BIOBOXES (
         ch_taxpasta
     )
+    // NOTE: .first() optimization - versions.yml content is identical across all invocations
     ch_versions = ch_versions.mix(TAXPASTA_TO_BIOBOXES.out.versions.first())
 
     //
@@ -120,6 +122,7 @@ workflow TAXBENCHER {
     OPAL_PER_SAMPLE (
         ch_bioboxes_per_sample
     )
+    // NOTE: .first() optimization - versions.yml content is identical across all invocations
     ch_versions = ch_versions.mix(OPAL_PER_SAMPLE.out.versions.first())
     ch_multiqc_files = ch_multiqc_files.mix(OPAL_PER_SAMPLE.out.results.map { meta, dir -> dir })
 
@@ -131,6 +134,7 @@ workflow TAXBENCHER {
         OPAL_PER_SAMPLE.out.results,
         ch_gold_standard
     )
+    // NOTE: .first() optimization - versions.yml content is identical across all invocations
     ch_versions = ch_versions.mix(COMPARATIVE_ANALYSIS.out.versions.first())
     ch_multiqc_files = ch_multiqc_files.mix(COMPARATIVE_ANALYSIS.out.comparison_report.map { meta, html -> html })
 

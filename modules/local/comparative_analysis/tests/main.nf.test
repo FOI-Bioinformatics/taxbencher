@@ -11,6 +11,43 @@ nextflow_process {
     // NOTE: COMPARATIVE_ANALYSIS requires pandas, scikit-learn, plotly, scipy, and statsmodels
     // for full statistical analysis. These dependencies may not be available in all test environments.
     // Stub tests verify module structure and output channels without requiring the full dependency stack.
+    // Functional tests require -profile conda or wave for dependency installation.
+
+    test("comparative_analysis - functional - realistic data") {
+
+        tag "conda"
+        tag "wave"
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [
+                        id: 'sample1',
+                        sample_id: 'sample1',
+                        labels: 'kraken2,metaphlan,centrifuge',
+                        num_classifiers: 3
+                    ],
+                    file('${moduleDir}/testdata/opal_results_realistic', checkIfExists: true)
+                ]
+                input[1] = file('${moduleDir}/testdata/gold_standard_realistic.bioboxes', checkIfExists: true)
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(
+                    process.out.pca_plot,
+                    process.out.diff_taxa,
+                    process.out.comparison_report,
+                    process.out.versions
+                ).match() }
+            )
+        }
+
+    }
 
     test("comparative_analysis - stub - basic") {
 
