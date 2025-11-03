@@ -2,7 +2,7 @@
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "https://raw.githubusercontent.com/FOI-Bioinformatics/taxbencher/master/nextflow_schema.json",
     "title": "FOI-Bioinformatics/taxbencher pipeline parameters",
-    "description": "Benchmark taxonomic classifiers using standardized metrics and CAMI OPAL evaluation. Accepts taxpasta-formatted taxonomic profiles and compares them against gold standard reference data to generate comprehensive performance reports including precision, recall, F1 scores, and UniFrac distances.",
+    "description": "Benchmark taxonomic classifiers using standardized metrics and CAMI OPAL evaluation",
     "type": "object",
     "$defs": {
         "input_output_options": {

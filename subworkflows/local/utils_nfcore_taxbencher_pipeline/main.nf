@@ -157,12 +157,13 @@ def validateInputParameters() {
 // Generate methods description for MultiQC
 //
 def toolCitationText() {
-    // TODO nf-core: Optionally add in-text citation tools to this list.
+    // Citation text for tools used in the taxbencher pipeline
     // Can use ternary operators to dynamically construct based conditions, e.g. params["run_xyz"] ? "Tool (Foo et al. 2023)" : "",
-    // Uncomment function in methodsDescriptionText to render in MultiQC report
+    // Currently disabled - uncomment in methodsDescriptionText to render in MultiQC report
     def citation_text = [
             "Tools used in the workflow included:",
-            "FastQC (Andrews 2010),",
+            "OPAL (Meyer et al. 2018),",
+            "taxpasta (Beber et al. 2023),",
             "MultiQC (Ewels et al. 2016)",
             "."
         ].join(' ').trim()
@@ -171,12 +172,13 @@ def toolCitationText() {
 }
 
 def toolBibliographyText() {
-    // TODO nf-core: Optionally add bibliographic entries to this list.
+    // Bibliography entries for tools used in the taxbencher pipeline
     // Can use ternary operators to dynamically construct based conditions, e.g. params["run_xyz"] ? "<li>Author (2023) Pub name, Journal, DOI</li>" : "",
-    // Uncomment function in methodsDescriptionText to render in MultiQC report
+    // Currently disabled - uncomment in methodsDescriptionText to render in MultiQC report
     def reference_text = [
-            "<li>Andrews S, (2010) FastQC, URL: https://www.bioinformatics.babraham.ac.uk/projects/fastqc/).</li>",
-            "<li>Ewels, P., Magnusson, M., Lundin, S., & Käller, M. (2016). MultiQC: summarize analysis results for multiple tools and samples in a single report. Bioinformatics , 32(19), 3047–3048. doi: /10.1093/bioinformatics/btw354</li>"
+            "<li>Meyer, F., Hofmann, P., Belmann, P. et al. (2018). OPAL: assessment of metagenome assembly quality. GigaScience, 7(10), giy063. doi: 10.1093/gigascience/giy063</li>",
+            "<li>Beber, M. E., Borry, M., Stamouli, S., & Fellows Yates, J. A. (2023). taxpasta: TAXonomic Profile Aggregation and STAndardization. Journal of Open Source Software, 8(87), 5627. doi: 10.21105/joss.05627</li>",
+            "<li>Ewels, P., Magnusson, M., Lundin, S., & Käller, M. (2016). MultiQC: summarize analysis results for multiple tools and samples in a single report. Bioinformatics, 32(19), 3047–3048. doi: 10.1093/bioinformatics/btw354</li>"
         ].join(' ').trim()
 
     return reference_text
@@ -206,7 +208,7 @@ def methodsDescriptionText(mqc_methods_yaml) {
     meta["tool_citations"] = ""
     meta["tool_bibliography"] = ""
 
-    // TODO nf-core: Only uncomment below if logic in toolCitationText/toolBibliographyText has been filled!
+    // Tool citations populated - uncomment below to enable in MultiQC methods section
     // meta["tool_citations"] = toolCitationText().replaceAll(", \\.", ".").replaceAll("\\. \\.", ".").replaceAll(", \\.", ".")
     // meta["tool_bibliography"] = toolBibliographyText()
 
