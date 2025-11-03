@@ -141,41 +141,6 @@
         },
         "timestamp": "2025-10-11T10:10:48.207345"
     },
-    "comparative_analysis - stub": {
-        "content": [
-            {
-                "0": [
-                    
-                ],
-                "1": [
-                    
-                ],
-                "2": [
-                    
-                ],
-                "3": [
-                    
-                ],
-                "comparison_report": [
-                    
-                ],
-                "diff_taxa": [
-                    
-                ],
-                "pca_plot": [
-                    
-                ],
-                "versions": [
-                    
-                ]
-            }
-        ],
-        "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.7"
-        },
-        "timestamp": "2025-10-12T10:56:46.080066"
-    },
     "comparative_analysis - functional - realistic data": {
         "content": [
             [
@@ -201,25 +166,14 @@
                 ]
             ],
             [
-                [
-                    {
-                        "id": "sample1",
-                        "sample_id": "sample1",
-                        "labels": "kraken2,metaphlan,centrifuge",
-                        "num_classifiers": 3
-                    },
-                    "sample1_comparison.html:md5,1c816dc691c9126877dbec951f147d44"
-                ]
-            ],
-            [
-                "versions.yml:md5,caa8f3d10c6675fa4bd500e63c7d81d8"
+                "versions.yml:md5,531e63df333450ea6071653b6ae7cf68"
             ]
         ],
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.7"
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.0"
         },
-        "timestamp": "2025-11-02T09:14:23.973134"
+        "timestamp": "2025-11-03T23:33:21.953614"
     },
     "comparative_analysis - stub - basic": {
         "content": [

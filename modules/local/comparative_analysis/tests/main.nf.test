@@ -38,12 +38,16 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
+                // Snapshot PCA and diff_taxa outputs (deterministic)
                 { assert snapshot(
                     process.out.pca_plot,
                     process.out.diff_taxa,
-                    process.out.comparison_report,
                     process.out.versions
-                ).match() }
+                ).match() },
+                // Verify comparison report exists but don't snapshot MD5 (Plotly HTML is non-deterministic)
+                { assert process.out.comparison_report.size() == 1 },
+                { assert process.out.comparison_report.get(0).get(0).id == 'sample1' },
+                { assert file(process.out.comparison_report.get(0).get(1)).name.endsWith('_comparison.html') }
             )
         }
 

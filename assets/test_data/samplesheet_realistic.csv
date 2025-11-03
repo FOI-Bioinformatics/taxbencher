@@ -1,2 +1,4 @@
 sample_id,label,classifier,taxpasta_file,taxonomy_db
-realistic_sample,realistic_kraken2,kraken2,assets/test_data/taxpasta/realistic_kraken2.tsv,NCBI
+test1,test1_kraken2,kraken2,assets/test_data/taxpasta/realistic_kraken2.tsv,NCBI
+test1,test1_metaphlan,metaphlan,assets/test_data/taxpasta/realistic_metaphlan.tsv,NCBI
+test1,test1_centrifuge,centrifuge,assets/test_data/taxpasta/realistic_centrifuge.tsv,NCBI

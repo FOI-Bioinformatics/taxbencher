@@ -10,11 +10,11 @@
                             "ranks": "domain|phylum|class|order|family|genus|species",
                             "taxonomy_db": "NCBI"
                         },
-                        "test_sample_custom.bioboxes:md5,128a54665f7b1ba9e7f96710272b0515"
+                        "test_sample_custom.bioboxes:md5,8b53819e28ce16584be04d41aac9088a"
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,d594ba295b1d2625316ebf0baee4ba0c"
+                    "versions.yml:md5,d1ab2723fcca801305f67709899d0c22"
                 ],
                 "bioboxes": [
                     [
@@ -24,19 +24,19 @@
                             "ranks": "domain|phylum|class|order|family|genus|species",
                             "taxonomy_db": "NCBI"
                         },
-                        "test_sample_custom.bioboxes:md5,128a54665f7b1ba9e7f96710272b0515"
+                        "test_sample_custom.bioboxes:md5,8b53819e28ce16584be04d41aac9088a"
                     ]
                 ],
                 "versions": [
-                    "versions.yml:md5,d594ba295b1d2625316ebf0baee4ba0c"
+                    "versions.yml:md5,d1ab2723fcca801305f67709899d0c22"
                 ]
             }
         ],
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.3",
             "nextflow": "25.04.7"
         },
-        "timestamp": "2025-10-12T14:03:26.751288"
+        "timestamp": "2025-11-03T23:06:47.003623"
     },
     "taxpasta to bioboxes - stub": {
         "content": [
@@ -51,7 +51,7 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,d594ba295b1d2625316ebf0baee4ba0c"
+                    "versions.yml:md5,d1ab2723fcca801305f67709899d0c22"
                 ],
                 "bioboxes": [
                     [
@@ -63,15 +63,15 @@
                     ]
                 ],
                 "versions": [
-                    "versions.yml:md5,d594ba295b1d2625316ebf0baee4ba0c"
+                    "versions.yml:md5,d1ab2723fcca801305f67709899d0c22"
                 ]
             }
         ],
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.3",
             "nextflow": "25.04.7"
         },
-        "timestamp": "2025-10-12T14:03:30.580603"
+        "timestamp": "2025-11-03T23:07:26.068531"
     },
     "taxpasta to bioboxes - basic": {
         "content": [
@@ -82,11 +82,11 @@
                             "id": "test_sample",
                             "sample_id": "test_1"
                         },
-                        "test_sample.bioboxes:md5,d624e770e47add96090d3f7b0899a128"
+                        "test_sample.bioboxes:md5,62d38e6504ce05f0455d874db792a053"
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,d594ba295b1d2625316ebf0baee4ba0c"
+                    "versions.yml:md5,d1ab2723fcca801305f67709899d0c22"
                 ],
                 "bioboxes": [
                     [
@@ -94,18 +94,18 @@
                             "id": "test_sample",
                             "sample_id": "test_1"
                         },
-                        "test_sample.bioboxes:md5,d624e770e47add96090d3f7b0899a128"
+                        "test_sample.bioboxes:md5,62d38e6504ce05f0455d874db792a053"
                     ]
                 ],
                 "versions": [
-                    "versions.yml:md5,d594ba295b1d2625316ebf0baee4ba0c"
+                    "versions.yml:md5,d1ab2723fcca801305f67709899d0c22"
                 ]
             }
         ],
         "meta": {
-            "nf-test": "0.9.2",
+            "nf-test": "0.9.3",
             "nextflow": "25.04.7"
         },
-        "timestamp": "2025-10-12T14:03:21.402731"
+        "timestamp": "2025-11-03T23:05:56.871734"
     }
 }

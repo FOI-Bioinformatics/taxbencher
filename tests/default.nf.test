@@ -63,4 +63,37 @@ nextflow_pipeline {
             )
         }
     }
+
+    test("-profile test_realistic with multi-classifier realistic data") {
+
+        tag "conda"
+        tag "wave"
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            config "../conf/test_realistic.config"
+        }
+
+        then {
+            // stable_name: All files + folders in ${params.outdir}/ with a stable name
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
+            // stable_path: All files in ${params.outdir}/ with stable content
+            def stable_path = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
+            assertAll(
+                { assert workflow.success},
+                { assert snapshot(
+                    // Number of successful tasks - complete pipeline with OPAL and COMPARATIVE_ANALYSIS
+                    workflow.trace.succeeded().size(),
+                    // pipeline versions.yml file
+                    removeNextflowVersion("$outputDir/pipeline_info/taxbencher_software_mqc_versions.yml"),
+                    // All stable path names
+                    stable_name,
+                    // All files with stable contents
+                    stable_path
+                ).match() }
+            )
+        }
+    }
 }
