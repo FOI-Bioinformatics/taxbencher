@@ -36,6 +36,24 @@
 > [!NOTE]
 > If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.
 
+### Test Profiles
+
+Two test profiles are available for validating your setup:
+
+- **`test`**: Minimal test dataset (12 taxa, 1 classifier) - Quick validation of pipeline structure
+- **`test_realistic`**: Comprehensive test dataset (40+ taxa, 3 classifiers) - **Recommended** for full functionality validation
+
+```bash
+# Quick structure validation (may fail at OPAL due to minimal data)
+nextflow run FOI-Bioinformatics/taxbencher -profile test,conda
+
+# Full functionality validation (recommended - proves pipeline works correctly)
+nextflow run FOI-Bioinformatics/taxbencher -profile test_realistic,conda
+```
+
+> [!TIP]
+> The `test_realistic` profile is recommended for validating your installation, as it includes realistic data that passes all OPAL evaluation steps. The minimal `test` profile may encounter OPAL spider plot errors due to insufficient taxa (known limitation of OPAL 1.0.13).
+
 First, prepare a samplesheet with your input data that looks as follows:
 
 `samplesheet.csv`:
