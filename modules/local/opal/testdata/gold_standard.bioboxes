@@ -1,8 +1,0 @@
-@SampleID:test_sample
-@Version:0.9.1
-@Ranks:superkingdom|phylum|class|order|family|genus|species
-@TaxonomyID:NCBI
-@@TAXID	RANK	TAXPATH	TAXPATHSN	PERCENTAGE
-562	species	131567|2|1224|1236|135622|543|561|562	Biota|Bacteria|Pseudomonadota|Gammaproteobacteria|Enterobacterales|Enterobacteriaceae|Escherichia|Escherichia coli	50.0
-1280	species	131567|2|1239|90964|1385|81852|1279|1280	Biota|Bacteria|Bacillota|Bacilli|Bacillales|Staphylococcaceae|Staphylococcus|Staphylococcus aureus	30.0
-1613	species	131567|2|1239|91061|186826|33958|1578|1613	Biota|Bacteria|Bacillota|Bacilli|Lactobacillales|Lactobacillaceae|Lactobacillus|Lacticaseibacillus rhamnosus	20.0

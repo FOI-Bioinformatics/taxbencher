@@ -1,7 +1,0 @@
-name: opal
-channels:
-  - conda-forge
-  - bioconda
-  - defaults
-dependencies:
-  - cami-opal=1.0.13
