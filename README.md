@@ -5,7 +5,7 @@
 [![nf-test](https://img.shields.io/badge/unit_tests-nf--test-337ab7.svg)](https://www.nf-test.com)
 
 [![Nextflow](https://img.shields.io/badge/version-%E2%89%A524.10.5-green?style=flat&logo=nextflow&logoColor=white&color=%230DC09D&link=https%3A%2F%2Fnextflow.io)](https://www.nextflow.io/)
-[![nf-core template version](https://img.shields.io/badge/nf--core_template-3.3.2-green?style=flat&logo=nfcore&logoColor=white&color=%2324B064&link=https%3A%2F%2Fnf-co.re)](https://github.com/nf-core/tools/releases/tag/3.3.2)
+[![nf-core template version](https://img.shields.io/badge/nf--core_template-3.4.1-green?style=flat&logo=nfcore&logoColor=white&color=%2324B064&link=https%3A%2F%2Fnf-co.re)](https://github.com/nf-core/tools/releases/tag/3.4.1)
 [![run with conda](http://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&logo=anaconda)](https://docs.conda.io/en/latest/)
 [![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
 [![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
@@ -157,12 +157,18 @@ nextflow run FOI-Bioinformatics/taxbencher \
 
 For detailed information, see:
 
+### User Documentation
 - **[Usage Guide](docs/usage.md)** - Complete usage instructions, parameters, and configuration
 - **[Output Files](docs/output.md)** - Description of output files and OPAL metrics interpretation
-- **[Gold Standard Troubleshooting](docs/troubleshooting-gold-standard.md)** - **NEW!** Validate and fix gold standard files
+- **[Gold Standard Troubleshooting](docs/troubleshooting-gold-standard.md)** - Validate and fix gold standard files
 - **[Validation Tools](docs/local_testing.md#validation-scripts)** - Pre-flight validation scripts and local testing
-- **[Developer Guide](CLAUDE.md)** - Architecture, development patterns, and contributing
-- **[Validation Report](VALIDATION_REPORT.md)** - Technical validation and test coverage details
+
+### Developer Documentation
+- **[Developer Hub](docs/development/README.md)** - Complete developer documentation
+- **[Contributing Guide](CLAUDE.md)** - Quick start for developers and architecture overview
+- **[Code Quality Report](docs/reports/code-quality.md)** - Latest quality assessment (Grade: A-)
+- **[Test Coverage Report](docs/reports/test-coverage.md)** - Detailed test analysis
+- **[Validation Report](docs/reports/validation.md)** - Technical validation infrastructure details
 
 ## Credits
 
