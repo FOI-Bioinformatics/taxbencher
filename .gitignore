@@ -30,7 +30,7 @@ build/
 .coverage
 htmlcov/
 .tox/
-test_results/
+test_results*/
 test_output/
 
 # IDE files
