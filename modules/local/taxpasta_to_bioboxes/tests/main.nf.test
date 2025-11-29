@@ -80,4 +80,44 @@ nextflow_process {
         }
 
     }
+
+    // Negative tests - error handling
+
+    test("taxpasta to bioboxes - empty file should fail") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id: 'test_empty', sample_id: 'empty_sample' ],
+                    file('${moduleDir}/testdata/test_empty.tsv', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assert process.failed
+        }
+
+    }
+
+    test("taxpasta to bioboxes - missing columns should fail") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id: 'test_missing', sample_id: 'missing_sample' ],
+                    file('${moduleDir}/testdata/test_missing_columns.tsv', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assert process.failed
+        }
+
+    }
 }

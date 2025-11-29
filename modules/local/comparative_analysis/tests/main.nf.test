@@ -159,4 +159,70 @@ nextflow_process {
         }
 
     }
+
+    // Negative tests - error handling
+
+    test("comparative_analysis - empty opal results handles gracefully") {
+
+        tag "conda"
+        tag "wave"
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [
+                        id: 'sample_empty',
+                        sample_id: 'empty_sample',
+                        labels: 'test1,test2',
+                        num_classifiers: 2
+                    ],
+                    file('${moduleDir}/testdata/empty_opal_results', checkIfExists: true)
+                ]
+                input[1] = file('${moduleDir}/testdata/gold_standard.bioboxes', checkIfExists: true)
+                """
+            }
+        }
+
+        then {
+            // Empty OPAL results should still complete but with limited output
+            assertAll(
+                { assert process.success },
+                { assert process.out.versions.size() == 1 }
+            )
+        }
+
+    }
+
+    test("comparative_analysis - single classifier warning") {
+
+        tag "conda"
+        tag "wave"
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [
+                        id: 'sample_single',
+                        sample_id: 'single_sample',
+                        labels: 'single_classifier',
+                        num_classifiers: 1
+                    ],
+                    file('${moduleDir}/testdata/opal_results_realistic', checkIfExists: true)
+                ]
+                input[1] = file('${moduleDir}/testdata/gold_standard_realistic.bioboxes', checkIfExists: true)
+                """
+            }
+        }
+
+        then {
+            // Single classifier runs should still succeed but may produce limited output
+            assertAll(
+                { assert process.success },
+                { assert process.out.versions.size() == 1 }
+            )
+        }
+
+    }
 }

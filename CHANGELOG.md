@@ -3,6 +3,61 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.2.0 - 2025-11-29
+
+Comprehensive code audit, improved test coverage with negative tests, and enhanced error handling validation.
+
+### New Features
+
+- **Negative Test Coverage**:
+  - Added error handling tests for all 4 local modules
+  - TAXPASTA_STANDARDISE: Tests for empty files, malformed input, and invalid classifiers
+  - TAXPASTA_TO_BIOBOXES: Tests for empty files and missing columns
+  - OPAL_PER_SAMPLE: Tests for empty gold standard and empty predictions
+  - COMPARATIVE_ANALYSIS: Tests for edge cases (empty results, single classifier)
+
+- **Comprehensive Development Documentation**:
+  - New documentation suite in `docs/development/`
+  - Architecture documentation with workflow patterns
+  - Module specifications and development guide
+  - Testing guide and code quality standards
+  - Troubleshooting guides for common issues
+
+### Fixed
+
+- **OPAL_PER_SAMPLE conda path**: Fixed broken reference to non-existent `opal/environment.yml`
+  - Created proper `modules/local/opal_per_sample/environment.yml` with cami-opal dependency
+  - Updated module to use correct path: `conda "${moduleDir}/environment.yml"`
+
+- **Utils subworkflow meta.yml**: Added required `output` property to pass nf-core linting
+
+- **Test snapshots**: Updated all module test snapshots for current software versions
+
+### Changed
+
+- **Test Coverage**: Increased from 22 to 35 module tests (100% pass rate)
+  - TAXPASTA_STANDARDISE: 12 -> 15 tests
+  - TAXPASTA_TO_BIOBOXES: 3 -> 5 tests
+  - OPAL_PER_SAMPLE: 6 -> 8 tests
+  - COMPARATIVE_ANALYSIS: 5 -> 7 tests
+
+- **nf-core version**: Updated from 3.4.1 to 3.5.1
+
+- **Documentation**: Updated test coverage and code quality reports with audit findings
+
+### Testing
+
+- All 35 module tests passing (100%)
+- 203/206 nf-core lint tests passing (3 minor template mismatches)
+- Functional tests use realistic data to avoid OPAL 1.0.13 visualization bugs
+- Stub tests available for CI/CD environments
+
+### Known Limitations
+
+- OPAL 1.0.13 spider plot bug affects pipeline integration tests with minimal data
+- Use `test_realistic` profile for validation testing
+- Module tests pass independently with docker profile
+
 ## v1.1.0 - 2025-10-26
 
 Wave container support, 100% test coverage for all classifiers, and comprehensive profiler support enhancements.

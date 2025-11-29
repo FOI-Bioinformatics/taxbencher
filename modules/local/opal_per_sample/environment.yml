@@ -1,0 +1,6 @@
+name: opal_per_sample
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - bioconda::cami-opal=1.0.13

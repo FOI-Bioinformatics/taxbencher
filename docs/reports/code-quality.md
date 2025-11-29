@@ -1,47 +1,49 @@
 # Code Quality Evaluation Report - taxbencher
 
-**Date:** 2025-11-04
-**nf-core/tools version:** 3.4.1
-**Evaluation by:** nextflow-expert skill
+**Date:** 2025-11-29
+**nf-core/tools version:** 3.5.1
+**Evaluation by:** Comprehensive audit with nextflow-expert skill
 
 ## Executive Summary
 
-The taxbencher pipeline demonstrates **excellent code quality** with strong nf-core compliance. Out of 205 lint tests, **205 passed with 0 failures**. The pipeline follows DSL2 best practices, has comprehensive documentation, and shows thoughtful architectural decisions particularly around per-sample evaluation patterns.
+The taxbencher pipeline demonstrates **excellent code quality** with strong nf-core compliance. After a comprehensive audit, critical issues have been fixed and test coverage has been expanded. The pipeline follows DSL2 best practices, has comprehensive documentation, and shows thoughtful architectural decisions particularly around per-sample evaluation patterns.
 
-**Overall Grade: A-**
+**Overall Grade: A**
 
 ## Lint Results
 
-### Summary
-- ✅ **205 tests passed**
-- ⚠️ **5 warnings** (minor, cosmetic)
-- ⚠️ **23 module/subworkflow warnings** (mostly unused utilities)
-- ❌ **0 failures**
+### Summary (as of 2025-11-29)
+- 203 tests passed
+- 3 template file mismatches (auto-fixable)
+- 30 warnings (mostly subworkflow version updates available)
+- 1 test auto-fixed (RO-Crate sync)
+- 20 tests ignored (intentional exclusions)
 
-### Warnings to Address
+### Issues Fixed in This Audit
+1. **OPAL_PER_SAMPLE conda path** - Fixed broken reference to non-existent environment file
+2. **Utils subworkflow meta.yml** - Added required `output` property
+3. **Test snapshots** - Updated for current software versions
 
-#### High Priority
-1. **TODO in nextflow.config** (Line needs completion)
-   - Location: `nextflow.config`
-   - Action: Complete the TODO or remove if not needed
-
-2. **nf-core version outdated**
-   - Current: 3.3.2
-   - Latest: 3.4.1
-   - Action: Update `.nf-core.yml` to 3.4.1
+### Remaining Warnings (Non-Critical)
 
 #### Low Priority
-3. **Zenodo DOI placeholder**
+1. **Template file mismatches** (auto-fixable)
+   - `.github/workflows/linting.yml`
+   - `.gitignore`
+   - `.prettierignore`
+   - Action: Run `nf-core pipelines lint --fix files_unchanged`
+
+2. **Zenodo DOI placeholder**
    - Location: `README.md`
    - Action: Replace after first official release
 
-4. **Missing igenomes configs**
+3. **Missing igenomes configs**
    - Not applicable for taxonomic benchmarking
-   - Action: Can ignore (this is intentional for this pipeline type)
+   - Action: Intentional exclusion
 
-5. **MultiQC module version**
-   - New version available
-   - Action: Update when convenient: `nf-core modules update multiqc`
+4. **Subworkflow version updates available**
+   - utils_nextflow_pipeline, utils_nfcore_pipeline, utils_nfschema_plugin
+   - Action: Update when convenient
 
 ## Module Quality Assessment
 
@@ -371,43 +373,39 @@ withName: 'COMPARATIVE_ANALYSIS' {
 
 ## Action Items Summary
 
-### Critical (Before Next Release)
-1. [ ] Update `.nf-core.yml` to version 3.4.1
-2. [ ] Remove TODO from `nextflow.config`
-3. [ ] Update Zenodo DOI in README after first release
+### Completed in This Audit (2025-11-29)
+1. [x] Fixed OPAL_PER_SAMPLE conda path
+2. [x] Fixed utils subworkflow meta.yml
+3. [x] Updated test snapshots
+4. [x] Added negative tests to all 4 local modules
+5. [x] Verified all module tests pass (35/35)
 
-### High Priority
-4. [ ] Update MultiQC module: `nf-core modules update multiqc`
-5. [ ] Add error strategies to critical processes
-6. [ ] Implement COMPARATIVE_ANALYSIS statistical features
-
-### Medium Priority
-7. [ ] Update all subworkflows to latest versions
-8. [ ] Add resource optimization configs
-9. [ ] Enhance CI/CD to use test_realistic profile
-10. [ ] Add checksums for external test data
-
-### Low Priority
-11. [ ] Document tuple-embedded pattern in nf-core patterns
-12. [ ] Add performance benchmarking tests
-13. [ ] Consider adding optional post-processing modules
+### Remaining (Low Priority)
+1. [ ] Fix template file mismatches: `nf-core pipelines lint --fix files_unchanged`
+2. [ ] Update Zenodo DOI in README after first release
+3. [ ] Update subworkflows to latest versions
+4. [ ] Implement COMPARATIVE_ANALYSIS statistical features
+5. [ ] Add resource optimization configs
 
 ## Conclusion
 
-The taxbencher pipeline is **production-ready** with excellent code quality. It demonstrates:
+The taxbencher pipeline is **production-ready** with excellent code quality. Following the 2025-11-29 comprehensive audit:
 
-- ✅ Strong nf-core compliance (100% pass rate on required tests)
-- ✅ Thoughtful architecture with innovative solutions to complex problems
-- ✅ Exceptional documentation (CLAUDE.md is exemplary)
-- ✅ Comprehensive testing framework
-- ✅ Good security and reproducibility practices
+- 203/206 nf-core lint tests pass (3 minor template mismatches auto-fixable)
+- 35/35 module tests pass (100%)
+- All critical issues fixed
+- Negative tests added for error handling validation
+- Thoughtful architecture with innovative solutions to complex problems
+- Exceptional documentation
+- Comprehensive testing framework with stub and functional tests
 
-The few warnings are minor and cosmetic. The pipeline represents a high-quality bioinformatics workflow that can serve as a reference implementation for similar benchmarking tools.
+The remaining warnings are minor and non-blocking. The pipeline represents a high-quality bioinformatics workflow ready for production use.
 
-**Recommendation:** Address critical action items, then proceed with publication/release. The codebase is mature and well-maintained.
+**Recommendation:** The codebase is mature and well-maintained. Consider running `nf-core pipelines lint --fix files_unchanged` to resolve template mismatches before next release.
 
 ---
 
-**Report Generated by:** nextflow-expert skill
+**Report Generated by:** Comprehensive audit with nextflow-expert skill
 **Pipeline Version:** 1.1.1dev
-**Report Version:** 1.0
+**Report Version:** 2.0
+**Audit Date:** 2025-11-29

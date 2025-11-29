@@ -187,4 +187,51 @@ nextflow_process {
         }
 
     }
+
+    // Negative tests - error handling
+    // Note: These tests verify that OPAL fails gracefully with invalid inputs
+
+    test("opal_per_sample - empty gold standard should fail") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id: 'sample_empty_gs' ],
+                    file('${moduleDir}/testdata/empty_gold_standard.bioboxes', checkIfExists: true),
+                    [
+                        file('${moduleDir}/testdata/prediction_realistic1.bioboxes', checkIfExists: true)
+                    ]
+                ]
+                """
+            }
+        }
+
+        then {
+            assert process.failed
+        }
+
+    }
+
+    test("opal_per_sample - empty prediction should fail") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id: 'sample_empty_pred' ],
+                    file('${moduleDir}/testdata/gold_standard_realistic.bioboxes', checkIfExists: true),
+                    [
+                        file('${moduleDir}/testdata/empty_prediction.bioboxes', checkIfExists: true)
+                    ]
+                ]
+                """
+            }
+        }
+
+        then {
+            assert process.failed
+        }
+
+    }
 }

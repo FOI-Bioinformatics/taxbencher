@@ -5,5 +5,13 @@ keywords:
   - initialization
   - completion
 components: []
+input:
+  - input:
+      type: channel
+      description: Pipeline input parameters and configuration
+output:
+  - versions:
+      type: channel
+      description: Channel of software versions
 authors:
   - "@andreassjodin"

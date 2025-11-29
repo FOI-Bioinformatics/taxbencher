@@ -7,7 +7,7 @@ process OPAL_PER_SAMPLE {
     // See: https://github.com/CAMI-challenge/OPAL/issues
     // NOTE: This module uses Seqera Wave for dynamic container building
     // If Wave is unavailable, use -profile conda
-    conda "${moduleDir}/../opal/environment.yml"
+    conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/cami-opal:1.0.13--pyhdfd78af_0' :
         'quay.io/biocontainers/cami-opal:1.0.13--pyhdfd78af_0' }"

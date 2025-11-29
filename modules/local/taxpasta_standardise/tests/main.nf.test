@@ -273,4 +273,63 @@ nextflow_process {
         }
 
     }
+
+    // Negative tests - error handling
+
+    test("taxpasta standardise - empty file should fail") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id: 'test_empty', classifier: 'kraken2', taxonomy_db: 'NCBI' ],
+                    file('${moduleDir}/testdata/test_empty.kreport', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assert process.failed
+        }
+
+    }
+
+    test("taxpasta standardise - malformed file should fail") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id: 'test_malformed', classifier: 'kraken2', taxonomy_db: 'NCBI' ],
+                    file('${moduleDir}/testdata/test_malformed.kreport', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assert process.failed
+        }
+
+    }
+
+    test("taxpasta standardise - invalid classifier should fail") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id: 'test_invalid', classifier: 'invalid_classifier', taxonomy_db: 'NCBI' ],
+                    file('${moduleDir}/testdata/test_kraken2.kreport', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            assert process.failed
+        }
+
+    }
 }
