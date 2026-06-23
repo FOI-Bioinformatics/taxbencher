@@ -110,6 +110,7 @@ The typical command for running the pipeline is as follows:
 nextflow run FOI-Bioinformatics/taxbencher \
   --input samplesheet.csv \
   --gold_standard gold_standard.bioboxes \
+  --taxpasta_taxonomy taxdump \
   --outdir ./results \
   -profile docker
 ```
@@ -118,9 +119,13 @@ This will launch the pipeline with the `docker` configuration profile. See below
 
 ### Required parameters
 
-- `--input`: Path to samplesheet CSV file
+- `--input`: Path to samplesheet CSV file. Relative `taxpasta_file` paths in the samplesheet are resolved relative to the samplesheet's own location.
 - `--gold_standard`: Path to gold standard bioboxes file (ground truth taxonomic composition)
+- `--taxpasta_taxonomy`: Path to a directory containing the NCBI taxdump (at least `nodes.dmp` and `names.dmp`). Used for offline taxonomy/lineage resolution via taxopy. Download once with `wget https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz` and extract into a directory. Pinning a taxdump keeps results reproducible.
 - `--outdir`: Output directory for results
+
+> [!NOTE]
+> `bin/fix_gold_standard.py` also requires the taxdump now: pass it with `-t/--taxonomy`, e.g. `python3 bin/fix_gold_standard.py -i gold.bioboxes -o gold_fixed.bioboxes -t taxdump`.
 
 > [!TIP]
 > **Best Practice**: Validate your input files before running the pipeline:

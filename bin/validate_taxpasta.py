@@ -14,11 +14,11 @@ Author: taxbencher pipeline
 import argparse
 import sys
 from pathlib import Path
-from typing import Dict, List, Tuple
+
 import pandas as pd
 
 
-def validate_taxpasta(input_file: Path) -> Tuple[bool, List[str], Dict[str, any]]:
+def validate_taxpasta(input_file: Path) -> tuple[bool, list[str], dict[str, any]]:
     """
     Validate taxpasta TSV format.
 
@@ -37,8 +37,8 @@ def validate_taxpasta(input_file: Path) -> Tuple[bool, List[str], Dict[str, any]
 
     # Check file is readable
     try:
-        with open(input_file, 'r') as f:
-            first_line = f.readline()
+        with open(input_file) as f:
+            f.readline()
     except Exception as e:
         return False, [f"Cannot read file: {e}"], {}
 
@@ -174,8 +174,10 @@ Format requirements:
         '''
     )
     parser.add_argument('input_file', type=Path, help='Input taxpasta TSV file')
+    parser.add_argument('--warn-only', action='store_true',
+                       help='Always exit 0, even when validation fails (report issues as warnings)')
     parser.add_argument('--strict', action='store_true',
-                       help='Exit with error on any validation warning')
+                       help='Deprecated: validation failure now exits non-zero by default')
 
     args = parser.parse_args()
 
@@ -199,12 +201,12 @@ Format requirements:
     # Print result
     print("\n" + "-" * 60)
     if is_valid:
-        print("✓ VALID: File conforms to taxpasta format")
+        print("VALID: File conforms to taxpasta format")
         return 0
     else:
-        print("✗ INVALID: File has format issues")
+        print("INVALID: File has format issues")
         print("\nPlease fix the issues above before using this file.")
-        return 1 if args.strict else 0
+        return 0 if args.warn_only else 1
 
 
 if __name__ == '__main__':

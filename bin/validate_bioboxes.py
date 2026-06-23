@@ -12,13 +12,12 @@ Author: taxbencher pipeline
 """
 
 import argparse
-import sys
 import re
+import sys
 from pathlib import Path
-from typing import Dict, List, Tuple
 
 
-def validate_bioboxes(input_file: Path) -> Tuple[bool, List[str], Dict[str, any]]:
+def validate_bioboxes(input_file: Path) -> tuple[bool, list[str], dict[str, any]]:
     """
     Validate CAMI Bioboxes profiling format.
 
@@ -37,7 +36,7 @@ def validate_bioboxes(input_file: Path) -> Tuple[bool, List[str], Dict[str, any]
 
     # Read file
     try:
-        with open(input_file, 'r') as f:
+        with open(input_file) as f:
             lines = f.readlines()
     except Exception as e:
         return False, [f"Cannot read file: {e}"], {}
@@ -294,8 +293,10 @@ Reference:
         '''
     )
     parser.add_argument('input_file', type=Path, help='Input bioboxes file')
+    parser.add_argument('--warn-only', action='store_true',
+                       help='Always exit 0, even when validation fails (report issues as warnings)')
     parser.add_argument('--strict', action='store_true',
-                       help='Exit with error on any validation warning')
+                       help='Deprecated: validation failure now exits non-zero by default')
 
     args = parser.parse_args()
 
@@ -322,13 +323,13 @@ Reference:
     # Print result
     print("\n" + "-" * 60)
     if is_valid:
-        print("✓ VALID: File conforms to CAMI Bioboxes format")
+        print("VALID: File conforms to CAMI Bioboxes format")
         return 0
     else:
-        print("✗ INVALID: File has format issues")
+        print("INVALID: File has format issues")
         print("\nPlease fix the issues above before using this file.")
         print("\nSee: https://github.com/bioboxes/rfc/tree/master/data-format")
-        return 1 if args.strict else 0
+        return 0 if args.warn_only else 1
 
 
 if __name__ == '__main__':

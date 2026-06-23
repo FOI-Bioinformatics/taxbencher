@@ -10,26 +10,30 @@
             "sample_id": {
                 "type": "string",
                 "pattern": "^\\S+$",
+                "meta": ["sample_id"],
                 "errorMessage": "Sample ID (biological sample identifier) must be provided and cannot contain spaces"
             },
             "label": {
                 "type": "string",
                 "pattern": "^\\S+$",
+                "meta": ["id", "label"],
                 "errorMessage": "Label (unique identifier for this taxonomic profile) must be provided and cannot contain spaces"
             },
             "classifier": {
                 "type": "string",
                 "pattern": "^\\S+$",
+                "meta": ["classifier"],
                 "errorMessage": "Classifier name must be provided and cannot contain spaces"
             },
             "taxpasta_file": {
                 "type": "string",
                 "pattern": "^\\S+\\.(tsv|txt|kreport|kreport2|report|out|profile|mpa|mpa3|kraken|kraken2|krakenuniq|centrifuge|kaiju|bracken|ganon|diamond|motus|megan|rma6|kmcp)$",
-                "errorMessage": "Input file must be provided and have a valid extension (.tsv/.txt for taxpasta standardized format, or raw profiler outputs: .kreport/.kreport2 (Kraken2/Bracken), .report (Centrifuge), .out (Kaiju/ganon/KMCP), .profile/.mpa/.mpa3 (MetaPhlAn), .diamond (DIAMOND), .motus (mOTUs), .megan/.rma6 (MEGAN6), .krakenuniq (KrakenUniq))"
+                "errorMessage": "Input file must be provided and have a valid extension (.tsv/.txt for taxpasta standardized format, or raw profiler outputs: .kreport/.kreport2 (Kraken2/Bracken), .report (Centrifuge), .out (Kaiju/ganon/KMCP), .profile/.mpa/.mpa3 (MetaPhlAn), .diamond (DIAMOND), .motus (mOTUs), .megan/.rma6 (MEGAN6), .krakenuniq (KrakenUniq)). Relative paths are resolved relative to the samplesheet's location; absolute paths and URLs are also accepted."
             },
             "taxonomy_db": {
                 "type": "string",
                 "default": "NCBI",
+                "meta": ["taxonomy_db"],
                 "errorMessage": "Taxonomy database should be specified (default: NCBI)"
             }
         },

@@ -28,7 +28,12 @@ nextflow_process {
                         labels: 'kraken2,metaphlan,centrifuge',
                         num_classifiers: 3
                     ],
-                    file('${moduleDir}/testdata/opal_results_realistic', checkIfExists: true)
+                    file('${moduleDir}/testdata/opal_results_realistic', checkIfExists: true),
+                    [
+                        file('${moduleDir}/testdata/kraken2.bioboxes', checkIfExists: true),
+                        file('${moduleDir}/testdata/metaphlan.bioboxes', checkIfExists: true),
+                        file('${moduleDir}/testdata/centrifuge.bioboxes', checkIfExists: true)
+                    ]
                 ]
                 input[1] = file('${moduleDir}/testdata/gold_standard_realistic.bioboxes', checkIfExists: true)
                 """
@@ -62,7 +67,11 @@ nextflow_process {
                 """
                 input[0] = [
                     [ id: 'sample1' ],
-                    file('${moduleDir}/testdata/opal_results', checkIfExists: true)
+                    file('${moduleDir}/testdata/opal_results', checkIfExists: true),
+                    [
+                        file('${moduleDir}/testdata/kraken2.bioboxes', checkIfExists: true),
+                        file('${moduleDir}/testdata/metaphlan.bioboxes', checkIfExists: true)
+                    ]
                 ]
                 input[1] = file('${moduleDir}/testdata/gold_standard.bioboxes', checkIfExists: true)
                 """
@@ -90,7 +99,11 @@ nextflow_process {
                         id: 'sample1',
                         sample_id: 'test_sample'
                     ],
-                    file('${moduleDir}/testdata/opal_results', checkIfExists: true)
+                    file('${moduleDir}/testdata/opal_results', checkIfExists: true),
+                    [
+                        file('${moduleDir}/testdata/kraken2.bioboxes', checkIfExists: true),
+                        file('${moduleDir}/testdata/metaphlan.bioboxes', checkIfExists: true)
+                    ]
                 ]
                 input[1] = file('${moduleDir}/testdata/gold_standard.bioboxes', checkIfExists: true)
                 """
@@ -119,7 +132,11 @@ nextflow_process {
                         sample_id: 'test_sample',
                         labels: 'Kraken2,MetaPhlAn'
                     ],
-                    file('${moduleDir}/testdata/opal_results', checkIfExists: true)
+                    file('${moduleDir}/testdata/opal_results', checkIfExists: true),
+                    [
+                        file('${moduleDir}/testdata/kraken2.bioboxes', checkIfExists: true),
+                        file('${moduleDir}/testdata/metaphlan.bioboxes', checkIfExists: true)
+                    ]
                 ]
                 input[1] = file('${moduleDir}/testdata/gold_standard.bioboxes', checkIfExists: true)
                 """
@@ -144,7 +161,11 @@ nextflow_process {
                 """
                 input[0] = [
                     [ id: 'custom_id' ],
-                    file('${moduleDir}/testdata/opal_results', checkIfExists: true)
+                    file('${moduleDir}/testdata/opal_results', checkIfExists: true),
+                    [
+                        file('${moduleDir}/testdata/kraken2.bioboxes', checkIfExists: true),
+                        file('${moduleDir}/testdata/metaphlan.bioboxes', checkIfExists: true)
+                    ]
                 ]
                 input[1] = file('${moduleDir}/testdata/gold_standard.bioboxes', checkIfExists: true)
                 """
@@ -177,7 +198,11 @@ nextflow_process {
                         labels: 'test1,test2',
                         num_classifiers: 2
                     ],
-                    file('${moduleDir}/testdata/empty_opal_results', checkIfExists: true)
+                    file('${moduleDir}/testdata/empty_opal_results', checkIfExists: true),
+                    [
+                        file('${moduleDir}/testdata/kraken2.bioboxes', checkIfExists: true),
+                        file('${moduleDir}/testdata/metaphlan.bioboxes', checkIfExists: true)
+                    ]
                 ]
                 input[1] = file('${moduleDir}/testdata/gold_standard.bioboxes', checkIfExists: true)
                 """
@@ -209,7 +234,12 @@ nextflow_process {
                         labels: 'single_classifier',
                         num_classifiers: 1
                     ],
-                    file('${moduleDir}/testdata/opal_results_realistic', checkIfExists: true)
+                    file('${moduleDir}/testdata/opal_results_realistic', checkIfExists: true),
+                    [
+                        file('${moduleDir}/testdata/kraken2.bioboxes', checkIfExists: true),
+                        file('${moduleDir}/testdata/metaphlan.bioboxes', checkIfExists: true),
+                        file('${moduleDir}/testdata/centrifuge.bioboxes', checkIfExists: true)
+                    ]
                 ]
                 input[1] = file('${moduleDir}/testdata/gold_standard_realistic.bioboxes', checkIfExists: true)
                 """

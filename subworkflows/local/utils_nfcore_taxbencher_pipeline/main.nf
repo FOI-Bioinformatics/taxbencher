@@ -71,16 +71,38 @@ workflow PIPELINE_INITIALISATION {
     //
     // Create channel from input file provided through params.input
     //
-    // Note: taxbencher uses taxpasta profiles, not fastq files
-    // The samplesheet schema defines: sample, classifier, taxpasta_file, taxonomy_db
+    // Note: taxbencher uses taxpasta profiles, not fastq files.
+    // samplesheetToList validates each row against assets/schema_input.json
+    // (required columns, field patterns, file existence, valid extensions) and
+    // resolves relative taxpasta_file paths relative to the samplesheet location.
+    // It returns rows shaped as [ meta, taxpasta_file ] using the schema's `meta`
+    // annotations (meta.id == label, plus sample_id, label, classifier, taxonomy_db).
     //
+    def samplesheet_rows = samplesheetToList(params.input, "${projectDir}/assets/schema_input.json")
 
+    // Enforce label uniqueness across the whole samplesheet. meta.id (and downstream
+    // output filenames) are derived from `label`, so duplicates would silently collide.
+    def label_counts = samplesheet_rows
+        .collect { meta, _taxpasta_file -> meta.label }
+        .countBy { it }
+    def duplicate_labels = label_counts.findAll { _label, count -> count > 1 }.keySet()
+    if (duplicate_labels) {
+        error("Duplicate label(s) found in samplesheet: ${duplicate_labels.sort().join(', ')}. " +
+            "Each 'label' must be unique across all rows (it identifies a single taxonomic profile and is used for output filenames).")
+    }
+
+    // Resolve each taxpasta_file relative to the samplesheet's location (the nf-core
+    // convention), so the same samplesheet works regardless of the launch directory.
+    // Absolute paths and URLs are passed through unchanged.
+    def samplesheet_dir = file(params.input).parent
     ch_samplesheet = Channel
-        .fromPath(params.input)
-        .splitCsv(header: true)
-        .map { row ->
-            row.taxonomy_db = row.taxonomy_db ?: 'NCBI'
-            return row
+        .fromList(samplesheet_rows)
+        .map { meta, taxpasta_file ->
+            def is_absolute_or_uri = taxpasta_file.startsWith('/') || taxpasta_file.contains('://')
+            def resolved = is_absolute_or_uri ?
+                file(taxpasta_file, checkIfExists: true) :
+                file(samplesheet_dir.resolve(taxpasta_file).toString(), checkIfExists: true)
+            [meta, resolved]
         }
 
     emit:

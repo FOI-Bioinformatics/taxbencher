@@ -41,6 +41,10 @@ process OPAL_PER_SAMPLE {
     def pred_files = predictions instanceof List ? predictions : [predictions]
 
     """
+    # Use a writable matplotlib cache dir to avoid noisy warnings on stderr
+    # (which otherwise leak into the version string below).
+    export MPLCONFIGDIR=\$(pwd)/.mplconfig
+
     # Validate prediction count
     NUM_PREDICTIONS=${pred_files.size()}
     if [ \$NUM_PREDICTIONS -lt 1 ]; then
@@ -99,7 +103,7 @@ process OPAL_PER_SAMPLE {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        opal: \$(opal.py --version 2>&1 | sed 's/OPAL //g')
+        opal: \$(opal.py --version 2>&1 | grep -oE '[0-9]+\\.[0-9]+\\.[0-9]+' | head -1)
     END_VERSIONS
     """
 

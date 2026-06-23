@@ -14,10 +14,9 @@ Examples:
     python3 validate_profiler_format.py centrifuge sample1.report
 """
 
-import sys
 import argparse
+import sys
 from pathlib import Path
-
 
 # Format specifications for each profiler
 PROFILER_SPECS = {
@@ -148,7 +147,7 @@ def validate_file_format(profiler: str, file_path: Path) -> tuple[bool, list[str
 
     # Read and validate file content
     try:
-        with open(file_path, "r") as f:
+        with open(file_path) as f:
             lines = [line.rstrip("\n") for line in f if line.strip()]
 
         if not lines:
@@ -282,9 +281,9 @@ Supported profilers:
         for issue in issues:
             print(f"  • {issue}", file=sys.stderr)
 
-        print(f"\nFor format details, run:", file=sys.stderr)
+        print("\nFor format details, run:", file=sys.stderr)
         print(f"  {sys.argv[0]} {profiler} --show-spec", file=sys.stderr)
-        print(f"\nSee docs/raw-inputs.md for comprehensive format documentation", file=sys.stderr)
+        print("\nSee docs/raw-inputs.md for comprehensive format documentation", file=sys.stderr)
 
         sys.exit(1)
 

@@ -5,6 +5,11 @@ repos:
       - id: prettier
         additional_dependencies:
           - prettier@3.6.2
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.4
+    hooks:
+      - id: ruff
+        files: ^(bin|tests/python)/.*\.py$
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:

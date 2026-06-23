@@ -2,8 +2,5 @@ name: taxpasta_to_bioboxes
 channels:
   - conda-forge
   - bioconda
-  - defaults
 dependencies:
-  - python=3.11
-  - pandas>=2.0
-  - ete3>=3.1.3
+  - bioconda::taxopy=0.14.0

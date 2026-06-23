@@ -74,10 +74,17 @@ workflow TAXBENCHER {
         .mix(TAXPASTA_STANDARDISE.out.standardised)
 
     //
+    // Taxonomy database (NCBI taxdump directory) used for offline lineage
+    // resolution by taxopy in TAXPASTA_TO_BIOBOXES.
+    //
+    ch_taxonomy = Channel.fromPath(params.taxpasta_taxonomy, type: 'dir', checkIfExists: true).first()
+
+    //
     // MODULE: Convert taxpasta profiles to CAMI Bioboxes format
     //
     TAXPASTA_TO_BIOBOXES (
-        ch_taxpasta
+        ch_taxpasta,
+        ch_taxonomy
     )
     // NOTE: .first() optimization - versions.yml content is identical across all invocations
     ch_versions = ch_versions.mix(TAXPASTA_TO_BIOBOXES.out.versions.first())
@@ -128,10 +135,22 @@ workflow TAXBENCHER {
 
     //
     // MODULE: Comparative analysis of classifiers per sample
-    // Generates PCA plots, differential taxa analysis, and comparison reports
+    // Generates PCA plots, differential taxa analysis, and comparison reports.
     //
+    // Differential abundance needs the per-sample prediction bioboxes staged into
+    // the task working directory, so we join the OPAL results with that sample's
+    // bioboxes files (keyed on sample_id) and pass both to the module.
+    //
+    ch_bioboxes_by_sample = ch_bioboxes_per_sample
+        .map { meta_grouped, _gold_std, bioboxes_files -> [meta_grouped.id, bioboxes_files] }
+
+    ch_comparative_input = OPAL_PER_SAMPLE.out.results
+        .map { meta, opal_dir -> [meta.id, meta, opal_dir] }
+        .join(ch_bioboxes_by_sample)
+        .map { _sample_id, meta, opal_dir, bioboxes_files -> [meta, opal_dir, bioboxes_files] }
+
     COMPARATIVE_ANALYSIS (
-        OPAL_PER_SAMPLE.out.results,
+        ch_comparative_input,
         ch_gold_standard
     )
     // NOTE: .first() optimization - versions.yml content is identical across all invocations

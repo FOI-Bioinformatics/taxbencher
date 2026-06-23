@@ -113,8 +113,8 @@ See [docs/development/architecture.md](docs/development/architecture.md) for det
 
 ### TAXPASTA_TO_BIOBOXES
 **Purpose**: Converts taxpasta TSV to CAMI Bioboxes format
-**Uses**: Python + ete3 for taxonomy lookups
-**Container**: Seqera Wave (pandas + ete3)
+**Uses**: Python + taxopy for offline taxonomy lookups (requires `--taxpasta_taxonomy` taxdump dir)
+**Container**: taxopy biocontainer (`quay.io/biocontainers/taxopy`)
 
 ### OPAL_PER_SAMPLE
 **Purpose**: CAMI OPAL evaluation per biological sample

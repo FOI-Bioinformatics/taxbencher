@@ -2,14 +2,20 @@ process COMPARATIVE_ANALYSIS {
     tag "$meta.id"
     label 'process_single'
 
-    // Custom Seqera Wave container with pandas + scikit-learn + plotly + scipy + statsmodels + python-kaleido
+    // Needs pandas + scikit-learn + plotly + scipy + statsmodels + python-kaleido.
+    // NOTE: the wave.seqera.io/wt/<token> URL below is an EXPIRED ephemeral Wave build
+    // token and no longer resolves. Run this module with `-profile conda` or
+    // `-profile wave` (which build the environment from environment.yml), or replace
+    // the reference below with a persistently published image. COMPARATIVE_ANALYSIS is
+    // configured as non-fatal (conf/modules.config) so the core OPAL benchmarking still
+    // completes if this container is unavailable.
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://wave.seqera.io/wt/722b2c677e9b/wave/build:comparative_analysis--8970105c926ac527' :
         'wave.seqera.io/wt/722b2c677e9b/wave/build:comparative_analysis--8970105c926ac527' }"
 
     input:
-    tuple val(meta), path(opal_dir)
+    tuple val(meta), path(opal_dir), path(bioboxes)
     path(gold_standard)
 
     output:
@@ -31,6 +37,7 @@ process COMPARATIVE_ANALYSIS {
     comparative_analysis.py \\
         --opal-dir ${opal_dir} \\
         --gold-standard ${gold_standard} \\
+        --bioboxes-dir . \\
         --sample-id ${sample_id} \\
         --labels "${labels}" \\
         --output-prefix ${prefix}

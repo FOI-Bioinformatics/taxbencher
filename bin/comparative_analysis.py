@@ -13,21 +13,21 @@ Author: Andreas Sjödin (with Claude Code assistance)
 
 import argparse
 import sys
-from pathlib import Path
 import warnings
+from pathlib import Path
 
 # Suppress warnings for cleaner output
 warnings.filterwarnings('ignore')
 
 try:
+    import numpy as np  # noqa: F401  (availability probe for FULL_ANALYSIS)
     import pandas as pd
-    import numpy as np
+    import plotly.express as px
+    import plotly.graph_objects as go
+    from plotly.subplots import make_subplots  # noqa: F401  (availability probe)
+    from scipy import stats  # noqa: F401  (availability probe)
     from sklearn.decomposition import PCA
     from sklearn.preprocessing import StandardScaler
-    import plotly.graph_objects as go
-    import plotly.express as px
-    from plotly.subplots import make_subplots
-    from scipy import stats
     FULL_ANALYSIS = True
 except ImportError as e:
     print(f"[comparative_analysis.py] WARNING: Missing dependencies: {e}", file=sys.stderr)
@@ -53,6 +53,14 @@ def parse_args():
         type=Path,
         required=True,
         help="Path to gold standard bioboxes file"
+    )
+    parser.add_argument(
+        "--bioboxes-dir",
+        type=Path,
+        default=Path("."),
+        help="Directory containing the per-classifier prediction bioboxes files "
+             "(named <label>.bioboxes). Defaults to the current working directory, "
+             "where the pipeline stages them."
     )
     parser.add_argument(
         "--sample-id",
@@ -138,7 +146,7 @@ def parse_bioboxes_profiles(bioboxes_dir: Path, labels: list):
 
         try:
             # Parse bioboxes file (skip metadata headers starting with @)
-            with open(bioboxes_file, 'r') as f:
+            with open(bioboxes_file) as f:
                 lines = [line for line in f if not line.startswith('@') and line.strip()]
 
             if len(lines) > 1:
@@ -158,7 +166,7 @@ def perform_pca_analysis(metrics_df: pd.DataFrame, labels: list, sample_id: str,
 
     Creates interactive Plotly visualization
     """
-    print(f"[comparative_analysis.py] Performing PCA analysis...", file=sys.stderr)
+    print("[comparative_analysis.py] Performing PCA analysis...", file=sys.stderr)
 
     # Identify metric columns (excluding metadata columns)
     metadata_cols = ['tool', 'rank', 'sample', 'label', 'classifier', 'Tool', 'Rank', 'Sample', 'Label', 'Classifier']
@@ -181,7 +189,7 @@ def perform_pca_analysis(metrics_df: pd.DataFrame, labels: list, sample_id: str,
             break
 
     if not classifier_col:
-        print(f"[comparative_analysis.py] WARNING: Could not identify classifier column", file=sys.stderr)
+        print("[comparative_analysis.py] WARNING: Could not identify classifier column", file=sys.stderr)
         create_placeholder_pca(sample_id, labels, output_file)
         return
 
@@ -299,13 +307,10 @@ def perform_differential_abundance(gold_standard: Path, profiles: dict, labels: 
 
     Uses chi-square or similar statistical test
     """
-    print(f"[comparative_analysis.py] Performing differential abundance analysis...", file=sys.stderr)
+    print("[comparative_analysis.py] Performing differential abundance analysis...", file=sys.stderr)
 
     # Parse gold standard
     try:
-        with open(gold_standard, 'r') as f:
-            lines = [line for line in f if not line.startswith('@') and line.strip()]
-
         gold_df = pd.read_csv(gold_standard, sep='\t', comment='@')
         print(f"[comparative_analysis.py] Loaded gold standard: {len(gold_df)} taxa", file=sys.stderr)
     except Exception as e:
@@ -412,7 +417,7 @@ def create_comparison_report(sample_id: str, labels: list, metrics_df,
     """
     Create comprehensive HTML comparison report with Plotly visualizations
     """
-    print(f"[comparative_analysis.py] Creating comparison report...", file=sys.stderr)
+    print("[comparative_analysis.py] Creating comparison report...", file=sys.stderr)
 
     # Create plotly visualizations
     figs = []
@@ -595,14 +600,17 @@ def main():
             else:
                 create_placeholder_pca(args.sample_id, labels, pca_html)
 
-            # Parse bioboxes profiles for differential abundance
-            bioboxes_dir = args.opal_dir.parent / 'taxpasta_to_bioboxes'
-            if not bioboxes_dir.exists():
-                bioboxes_dir = args.opal_dir.parent.parent / 'taxpasta_to_bioboxes'
-
+            # Parse bioboxes profiles for differential abundance.
+            # The pipeline stages each classifier's <label>.bioboxes into the task
+            # working directory, so read them from --bioboxes-dir (default: cwd).
+            bioboxes_dir = args.bioboxes_dir
             if bioboxes_dir.exists():
                 profiles = parse_bioboxes_profiles(bioboxes_dir, labels)
-                perform_differential_abundance(args.gold_standard, profiles, labels, diff_taxa_tsv)
+                if profiles:
+                    perform_differential_abundance(args.gold_standard, profiles, labels, diff_taxa_tsv)
+                else:
+                    print(f"[comparative_analysis.py] WARNING: No matching bioboxes files found in {bioboxes_dir}", file=sys.stderr)
+                    create_placeholder_diff_taxa(diff_taxa_tsv)
             else:
                 print(f"[comparative_analysis.py] WARNING: Bioboxes dir not found at {bioboxes_dir}", file=sys.stderr)
                 create_placeholder_diff_taxa(diff_taxa_tsv)

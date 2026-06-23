@@ -96,6 +96,17 @@ Profiles with the same `sample_id` are evaluated together in a single OPAL run, 
 > ```
 > See **[Gold Standard Troubleshooting](docs/troubleshooting-gold-standard.md)** for detailed validation and fixing guide.
 
+> [!IMPORTANT]
+> The pipeline resolves taxonomic ranks and lineages from an NCBI taxdump using
+> [taxopy](https://github.com/apcamargo/taxopy) (no network access at runtime). You must
+> provide the taxdump directory via `--taxpasta_taxonomy`. Download and extract it once:
+> ```bash
+> wget https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz
+> mkdir -p taxdump && tar -xzf taxdump.tar.gz -C taxdump
+> ```
+> Then point `--taxpasta_taxonomy taxdump` at the extracted directory (it must contain at
+> least `nodes.dmp` and `names.dmp`). Pinning a taxdump keeps results reproducible.
+
 Now, you can run the pipeline using:
 
 ```bash
@@ -103,6 +114,7 @@ nextflow run FOI-Bioinformatics/taxbencher \
    -profile <docker/singularity/conda/.../institute> \
    --input samplesheet.csv \
    --gold_standard gold_standard.bioboxes \
+   --taxpasta_taxonomy taxdump \
    --outdir <OUTDIR>
 ```
 
