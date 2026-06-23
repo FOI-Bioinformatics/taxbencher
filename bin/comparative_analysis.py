@@ -124,6 +124,35 @@ def parse_opal_metrics(opal_dir: Path):
         return None
 
 
+def read_bioboxes_table(path: Path):
+    """
+    Read a CAMI Bioboxes file into a DataFrame.
+
+    The column header is the line starting with '@@' (e.g. '@@TAXID\\tRANK\\t...');
+    lines starting with a single '@' are metadata and are skipped. Using
+    pandas' comment='@' would also drop the '@@' header and lose the column
+    names, so the file is parsed explicitly here.
+    """
+    columns = None
+    rows = []
+    with open(path) as handle:
+        for raw in handle:
+            line = raw.rstrip("\n")
+            if line.startswith("@@"):
+                columns = line[2:].split("\t")
+            elif line.startswith("@") or not line.strip():
+                continue
+            elif columns is not None:
+                rows.append(line.split("\t"))
+    if columns is None:
+        return pd.DataFrame()
+    df = pd.DataFrame(rows, columns=columns)
+    for numeric_col in ("TAXID", "PERCENTAGE"):
+        if numeric_col in df.columns:
+            df[numeric_col] = pd.to_numeric(df[numeric_col], errors="coerce")
+    return df
+
+
 def parse_bioboxes_profiles(bioboxes_dir: Path, labels: list):
     """
     Parse bioboxes profiles to extract taxa abundances
@@ -145,13 +174,8 @@ def parse_bioboxes_profiles(bioboxes_dir: Path, labels: list):
                 continue
 
         try:
-            # Parse bioboxes file (skip metadata headers starting with @)
-            with open(bioboxes_file) as f:
-                lines = [line for line in f if not line.startswith('@') and line.strip()]
-
-            if len(lines) > 1:
-                # First non-@ line should be header
-                df = pd.read_csv(bioboxes_file, sep='\t', comment='@', skiprows=0)
+            df = read_bioboxes_table(bioboxes_file)
+            if not df.empty:
                 profiles[label] = df
                 print(f"[comparative_analysis.py] Loaded profile {label}: {len(df)} taxa", file=sys.stderr)
         except Exception as e:
@@ -309,9 +333,9 @@ def perform_differential_abundance(gold_standard: Path, profiles: dict, labels: 
     """
     print("[comparative_analysis.py] Performing differential abundance analysis...", file=sys.stderr)
 
-    # Parse gold standard
+    # Parse gold standard (same Bioboxes format as the predictions)
     try:
-        gold_df = pd.read_csv(gold_standard, sep='\t', comment='@')
+        gold_df = read_bioboxes_table(gold_standard)
         print(f"[comparative_analysis.py] Loaded gold standard: {len(gold_df)} taxa", file=sys.stderr)
     except Exception as e:
         print(f"[comparative_analysis.py] ERROR loading gold standard: {e}", file=sys.stderr)

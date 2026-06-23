@@ -8,10 +8,10 @@ nextflow_process {
     tag "modules_local"
     tag "comparative_analysis"
 
-    // NOTE: COMPARATIVE_ANALYSIS requires pandas, scikit-learn, plotly, scipy, and statsmodels
-    // for full statistical analysis. These dependencies may not be available in all test environments.
-    // Stub tests verify module structure and output channels without requiring the full dependency stack.
-    // Functional tests require -profile conda or wave for dependency installation.
+    // COMPARATIVE_ANALYSIS needs pandas, scikit-learn, plotly, scipy and statsmodels.
+    // These are provided by a persistent Seqera community container (see the module's
+    // container directive), so the functional tests run under -profile docker/singularity
+    // as well as conda/wave. Stub tests verify the module's structure and output channels.
 
     test("comparative_analysis - functional - realistic data") {
 

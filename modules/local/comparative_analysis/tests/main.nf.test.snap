@@ -1,0 +1,314 @@
+{
+    "comparative_analysis - stub - with labels": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "sample1",
+                            "sample_id": "test_sample",
+                            "labels": "Kraken2,MetaPhlAn"
+                        },
+                        "sample1_pca.html:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "sample1",
+                            "sample_id": "test_sample",
+                            "labels": "Kraken2,MetaPhlAn"
+                        },
+                        "sample1_diff_taxa.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "2": [
+                    [
+                        {
+                            "id": "sample1",
+                            "sample_id": "test_sample",
+                            "labels": "Kraken2,MetaPhlAn"
+                        },
+                        "sample1_comparison.html:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "3": [
+                    "versions.yml:md5,e51d92ba13a37608f9095c6b688ec561"
+                ],
+                "comparison_report": [
+                    [
+                        {
+                            "id": "sample1",
+                            "sample_id": "test_sample",
+                            "labels": "Kraken2,MetaPhlAn"
+                        },
+                        "sample1_comparison.html:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "diff_taxa": [
+                    [
+                        {
+                            "id": "sample1",
+                            "sample_id": "test_sample",
+                            "labels": "Kraken2,MetaPhlAn"
+                        },
+                        "sample1_diff_taxa.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "pca_plot": [
+                    [
+                        {
+                            "id": "sample1",
+                            "sample_id": "test_sample",
+                            "labels": "Kraken2,MetaPhlAn"
+                        },
+                        "sample1_pca.html:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,e51d92ba13a37608f9095c6b688ec561"
+                ]
+            }
+        ],
+        "timestamp": "2026-06-24T01:05:23.740436",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
+    },
+    "comparative_analysis - stub - custom prefix": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "custom_id"
+                        },
+                        "custom_id_pca.html:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "custom_id"
+                        },
+                        "custom_id_diff_taxa.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "2": [
+                    [
+                        {
+                            "id": "custom_id"
+                        },
+                        "custom_id_comparison.html:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "3": [
+                    "versions.yml:md5,e51d92ba13a37608f9095c6b688ec561"
+                ],
+                "comparison_report": [
+                    [
+                        {
+                            "id": "custom_id"
+                        },
+                        "custom_id_comparison.html:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "diff_taxa": [
+                    [
+                        {
+                            "id": "custom_id"
+                        },
+                        "custom_id_diff_taxa.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "pca_plot": [
+                    [
+                        {
+                            "id": "custom_id"
+                        },
+                        "custom_id_pca.html:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,e51d92ba13a37608f9095c6b688ec561"
+                ]
+            }
+        ],
+        "timestamp": "2026-06-24T01:05:27.444009",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
+    },
+    "comparative_analysis - functional - realistic data": {
+        "content": [
+            [
+                [
+                    {
+                        "id": "sample1",
+                        "sample_id": "sample1",
+                        "labels": "kraken2,metaphlan,centrifuge",
+                        "num_classifiers": 3
+                    },
+                    "sample1_pca.html:md5,7ddcf7e063fcf57207969ed8963ca8b8"
+                ]
+            ],
+            [
+                [
+                    {
+                        "id": "sample1",
+                        "sample_id": "sample1",
+                        "labels": "kraken2,metaphlan,centrifuge",
+                        "num_classifiers": 3
+                    },
+                    "sample1_diff_taxa.tsv:md5,356a405ec5f154e14d595bca109c60df"
+                ]
+            ],
+            [
+                "versions.yml:md5,e76e5038beee0bdf7ba91db2a05c73b9"
+            ]
+        ],
+        "timestamp": "2026-06-24T01:08:39.24308",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
+    },
+    "comparative_analysis - stub - basic": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "sample1"
+                        },
+                        "sample1_pca.html:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "sample1"
+                        },
+                        "sample1_diff_taxa.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "2": [
+                    [
+                        {
+                            "id": "sample1"
+                        },
+                        "sample1_comparison.html:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "3": [
+                    "versions.yml:md5,e51d92ba13a37608f9095c6b688ec561"
+                ],
+                "comparison_report": [
+                    [
+                        {
+                            "id": "sample1"
+                        },
+                        "sample1_comparison.html:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "diff_taxa": [
+                    [
+                        {
+                            "id": "sample1"
+                        },
+                        "sample1_diff_taxa.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "pca_plot": [
+                    [
+                        {
+                            "id": "sample1"
+                        },
+                        "sample1_pca.html:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,e51d92ba13a37608f9095c6b688ec561"
+                ]
+            }
+        ],
+        "timestamp": "2026-06-24T00:50:00.083189",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
+    },
+    "comparative_analysis - stub - with sample_id": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "sample1",
+                            "sample_id": "test_sample"
+                        },
+                        "sample1_pca.html:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "sample1",
+                            "sample_id": "test_sample"
+                        },
+                        "sample1_diff_taxa.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "2": [
+                    [
+                        {
+                            "id": "sample1",
+                            "sample_id": "test_sample"
+                        },
+                        "sample1_comparison.html:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "3": [
+                    "versions.yml:md5,e51d92ba13a37608f9095c6b688ec561"
+                ],
+                "comparison_report": [
+                    [
+                        {
+                            "id": "sample1",
+                            "sample_id": "test_sample"
+                        },
+                        "sample1_comparison.html:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "diff_taxa": [
+                    [
+                        {
+                            "id": "sample1",
+                            "sample_id": "test_sample"
+                        },
+                        "sample1_diff_taxa.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "pca_plot": [
+                    [
+                        {
+                            "id": "sample1",
+                            "sample_id": "test_sample"
+                        },
+                        "sample1_pca.html:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,e51d92ba13a37608f9095c6b688ec561"
+                ]
+            }
+        ],
+        "timestamp": "2026-06-24T01:05:20.62444",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
+    }
+}
