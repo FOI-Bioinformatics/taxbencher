@@ -1,0 +1,31 @@
+@SampleID:test_sample
+@Version:0.9.1
+@Ranks:superkingdom|phylum|class|order|family|genus|species|strain
+@TaxonomyID:NCBI
+@@TAXID	RANK	TAXPATH	TAXPATHSN	PERCENTAGE
+2	superkingdom	2	Bacteria	75.000000
+2157	superkingdom	2157	Archaea	25.000000
+1224	phylum	2|1224	Bacteria|Pseudomonadota	55.000000
+28890	phylum	2157|28890	Archaea|Methanobacteriota	25.000000
+1239	phylum	2|1239	Bacteria|Bacillota	20.000000
+1236	class	2|1224|1236	Bacteria|Pseudomonadota|Gammaproteobacteria	45.000000
+183925	class	2157|28890|183925	Archaea|Methanobacteriota|Methanobacteria	25.000000
+91061	class	2|1239|91061	Bacteria|Bacillota|Bacilli	20.000000
+28216	class	2|1224|28216	Bacteria|Pseudomonadota|Betaproteobacteria	10.000000
+91347	order	2|1224|1236|91347	Bacteria|Pseudomonadota|Gammaproteobacteria|Enterobacterales	45.000000
+2158	order	2157|28890|183925|2158	Archaea|Methanobacteriota|Methanobacteria|Methanobacteriales	25.000000
+1385	order	2|1239|91061|1385	Bacteria|Bacillota|Bacilli|Bacillales	20.000000
+80840	order	2|1224|28216|80840	Bacteria|Pseudomonadota|Betaproteobacteria|Burkholderiales	10.000000
+543	family	2|1224|1236|91347|543	Bacteria|Pseudomonadota|Gammaproteobacteria|Enterobacterales|Enterobacteriaceae	45.000000
+2159	family	2157|28890|183925|2158|2159	Archaea|Methanobacteriota|Methanobacteria|Methanobacteriales|Methanobacteriaceae	25.000000
+90964	family	2|1239|91061|1385|90964	Bacteria|Bacillota|Bacilli|Bacillales|Staphylococcaceae	20.000000
+119060	family	2|1224|28216|80840|119060	Bacteria|Pseudomonadota|Betaproteobacteria|Burkholderiales|Burkholderiaceae	10.000000
+561	genus	2|1224|1236|91347|543|561	Bacteria|Pseudomonadota|Gammaproteobacteria|Enterobacterales|Enterobacteriaceae|Escherichia	45.000000
+2172	genus	2157|28890|183925|2158|2159|2172	Archaea|Methanobacteriota|Methanobacteria|Methanobacteriales|Methanobacteriaceae|Methanobrevibacter	25.000000
+1279	genus	2|1239|91061|1385|90964|1279	Bacteria|Bacillota|Bacilli|Bacillales|Staphylococcaceae|Staphylococcus	20.000000
+32008	genus	2|1224|28216|80840|119060|32008	Bacteria|Pseudomonadota|Betaproteobacteria|Burkholderiales|Burkholderiaceae|Burkholderia	10.000000
+562	species	2|1224|1236|91347|543|561|562	Bacteria|Pseudomonadota|Gammaproteobacteria|Enterobacterales|Enterobacteriaceae|Escherichia|Escherichia coli	45.000000
+2173	species	2157|28890|183925|2158|2159|2172|2173	Archaea|Methanobacteriota|Methanobacteria|Methanobacteriales|Methanobacteriaceae|Methanobrevibacter|Methanobrevibacter smithii	25.000000
+1280	species	2|1239|91061|1385|90964|1279|1280	Bacteria|Bacillota|Bacilli|Bacillales|Staphylococcaceae|Staphylococcus|Staphylococcus aureus	20.000000
+28450	species	2|1224|28216|80840|119060|32008|28450	Bacteria|Pseudomonadota|Betaproteobacteria|Burkholderiales|Burkholderiaceae|Burkholderia|Burkholderia pseudomallei	10.000000
+272631	strain	2|1224|28216|80840|119060|32008|28450|272631	Bacteria|Pseudomonadota|Betaproteobacteria|Burkholderiales|Burkholderiaceae|Burkholderia|Burkholderia pseudomallei|Burkholderia pseudomallei K96243	10.000000

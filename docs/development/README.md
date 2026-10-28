@@ -5,6 +5,7 @@ This directory contains comprehensive technical documentation for taxbencher dev
 ## Quick Navigation
 
 ### Core Documentation
+
 - **[Architecture](architecture.md)** - Pipeline structure, data flow, and design patterns
 - **[Modules](modules.md)** - Detailed module specifications and implementation details
 - **[Workflow Patterns](workflow-patterns.md)** - Channel operations and Nextflow patterns
@@ -13,12 +14,14 @@ This directory contains comprehensive technical documentation for taxbencher dev
 - **[Code Quality](code-quality.md)** - Best practices, innovative patterns, container strategy
 
 ### Reports
+
 - [Code Quality Report](../reports/code-quality.md) - Latest quality assessment
 - [Test Coverage Report](../reports/test-coverage.md) - Detailed test analysis
 - [Validation Report](../reports/validation.md) - Validation infrastructure overview
 - [Test Improvements Summary](../reports/test-improvements.md) - Historical improvements
 
 ### User Documentation
+
 - [Usage Guide](../usage.md) - How to run the pipeline
 - [Input Formats](../raw-inputs.md) - Supported input formats
 - [Output Documentation](../output.md) - Understanding pipeline outputs
@@ -35,6 +38,7 @@ This directory contains comprehensive technical documentation for taxbencher dev
 ## Contributing
 
 Before contributing:
+
 1. Read the [Development Guide](development-guide.md)
 2. Check [Code Quality](code-quality.md) for standards
 3. Review [Testing](testing.md) for test requirements
@@ -44,12 +48,14 @@ Before contributing:
 ## Quick References
 
 **Common Tasks:**
+
 - Adding a module: See [development-guide.md#adding-modules](development-guide.md)
 - Modifying workflows: See [development-guide.md#modifying-workflows](development-guide.md)
 - Running tests: See [testing.md#running-tests](testing.md)
 - Debugging: See [workflow-patterns.md#debugging](workflow-patterns.md)
 
 **Key Patterns:**
+
 - Per-sample grouping: [workflow-patterns.md#per-sample-grouping](workflow-patterns.md)
 - Tuple-embedded channels: [code-quality.md#innovative-patterns](code-quality.md)
 - Automatic format detection: [workflow-patterns.md#format-detection](workflow-patterns.md)

@@ -1,0 +1,43 @@
+{
+    "ete3 build taxdb - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        "taxa.sqlite:md5,d41d8cd98f00b204e9800998ecf8427e",
+                        "taxa.sqlite.traverse.pkl:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,f6b2c10f92a9bc9f2e13ec01d86bc05e"
+                ],
+                "db": [
+                    [
+                        "taxa.sqlite:md5,d41d8cd98f00b204e9800998ecf8427e",
+                        "taxa.sqlite.traverse.pkl:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,f6b2c10f92a9bc9f2e13ec01d86bc05e"
+                ]
+            }
+        ],
+        "timestamp": "2026-10-28T12:55:49.23679109",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.4"
+        }
+    },
+    "ete3 build taxdb - reduced taxdump": {
+        "content": [
+            [
+                "versions.yml:md5,f6b2c10f92a9bc9f2e13ec01d86bc05e"
+            ]
+        ],
+        "timestamp": "2026-10-28T12:55:40.795594146",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.4"
+        }
+    }
+}

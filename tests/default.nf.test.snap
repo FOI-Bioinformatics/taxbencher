@@ -1,19 +1,97 @@
 {
     "-profile test_realistic with multi-classifier realistic data": {
         "content": [
-            3,
+            7,
             {
+                "COMPARATIVE_ANALYSIS": {
+                    "python": "3.10.22",
+                    "comparative_analysis": "2.0.0"
+                },
+                "ETE3_BUILD_TAXDB": {
+                    "python": "3.10.22",
+                    "ete3": "3.1.3"
+                },
+                "OPAL_PER_SAMPLE": {
+                    "opal": "opal.py 1.0.13"
+                },
                 "TAXPASTA_TO_BIOBOXES": {
-                    "python": "3.14.0",
+                    "python": "3.10.22",
                     "pandas": "2.3.3",
-                    "ete3": "not installed",
-                    "taxpasta_to_bioboxes": "1.0.0"
+                    "ete3": "3.1.3",
+                    "taxpasta_to_bioboxes": "2.0.0"
                 },
                 "Workflow": {
-                    "FOI-Bioinformatics/taxbencher": "v1.1.1dev"
+                    "FOI-Bioinformatics/taxbencher": "v1.3.0dev"
                 }
             },
             [
+                "comparative_analysis",
+                "comparative_analysis/test1_comparison.html",
+                "comparative_analysis/test1_diff_taxa.tsv",
+                "comparative_analysis/test1_metrics_wide.tsv",
+                "comparative_analysis/test1_opal_summary_mqc.tsv",
+                "comparative_analysis/test1_pca.html",
+                "multiqc",
+                "multiqc/multiqc_data",
+                "multiqc/multiqc_data/llms-full.txt",
+                "multiqc/multiqc_data/multiqc.log",
+                "multiqc/multiqc_data/multiqc.parquet",
+                "multiqc/multiqc_data/multiqc_citations.txt",
+                "multiqc/multiqc_data/multiqc_data.json",
+                "multiqc/multiqc_data/multiqc_software_versions.txt",
+                "multiqc/multiqc_data/multiqc_sources.txt",
+                "multiqc/multiqc_data/multiqc_taxbencher_opal_summary_table.txt",
+                "multiqc/multiqc_plots",
+                "multiqc/multiqc_plots/pdf",
+                "multiqc/multiqc_plots/pdf/taxbencher_opal_summary_table.pdf",
+                "multiqc/multiqc_plots/png",
+                "multiqc/multiqc_plots/png/taxbencher_opal_summary_table.png",
+                "multiqc/multiqc_plots/svg",
+                "multiqc/multiqc_plots/svg/taxbencher_opal_summary_table.svg",
+                "multiqc/multiqc_report.html",
+                "opal",
+                "opal/test1",
+                "opal/test1/by_rank",
+                "opal/test1/by_rank/class.tsv",
+                "opal/test1/by_rank/family.tsv",
+                "opal/test1/by_rank/genus.tsv",
+                "opal/test1/by_rank/order.tsv",
+                "opal/test1/by_rank/phylum.tsv",
+                "opal/test1/by_rank/species.tsv",
+                "opal/test1/by_rank/strain.tsv",
+                "opal/test1/by_rank/superkingdom.tsv",
+                "opal/test1/by_tool",
+                "opal/test1/by_tool/test1_centrifuge",
+                "opal/test1/by_tool/test1_centrifuge.tsv",
+                "opal/test1/by_tool/test1_centrifuge/purity_completeness_per_rank.pdf",
+                "opal/test1/by_tool/test1_centrifuge/purity_completeness_per_rank.png",
+                "opal/test1/by_tool/test1_kraken2",
+                "opal/test1/by_tool/test1_kraken2.tsv",
+                "opal/test1/by_tool/test1_kraken2/purity_completeness_per_rank.pdf",
+                "opal/test1/by_tool/test1_kraken2/purity_completeness_per_rank.png",
+                "opal/test1/by_tool/test1_metaphlan",
+                "opal/test1/by_tool/test1_metaphlan.tsv",
+                "opal/test1/by_tool/test1_metaphlan/purity_completeness_per_rank.pdf",
+                "opal/test1/by_tool/test1_metaphlan/purity_completeness_per_rank.png",
+                "opal/test1/confusion.tsv",
+                "opal/test1/gold_standard",
+                "opal/test1/gold_standard/rarefaction_curves.pdf",
+                "opal/test1/gold_standard/rarefaction_curves.png",
+                "opal/test1/gold_standard/rarefaction_curves_log_scale.pdf",
+                "opal/test1/gold_standard/rarefaction_curves_log_scale.png",
+                "opal/test1/heatmap_bar.png",
+                "opal/test1/log.txt",
+                "opal/test1/opal.log",
+                "opal/test1/plot_shannon.pdf",
+                "opal/test1/plot_shannon.png",
+                "opal/test1/plot_shannon_diff.pdf",
+                "opal/test1/plot_shannon_diff.png",
+                "opal/test1/results.html",
+                "opal/test1/results.tsv",
+                "opal/test1/spider_plot_absolute.pdf",
+                "opal/test1/spider_plot_absolute.png",
+                "opal/test1/spider_plot_relative.pdf",
+                "opal/test1/spider_plot_relative.png",
                 "pipeline_info",
                 "pipeline_info/taxbencher_software_mqc_versions.yml",
                 "taxpasta_to_bioboxes",
@@ -22,32 +100,127 @@
                 "taxpasta_to_bioboxes/test1_metaphlan.bioboxes"
             ],
             [
-                "test1_centrifuge.bioboxes:md5,40308fbed4199ebd200d026f818a0a1d",
-                "test1_kraken2.bioboxes:md5,40308fbed4199ebd200d026f818a0a1d",
-                "test1_metaphlan.bioboxes:md5,40308fbed4199ebd200d026f818a0a1d"
+                "test1_diff_taxa.tsv:md5,4ff996f3d0198bace429e1a6f5adb460",
+                "test1_metrics_wide.tsv:md5,028baee46ff9f6d2fcba5783805e1cc8",
+                "test1_opal_summary_mqc.tsv:md5,435434ea4b6a0c34d35163cd263852cc",
+                "class.tsv:md5,531e82fbc2e76d53a222041af8b5a6e5",
+                "family.tsv:md5,ea4e4800cb20a7a4e0ac1aaf949f9053",
+                "genus.tsv:md5,53352ea033ece1af774688a6eb6e4979",
+                "order.tsv:md5,91959a21a4aeb0235490aa48f946c834",
+                "phylum.tsv:md5,8c0221f071a742b1e80873d01312acd6",
+                "species.tsv:md5,d20ba4b1d184be3debc799e7db16179d",
+                "strain.tsv:md5,860010748089f0a5ee0948c3d7e7bb54",
+                "superkingdom.tsv:md5,8cf591193e0dc2189a97532f1080464d",
+                "test1_centrifuge.tsv:md5,a69ffffb4dc562f0c1cf75a49e31778a",
+                "test1_kraken2.tsv:md5,3505b524c0cbf6534b62a2aa96467b01",
+                "test1_metaphlan.tsv:md5,10d2f687044bf3d87d0a258968799d6d",
+                "confusion.tsv:md5,d991cea50a40acb84af500e7fdb90b59",
+                "log.txt:md5,207238e37cd4e66a7bd39810b4821250",
+                "results.tsv:md5,eb98d05dbbdde27d168b5257ba540781",
+                "test1_centrifuge.bioboxes:md5,d2fffdce69f033fa7c1857f4d97118aa",
+                "test1_kraken2.bioboxes:md5,8b5fcde17837274461d94693aba528e0",
+                "test1_metaphlan.bioboxes:md5,58fb9e12fc5169c555987c0090ad8566"
             ]
         ],
+        "timestamp": "2026-10-28T13:04:29.567981689",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.1"
-        },
-        "timestamp": "2025-11-29T19:58:20.803772"
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.4"
+        }
     },
     "-profile test": {
         "content": [
-            3,
+            7,
             {
+                "COMPARATIVE_ANALYSIS": {
+                    "python": "3.10.22",
+                    "comparative_analysis": "2.0.0"
+                },
+                "ETE3_BUILD_TAXDB": {
+                    "python": "3.10.22",
+                    "ete3": "3.1.3"
+                },
+                "OPAL_PER_SAMPLE": {
+                    "opal": "opal.py 1.0.13"
+                },
                 "TAXPASTA_TO_BIOBOXES": {
-                    "python": "3.14.0",
+                    "python": "3.10.22",
                     "pandas": "2.3.3",
-                    "ete3": "not installed",
-                    "taxpasta_to_bioboxes": "1.0.0"
+                    "ete3": "3.1.3",
+                    "taxpasta_to_bioboxes": "2.0.0"
                 },
                 "Workflow": {
-                    "FOI-Bioinformatics/taxbencher": "v1.1.1dev"
+                    "FOI-Bioinformatics/taxbencher": "v1.3.0dev"
                 }
             },
             [
+                "comparative_analysis",
+                "comparative_analysis/test_sample_comparison.html",
+                "comparative_analysis/test_sample_diff_taxa.tsv",
+                "comparative_analysis/test_sample_metrics_wide.tsv",
+                "comparative_analysis/test_sample_opal_summary_mqc.tsv",
+                "comparative_analysis/test_sample_pca.html",
+                "multiqc",
+                "multiqc/multiqc_data",
+                "multiqc/multiqc_data/llms-full.txt",
+                "multiqc/multiqc_data/multiqc.log",
+                "multiqc/multiqc_data/multiqc.parquet",
+                "multiqc/multiqc_data/multiqc_citations.txt",
+                "multiqc/multiqc_data/multiqc_data.json",
+                "multiqc/multiqc_data/multiqc_software_versions.txt",
+                "multiqc/multiqc_data/multiqc_sources.txt",
+                "multiqc/multiqc_data/multiqc_taxbencher_opal_summary_table.txt",
+                "multiqc/multiqc_plots",
+                "multiqc/multiqc_plots/pdf",
+                "multiqc/multiqc_plots/pdf/taxbencher_opal_summary_table.pdf",
+                "multiqc/multiqc_plots/png",
+                "multiqc/multiqc_plots/png/taxbencher_opal_summary_table.png",
+                "multiqc/multiqc_plots/svg",
+                "multiqc/multiqc_plots/svg/taxbencher_opal_summary_table.svg",
+                "multiqc/multiqc_report.html",
+                "opal",
+                "opal/test_sample",
+                "opal/test_sample/by_rank",
+                "opal/test_sample/by_rank/class.tsv",
+                "opal/test_sample/by_rank/family.tsv",
+                "opal/test_sample/by_rank/genus.tsv",
+                "opal/test_sample/by_rank/order.tsv",
+                "opal/test_sample/by_rank/phylum.tsv",
+                "opal/test_sample/by_rank/species.tsv",
+                "opal/test_sample/by_rank/strain.tsv",
+                "opal/test_sample/by_rank/superkingdom.tsv",
+                "opal/test_sample/by_tool",
+                "opal/test_sample/by_tool/test_sample_centrifuge",
+                "opal/test_sample/by_tool/test_sample_centrifuge.tsv",
+                "opal/test_sample/by_tool/test_sample_centrifuge/purity_completeness_per_rank.pdf",
+                "opal/test_sample/by_tool/test_sample_centrifuge/purity_completeness_per_rank.png",
+                "opal/test_sample/by_tool/test_sample_kraken2",
+                "opal/test_sample/by_tool/test_sample_kraken2.tsv",
+                "opal/test_sample/by_tool/test_sample_kraken2/purity_completeness_per_rank.pdf",
+                "opal/test_sample/by_tool/test_sample_kraken2/purity_completeness_per_rank.png",
+                "opal/test_sample/by_tool/test_sample_metaphlan",
+                "opal/test_sample/by_tool/test_sample_metaphlan.tsv",
+                "opal/test_sample/by_tool/test_sample_metaphlan/purity_completeness_per_rank.pdf",
+                "opal/test_sample/by_tool/test_sample_metaphlan/purity_completeness_per_rank.png",
+                "opal/test_sample/confusion.tsv",
+                "opal/test_sample/gold_standard",
+                "opal/test_sample/gold_standard/rarefaction_curves.pdf",
+                "opal/test_sample/gold_standard/rarefaction_curves.png",
+                "opal/test_sample/gold_standard/rarefaction_curves_log_scale.pdf",
+                "opal/test_sample/gold_standard/rarefaction_curves_log_scale.png",
+                "opal/test_sample/heatmap_bar.png",
+                "opal/test_sample/log.txt",
+                "opal/test_sample/opal.log",
+                "opal/test_sample/plot_shannon.pdf",
+                "opal/test_sample/plot_shannon.png",
+                "opal/test_sample/plot_shannon_diff.pdf",
+                "opal/test_sample/plot_shannon_diff.png",
+                "opal/test_sample/results.html",
+                "opal/test_sample/results.tsv",
+                "opal/test_sample/spider_plot_absolute.pdf",
+                "opal/test_sample/spider_plot_absolute.png",
+                "opal/test_sample/spider_plot_relative.pdf",
+                "opal/test_sample/spider_plot_relative.png",
                 "pipeline_info",
                 "pipeline_info/taxbencher_software_mqc_versions.yml",
                 "taxpasta_to_bioboxes",
@@ -56,35 +229,130 @@
                 "taxpasta_to_bioboxes/test_sample_metaphlan.bioboxes"
             ],
             [
-                "test_sample_centrifuge.bioboxes:md5,a4e7d6690c8fad5c6be44195c4bd5976",
-                "test_sample_kraken2.bioboxes:md5,a4e7d6690c8fad5c6be44195c4bd5976",
-                "test_sample_metaphlan.bioboxes:md5,a4e7d6690c8fad5c6be44195c4bd5976"
+                "test_sample_diff_taxa.tsv:md5,b7cb168b60f4bc5d6ccac619e3586aa7",
+                "test_sample_metrics_wide.tsv:md5,fa0e820bc29f340ec9865b520e2e33e7",
+                "test_sample_opal_summary_mqc.tsv:md5,db25a9ba1db92028fa6f4c46c2859af9",
+                "class.tsv:md5,f6ef7c0157ac3dcd9f9eae80a1127a1e",
+                "family.tsv:md5,bf1b8138b591dd6d834b52c8002e9686",
+                "genus.tsv:md5,3ce6a5dd55b8d0dbe8eec5add60960da",
+                "order.tsv:md5,bf1b8138b591dd6d834b52c8002e9686",
+                "phylum.tsv:md5,60d8a583002bfaa8d10230ba1aafe1ae",
+                "species.tsv:md5,e541cb2b9514bca8ca18d3b3faf42f30",
+                "strain.tsv:md5,3987eca13058b8c90c433e7d4daa354c",
+                "superkingdom.tsv:md5,5db628779e4a48dddecc3568f3ac4f8f",
+                "test_sample_centrifuge.tsv:md5,dc42de4ba5a347e51808de5f2a4a7bba",
+                "test_sample_kraken2.tsv:md5,54f664398f97be26e64144ff4e0d533f",
+                "test_sample_metaphlan.tsv:md5,4c0aea0f9dfd3bb976e1c74e356c002b",
+                "confusion.tsv:md5,42c4ad35652fef32b2fe9e32e4b0b0e3",
+                "log.txt:md5,01160d509576ebecae0021984d05131a",
+                "results.tsv:md5,e8790354e0654ffed378c095af4e3257",
+                "test_sample_centrifuge.bioboxes:md5,61b297f6094f9b92ae1e6bd3ced6ab97",
+                "test_sample_kraken2.bioboxes:md5,9238470f20a02816636b1b41b72882e8",
+                "test_sample_metaphlan.bioboxes:md5,c613540109335133ce3a1219a59e4a6f"
             ]
         ],
+        "timestamp": "2026-10-28T13:02:47.876857486",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.1"
-        },
-        "timestamp": "2025-11-29T19:57:46.815899"
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.4"
+        }
     },
     "-profile test_raw with raw profiler inputs": {
         "content": [
-            6,
+            10,
             {
+                "COMPARATIVE_ANALYSIS": {
+                    "python": "3.10.22",
+                    "comparative_analysis": "2.0.0"
+                },
+                "ETE3_BUILD_TAXDB": {
+                    "python": "3.10.22",
+                    "ete3": "3.1.3"
+                },
+                "OPAL_PER_SAMPLE": {
+                    "opal": "opal.py 1.0.13"
+                },
                 "TAXPASTA_STANDARDISE": {
                     "taxpasta": "0.7.0"
                 },
                 "TAXPASTA_TO_BIOBOXES": {
-                    "python": "3.14.0",
+                    "python": "3.10.22",
                     "pandas": "2.3.3",
-                    "ete3": "not installed",
-                    "taxpasta_to_bioboxes": "1.0.0"
+                    "ete3": "3.1.3",
+                    "taxpasta_to_bioboxes": "2.0.0"
                 },
                 "Workflow": {
-                    "FOI-Bioinformatics/taxbencher": "v1.1.1dev"
+                    "FOI-Bioinformatics/taxbencher": "v1.3.0dev"
                 }
             },
             [
+                "comparative_analysis",
+                "comparative_analysis/test_sample_comparison.html",
+                "comparative_analysis/test_sample_diff_taxa.tsv",
+                "comparative_analysis/test_sample_metrics_wide.tsv",
+                "comparative_analysis/test_sample_opal_summary_mqc.tsv",
+                "comparative_analysis/test_sample_pca.html",
+                "multiqc",
+                "multiqc/multiqc_data",
+                "multiqc/multiqc_data/llms-full.txt",
+                "multiqc/multiqc_data/multiqc.log",
+                "multiqc/multiqc_data/multiqc.parquet",
+                "multiqc/multiqc_data/multiqc_citations.txt",
+                "multiqc/multiqc_data/multiqc_data.json",
+                "multiqc/multiqc_data/multiqc_software_versions.txt",
+                "multiqc/multiqc_data/multiqc_sources.txt",
+                "multiqc/multiqc_data/multiqc_taxbencher_opal_summary_table.txt",
+                "multiqc/multiqc_plots",
+                "multiqc/multiqc_plots/pdf",
+                "multiqc/multiqc_plots/pdf/taxbencher_opal_summary_table.pdf",
+                "multiqc/multiqc_plots/png",
+                "multiqc/multiqc_plots/png/taxbencher_opal_summary_table.png",
+                "multiqc/multiqc_plots/svg",
+                "multiqc/multiqc_plots/svg/taxbencher_opal_summary_table.svg",
+                "multiqc/multiqc_report.html",
+                "opal",
+                "opal/test_sample",
+                "opal/test_sample/by_rank",
+                "opal/test_sample/by_rank/class.tsv",
+                "opal/test_sample/by_rank/family.tsv",
+                "opal/test_sample/by_rank/genus.tsv",
+                "opal/test_sample/by_rank/order.tsv",
+                "opal/test_sample/by_rank/phylum.tsv",
+                "opal/test_sample/by_rank/species.tsv",
+                "opal/test_sample/by_rank/strain.tsv",
+                "opal/test_sample/by_rank/superkingdom.tsv",
+                "opal/test_sample/by_tool",
+                "opal/test_sample/by_tool/test_sample_centrifuge",
+                "opal/test_sample/by_tool/test_sample_centrifuge.tsv",
+                "opal/test_sample/by_tool/test_sample_centrifuge/purity_completeness_per_rank.pdf",
+                "opal/test_sample/by_tool/test_sample_centrifuge/purity_completeness_per_rank.png",
+                "opal/test_sample/by_tool/test_sample_kraken2",
+                "opal/test_sample/by_tool/test_sample_kraken2.tsv",
+                "opal/test_sample/by_tool/test_sample_kraken2/purity_completeness_per_rank.pdf",
+                "opal/test_sample/by_tool/test_sample_kraken2/purity_completeness_per_rank.png",
+                "opal/test_sample/by_tool/test_sample_metaphlan",
+                "opal/test_sample/by_tool/test_sample_metaphlan.tsv",
+                "opal/test_sample/by_tool/test_sample_metaphlan/purity_completeness_per_rank.pdf",
+                "opal/test_sample/by_tool/test_sample_metaphlan/purity_completeness_per_rank.png",
+                "opal/test_sample/confusion.tsv",
+                "opal/test_sample/gold_standard",
+                "opal/test_sample/gold_standard/rarefaction_curves.pdf",
+                "opal/test_sample/gold_standard/rarefaction_curves.png",
+                "opal/test_sample/gold_standard/rarefaction_curves_log_scale.pdf",
+                "opal/test_sample/gold_standard/rarefaction_curves_log_scale.png",
+                "opal/test_sample/heatmap_bar.png",
+                "opal/test_sample/log.txt",
+                "opal/test_sample/opal.log",
+                "opal/test_sample/plot_shannon.pdf",
+                "opal/test_sample/plot_shannon.png",
+                "opal/test_sample/plot_shannon_diff.pdf",
+                "opal/test_sample/plot_shannon_diff.png",
+                "opal/test_sample/results.html",
+                "opal/test_sample/results.tsv",
+                "opal/test_sample/spider_plot_absolute.pdf",
+                "opal/test_sample/spider_plot_absolute.png",
+                "opal/test_sample/spider_plot_relative.pdf",
+                "opal/test_sample/spider_plot_relative.png",
                 "pipeline_info",
                 "pipeline_info/taxbencher_software_mqc_versions.yml",
                 "taxpasta_to_bioboxes",
@@ -93,15 +361,32 @@
                 "taxpasta_to_bioboxes/test_sample_metaphlan.bioboxes"
             ],
             [
-                "test_sample_centrifuge.bioboxes:md5,a4e7d6690c8fad5c6be44195c4bd5976",
-                "test_sample_kraken2.bioboxes:md5,a4e7d6690c8fad5c6be44195c4bd5976",
-                "test_sample_metaphlan.bioboxes:md5,a4e7d6690c8fad5c6be44195c4bd5976"
+                "test_sample_diff_taxa.tsv:md5,866bf8dfca63cc19496c60e4a6a63f0b",
+                "test_sample_metrics_wide.tsv:md5,7097921b5659de35af62e05a7b9ce9c1",
+                "test_sample_opal_summary_mqc.tsv:md5,3a1e1d901012e4baade0053e88c534b9",
+                "class.tsv:md5,bee26d2d2f68a66f1b5ae103e736ed2c",
+                "family.tsv:md5,bee26d2d2f68a66f1b5ae103e736ed2c",
+                "genus.tsv:md5,bee26d2d2f68a66f1b5ae103e736ed2c",
+                "order.tsv:md5,bee26d2d2f68a66f1b5ae103e736ed2c",
+                "phylum.tsv:md5,ede8ab2f3998b798ce9b36cc03c9bfe1",
+                "species.tsv:md5,7ecb4145f8b742480acb8fecf1cf9d24",
+                "strain.tsv:md5,1ca0419a2dbbeac4b4a8dd8875c2ee19",
+                "superkingdom.tsv:md5,a39ac4154d6ebc7d64a3f798fcbe6289",
+                "test_sample_centrifuge.tsv:md5,b5d0a2dadab2e4cd27c6293b038cda52",
+                "test_sample_kraken2.tsv:md5,f8cf801b59709cc021df3a28f6e07442",
+                "test_sample_metaphlan.tsv:md5,f0fb158c9e7687b9b68de527d09fcbe1",
+                "confusion.tsv:md5,0fcb8821a9f702e1bc6e80f061e21493",
+                "log.txt:md5,90753dfdf41221cd2acd71fd86a6b15d",
+                "results.tsv:md5,6f052ceec8068817abdf68ac10c67dba",
+                "test_sample_centrifuge.bioboxes:md5,9b138d6723d9b6eb4aea7a349420e7b1",
+                "test_sample_kraken2.bioboxes:md5,e2a585c4cf13b7988dab5368e404faa2",
+                "test_sample_metaphlan.bioboxes:md5,04cbed529e64daf77e9f4888f4443d46"
             ]
         ],
+        "timestamp": "2026-10-28T13:03:42.527578623",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.1"
-        },
-        "timestamp": "2025-11-29T19:58:08.29779"
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.4"
+        }
     }
 }

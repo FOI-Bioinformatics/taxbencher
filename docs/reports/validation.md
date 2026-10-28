@@ -27,17 +27,17 @@ The taxbencher pipeline is functional for production use with all profiles inclu
 
 ## Test Coverage Matrix
 
-| Component | Test Type | Docker | Conda | Notes |
-|-----------|-----------|--------|-------|-------|
-| TAXPASTA_STANDARDISE | Functional (4/4) | ✅ Pass | ✅ Pass | `modules/local/taxpasta_standardise/tests/` |
-| TAXPASTA_TO_BIOBOXES | Functional (3/3) | ✅ Pass | ✅ Pass | Wave container with pandas+ete3 (commit 7cae708) |
-| OPAL | Functional (1/4) | ⚠️ Partial | ⚠️ Partial | OPAL 1.0.13 spider plot bug with minimal data |
-| OPAL_PER_SAMPLE | Stub only (5/5) | ✅ Pass* | ✅ Pass* | *Stub tests don't validate functionality |
-| COMPARATIVE_ANALYSIS | Stub only (4/4) | ✅ Pass | ✅ Pass | Wave container with scipy stack (commit a76ca48) |
-| Full Pipeline | Integration (0/2) | ❌ Fail | ❌ Fail | Blocked by OPAL_PER_SAMPLE bugs |
-| taxpasta format | Python validation | ✅ Working | ✅ Working | `bin/validate_taxpasta.py` |
-| Bioboxes format | Python validation | ✅ Working | ✅ Working | `bin/validate_bioboxes.py` |
-| Conversion script | Direct testing | ❌ Docker | ✅ Conda | Requires pandas+ete3 |
+| Component            | Test Type         | Docker     | Conda      | Notes                                            |
+| -------------------- | ----------------- | ---------- | ---------- | ------------------------------------------------ |
+| TAXPASTA_STANDARDISE | Functional (4/4)  | ✅ Pass    | ✅ Pass    | `modules/local/taxpasta_standardise/tests/`      |
+| TAXPASTA_TO_BIOBOXES | Functional (3/3)  | ✅ Pass    | ✅ Pass    | Wave container with pandas+ete3 (commit 7cae708) |
+| OPAL                 | Functional (1/4)  | ⚠️ Partial | ⚠️ Partial | OPAL 1.0.13 spider plot bug with minimal data    |
+| OPAL_PER_SAMPLE      | Stub only (5/5)   | ✅ Pass\*  | ✅ Pass\*  | \*Stub tests don't validate functionality        |
+| COMPARATIVE_ANALYSIS | Stub only (4/4)   | ✅ Pass    | ✅ Pass    | Wave container with scipy stack (commit a76ca48) |
+| Full Pipeline        | Integration (0/2) | ❌ Fail    | ❌ Fail    | Blocked by OPAL_PER_SAMPLE bugs                  |
+| taxpasta format      | Python validation | ✅ Working | ✅ Working | `bin/validate_taxpasta.py`                       |
+| Bioboxes format      | Python validation | ✅ Working | ✅ Working | `bin/validate_bioboxes.py`                       |
+| Conversion script    | Direct testing    | ❌ Docker  | ✅ Conda   | Requires pandas+ete3                             |
 
 **Overall**: 100% profile compatibility - All modules work with docker, conda, and singularity profiles. See [TEST_COVERAGE_REPORT.md](TEST_COVERAGE_REPORT.md) for detailed breakdown.
 
@@ -48,11 +48,13 @@ The taxbencher pipeline is functional for production use with all profiles inclu
 **Purpose**: Validates taxpasta TSV files before pipeline execution
 
 **Usage**:
+
 ```bash
 python3 bin/validate_taxpasta.py assets/test_data/taxpasta/sample1_kraken2.tsv
 ```
 
 **Checks**:
+
 - ✅ Required columns (taxonomy_id, count)
 - ✅ Valid data types (integers, numerics)
 - ✅ Positive values
@@ -60,6 +62,7 @@ python3 bin/validate_taxpasta.py assets/test_data/taxpasta/sample1_kraken2.tsv
 - ✅ Statistics (read counts, unique taxa)
 
 **Test Results**:
+
 ```
 Validating: assets/test_data/taxpasta/sample1_kraken2.tsv
 ------------------------------------------------------------
@@ -82,11 +85,13 @@ Statistics:
 **Purpose**: Validates CAMI Bioboxes files (gold standards and predictions)
 
 **Usage**:
+
 ```bash
 python3 bin/validate_bioboxes.py assets/test_data/gold_standard.bioboxes
 ```
 
 **Checks**:
+
 - ✅ Required headers (@SampleID, @Version, @Ranks)
 - ✅ Required columns (TAXID, RANK, TAXPATH, TAXPATHSN, PERCENTAGE)
 - ✅ TAXPATH format (pipe-separated taxids)
@@ -95,6 +100,7 @@ python3 bin/validate_bioboxes.py assets/test_data/gold_standard.bioboxes
 - ✅ Percentage sum (~100% total)
 
 **Test Results**:
+
 ```
 Validating: assets/test_data/gold_standard.bioboxes
 ------------------------------------------------------------
@@ -115,6 +121,7 @@ Statistics:
 **Purpose**: Converts taxpasta TSV to CAMI Bioboxes format
 
 **Features**:
+
 - ✅ Reads taxpasta TSV input
 - ✅ Validates required columns
 - ✅ Handles missing data gracefully
@@ -124,6 +131,7 @@ Statistics:
 - ✅ Produces valid CAMI Bioboxes output
 
 **Test Results**:
+
 ```bash
 # Test conversion
 python3 bin/taxpasta_to_bioboxes.py \
@@ -157,6 +165,7 @@ python3 bin/validate_bioboxes.py /tmp/test_output.bioboxes
 **Impact**: LOW - Pipeline uses containers (quay.io/biocontainers/cami-opal:1.0.13)
 
 **Solutions Documented**:
+
 1. Use Docker/Singularity (RECOMMENDED - what pipeline does)
 2. Downgrade bokeh to < 3.0
 3. Upgrade OPAL to >= 1.0.13
@@ -175,6 +184,7 @@ python3 bin/validate_bioboxes.py /tmp/test_output.bioboxes
 **Impact**: LOW - Only affects test data; production use has multiple samples
 
 **Analysis**:
+
 - OPAL core functionality works correctly (metrics, plots, confusion matrices)
 - Only HTML visualization fails
 - Metrics file (results.tsv) is created successfully
@@ -194,6 +204,7 @@ python3 bin/validate_bioboxes.py /tmp/test_output.bioboxes
 **Fix**: Corrected TAXPATH from `131567|2|1239|90964|1385|90964|1279|1280` to `131567|2|1239|90964|1385|81852|1279|1280`
 
 **Files Fixed**:
+
 - `assets/test_data/gold_standard.bioboxes`
 - `modules/local/opal/testdata/gold_standard.bioboxes`
 - `modules/local/opal/testdata/prediction1.bioboxes`
@@ -205,33 +216,34 @@ python3 bin/validate_bioboxes.py /tmp/test_output.bioboxes
 
 ### Assets Test Data
 
-| File | Type | Status | Issues |
-|------|------|--------|--------|
-| `sample1_kraken2.tsv` | taxpasta | ✅ Valid | None |
-| `sample1_metaphlan.tsv` | taxpasta | ✅ Valid | None |
-| `sample2_kraken2.tsv` | taxpasta | ✅ Valid | None |
+| File                     | Type     | Status   | Issues            |
+| ------------------------ | -------- | -------- | ----------------- |
+| `sample1_kraken2.tsv`    | taxpasta | ✅ Valid | None              |
+| `sample1_metaphlan.tsv`  | taxpasta | ✅ Valid | None              |
+| `sample2_kraken2.tsv`    | taxpasta | ✅ Valid | None              |
 | `gold_standard.bioboxes` | bioboxes | ✅ Valid | Fixed percentages |
 
 ### Module Test Data
 
-| File | Type | Status | Issues |
-|------|------|--------|--------|
-| `taxpasta_to_bioboxes/testdata/test_taxpasta.tsv` | taxpasta | ✅ Valid | None |
-| `opal/testdata/gold_standard.bioboxes` | bioboxes | ✅ Valid | None |
-| `opal/testdata/prediction1.bioboxes` | bioboxes | ✅ Valid | None |
-| `opal/testdata/prediction2.bioboxes` | bioboxes | ✅ Valid | None |
-| `opal_per_sample/testdata/gold_standard.bioboxes` | bioboxes | ✅ Valid | None |
-| `opal_per_sample/testdata/prediction1.bioboxes` | bioboxes | ✅ Valid | None |
-| `opal_per_sample/testdata/prediction2.bioboxes` | bioboxes | ✅ Valid | None |
-| `opal_per_sample/testdata/prediction3.bioboxes` | bioboxes | ✅ Valid | None |
-| `comparative_analysis/testdata/gold_standard.bioboxes` | bioboxes | ✅ Valid | None |
-| `comparative_analysis/testdata/opal_results/results.tsv` | OPAL metrics | ✅ Valid | None |
+| File                                                     | Type         | Status   | Issues |
+| -------------------------------------------------------- | ------------ | -------- | ------ |
+| `taxpasta_to_bioboxes/testdata/test_taxpasta.tsv`        | taxpasta     | ✅ Valid | None   |
+| `opal/testdata/gold_standard.bioboxes`                   | bioboxes     | ✅ Valid | None   |
+| `opal/testdata/prediction1.bioboxes`                     | bioboxes     | ✅ Valid | None   |
+| `opal/testdata/prediction2.bioboxes`                     | bioboxes     | ✅ Valid | None   |
+| `opal_per_sample/testdata/gold_standard.bioboxes`        | bioboxes     | ✅ Valid | None   |
+| `opal_per_sample/testdata/prediction1.bioboxes`          | bioboxes     | ✅ Valid | None   |
+| `opal_per_sample/testdata/prediction2.bioboxes`          | bioboxes     | ✅ Valid | None   |
+| `opal_per_sample/testdata/prediction3.bioboxes`          | bioboxes     | ✅ Valid | None   |
+| `comparative_analysis/testdata/gold_standard.bioboxes`   | bioboxes     | ✅ Valid | None   |
+| `comparative_analysis/testdata/opal_results/results.tsv` | OPAL metrics | ✅ Valid | None   |
 
 ## nf-test Coverage
 
 ### Module Tests
 
 **TAXPASTA_STANDARDISE** (`modules/local/taxpasta_standardise/tests/main.nf.test`):
+
 - ✅ Test 1: Basic standardization (Kraken2)
 - ✅ Test 2: Bracken format
 - ✅ Test 3: MetaPhlAn format
@@ -239,12 +251,14 @@ python3 bin/validate_bioboxes.py /tmp/test_output.bioboxes
 - **Status**: ✅ All tests passing
 
 **TAXPASTA_TO_BIOBOXES** (`modules/local/taxpasta_to_bioboxes/tests/main.nf.test`):
+
 - ✅ Test 1: Basic conversion
 - ✅ Test 2: Custom parameters (ranks, taxonomy_db)
 - ✅ Test 3: Stub mode
 - **Status**: ✅ All tests passing
 
 **OPAL** (`modules/local/opal/tests/main.nf.test`):
+
 - ✅ Test 1: Single prediction
 - ✅ Test 2: Multiple predictions with labels
 - ✅ Test 3: Filtered and normalized
@@ -252,6 +266,7 @@ python3 bin/validate_bioboxes.py /tmp/test_output.bioboxes
 - **Status**: ⚠️ Known HTML generation issue (core functionality works)
 
 **OPAL_PER_SAMPLE** (`modules/local/opal_per_sample/tests/main.nf.test`):
+
 - ✅ Test 1: Single classifier (stub)
 - ✅ Test 2: Two classifiers (stub)
 - ✅ Test 3: Three classifiers (stub)
@@ -261,6 +276,7 @@ python3 bin/validate_bioboxes.py /tmp/test_output.bioboxes
 - **Note**: Stub tests used due to OPAL 1.0.13 HTML generation bug with minimal datasets
 
 **COMPARATIVE_ANALYSIS** (`modules/local/comparative_analysis/tests/main.nf.test`):
+
 - ✅ Test 1: Basic analysis (stub)
 - ✅ Test 2: With sample_id (stub)
 - ✅ Test 3: With labels (stub)
@@ -271,6 +287,7 @@ python3 bin/validate_bioboxes.py /tmp/test_output.bioboxes
 ### Workflow Test
 
 **Full Pipeline** (`tests/default.nf.test`):
+
 - ✅ Test: `-profile test` with complete pipeline
 - **Status**: Ready for execution
 
@@ -307,6 +324,7 @@ nf-test test tests/default.nf.test --profile test,docker
 ```
 
 **Test Results**:
+
 - ✅ **TAXPASTA_TO_BIOBOXES**: All 3 tests passed (basic, custom parameters, stub)
   - Snapshots created successfully
   - Conversion working correctly
@@ -430,6 +448,7 @@ The taxbencher pipeline has comprehensive validation and testing infrastructure:
 ### Final Test Summary
 
 **Passing Tests**:
+
 - ✅ validate_taxpasta.py: All test files pass validation
 - ✅ validate_bioboxes.py: All test files pass validation
 - ✅ taxpasta_to_bioboxes.py: Conversion produces valid output
@@ -443,6 +462,7 @@ The taxbencher pipeline has comprehensive validation and testing infrastructure:
 **Total Test Coverage**: 19/19 tests passing (100%)
 
 **Known Issues**:
+
 - ⚠️ OPAL nf-test (real): HTML generation fails with single-sample datasets (OPAL 1.0.13 bug)
   - Core functionality works: metrics, plots, and confusion matrices generated
   - Not a blocker: Production use has multiple samples

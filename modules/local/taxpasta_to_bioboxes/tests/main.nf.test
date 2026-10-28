@@ -8,15 +8,89 @@ nextflow_process {
     tag "modules_local"
     tag "taxpasta_to_bioboxes"
 
-    test("taxpasta to bioboxes - basic") {
+    // All functional tests use the reduced, pinned taxonomy so results are deterministic and offline
+    setup {
+        run("ETE3_BUILD_TAXDB") {
+            script "../../ete3_build_taxdb/main.nf"
+            process {
+                """
+                input[0] = file('${projectDir}/assets/test_data/taxonomy/taxdump.tar.gz', checkIfExists: true)
+                """
+            }
+        }
+    }
+
+    test("taxpasta to bioboxes - direct counts (kraken2-like)") {
 
         when {
             process {
                 """
                 input[0] = [
-                    [ id: 'test_sample', sample_id: 'test_1' ],
+                    [ id: 'test_sample', sample_id: 'test_1', classifier: 'kraken2' ],
                     file('${moduleDir}/testdata/test_taxpasta.tsv', checkIfExists: true)
                 ]
+                input[1] = ETE3_BUILD_TAXDB.out.db
+                """
+            }
+        }
+
+        then {
+            def bioboxes = path(process.out.bioboxes.get(0).get(1))
+            def data = bioboxes.readLines().findAll { !it.startsWith('@') }
+            def species_sum = data.findAll { it.split('\t')[1] == 'species' }.collect { it.split('\t')[4] as double }.sum()
+            def sk_sum = data.findAll { it.split('\t')[1] == 'superkingdom' }.collect { it.split('\t')[4] as double }.sum()
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() },
+                { assert bioboxes.readLines().contains('@SampleID:test_1') },
+                // CAMI semantics: every rank sums to 100% when all reads are classified
+                { assert Math.abs(species_sum - 100.0) < 0.01 },
+                { assert Math.abs(sk_sum - 100.0) < 0.01 },
+                // TAXPATH restricted to the @Ranks (species = 7th rank)
+                { assert data.find { it.startsWith('562\t') }.split('\t')[2] == '2|1224|1236|91347|543|561|562' }
+            )
+        }
+
+    }
+
+    test("taxpasta to bioboxes - clade abundances (metaphlan)") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id: 'test_metaphlan', sample_id: 'test_sample', classifier: 'metaphlan' ],
+                    file('${moduleDir}/testdata/test_metaphlan_taxpasta.tsv', checkIfExists: true)
+                ]
+                input[1] = ETE3_BUILD_TAXDB.out.db
+                """
+            }
+        }
+
+        then {
+            def data = path(process.out.bioboxes.get(0).get(1)).readLines().findAll { !it.startsWith('@') }
+            def rank_sums = data.groupBy { it.split('\t')[1] }.collectEntries { r, rows -> [r, rows.collect { it.split('\t')[4] as double }.sum()] }
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() },
+                // no double counting of cumulative MetaPhlAn values
+                { assert rank_sums.values().every { Math.abs(it - 100.0) < 0.01 } },
+                { assert rank_sums.keySet().contains('species') }
+            )
+        }
+
+    }
+
+    test("taxpasta to bioboxes - lineage columns without taxonomy database") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id: 'test_lineage', sample_id: 'test_sample', classifier: 'kraken2' ],
+                    file('${moduleDir}/testdata/test_kraken2_lineage.tsv', checkIfExists: true)
+                ]
+                input[1] = []
                 """
             }
         }
@@ -24,13 +98,14 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
-                { assert snapshot(process.out).match() }
+                { assert snapshot(process.out).match() },
+                { assert path(process.out.bioboxes.get(0).get(1)).readLines().any { it.startsWith('561\tgenus\t2|1224|1236|91347|543|561\t') } }
             )
         }
 
     }
 
-    test("taxpasta to bioboxes - custom parameters") {
+    test("taxpasta to bioboxes - custom ranks") {
 
         when {
             process {
@@ -39,11 +114,12 @@ nextflow_process {
                     [
                         id: 'test_sample_custom',
                         sample_id: 'custom_sample',
-                        ranks: 'domain|phylum|class|order|family|genus|species',
+                        ranks: 'superkingdom|phylum|class|order|family|genus|species',
                         taxonomy_db: 'NCBI'
                     ],
                     file('${moduleDir}/testdata/test_taxpasta.tsv', checkIfExists: true)
                 ]
+                input[1] = ETE3_BUILD_TAXDB.out.db
                 """
             }
         }
@@ -51,7 +127,8 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
-                { assert snapshot(process.out).match() }
+                { assert snapshot(process.out).match() },
+                { assert path(process.out.bioboxes.get(0).get(1)).readLines().contains('@Ranks:superkingdom|phylum|class|order|family|genus|species') }
             )
         }
 
@@ -68,6 +145,7 @@ nextflow_process {
                     [ id: 'test_sample', sample_id: 'test_1' ],
                     file('${moduleDir}/testdata/test_taxpasta.tsv', checkIfExists: true)
                 ]
+                input[1] = []
                 """
             }
         }
@@ -92,6 +170,7 @@ nextflow_process {
                     [ id: 'test_empty', sample_id: 'empty_sample' ],
                     file('${moduleDir}/testdata/test_empty.tsv', checkIfExists: true)
                 ]
+                input[1] = ETE3_BUILD_TAXDB.out.db
                 """
             }
         }
@@ -111,6 +190,47 @@ nextflow_process {
                     [ id: 'test_missing', sample_id: 'missing_sample' ],
                     file('${moduleDir}/testdata/test_missing_columns.tsv', checkIfExists: true)
                 ]
+                input[1] = ETE3_BUILD_TAXDB.out.db
+                """
+            }
+        }
+
+        then {
+            assert process.failed
+        }
+
+    }
+
+    test("taxpasta to bioboxes - only unknown taxids should fail instead of writing an empty profile") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id: 'test_unknown', sample_id: 'unknown_sample' ],
+                    file('${moduleDir}/testdata/test_unknown_taxids.tsv', checkIfExists: true)
+                ]
+                input[1] = ETE3_BUILD_TAXDB.out.db
+                """
+            }
+        }
+
+        then {
+            assert process.failed
+        }
+
+    }
+
+    test("taxpasta to bioboxes - unsupported taxonomy_db should fail") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id: 'test_db', sample_id: 'db_sample', taxonomy_db: 'SILVA' ],
+                    file('${moduleDir}/testdata/test_taxpasta.tsv', checkIfExists: true)
+                ]
+                input[1] = ETE3_BUILD_TAXDB.out.db
                 """
             }
         }

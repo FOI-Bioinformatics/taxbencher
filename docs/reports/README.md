@@ -4,10 +4,20 @@ This directory contains comprehensive reports on code quality, testing, and vali
 
 ## Available Reports
 
+### [Code & Functionality Audit](audit-2026-10.md)
+
+**Latest:** 2026-10-28
+
+Correctness audit of the evaluation path with end-to-end testing, gap analysis and SWOT. Supersedes the
+assessments below where they conflict (in particular the earlier "Grade A-" predates the discovery that
+converted profiles were invalid and that the pipeline tests never exercised OPAL).
+
 ### [Code Quality Report](code-quality.md)
+
 **Latest:** 2025-11-04
 
 Comprehensive code quality assessment including:
+
 - nf-core compliance evaluation (205/205 tests passed)
 - Module-by-module quality review
 - Innovative patterns documentation
@@ -17,21 +27,27 @@ Comprehensive code quality assessment including:
 **Grade: A-** (Production-ready)
 
 ### [Test Coverage Report](test-coverage.md)
+
 Detailed analysis of test coverage:
+
 - nf-test implementation status (14/22 tests passing, 64%)
 - Module test requirements
 - Known limitations and workarounds
 - Recommendations for improvement
 
 ### [Validation Report](validation.md)
+
 Overview of validation infrastructure:
+
 - Validation scripts (validate_taxpasta.py, validate_bioboxes.py)
 - Gold standard validation
 - Critical OPAL compatibility checks
 - Pre-flight validation workflow
 
 ### [Test Improvements Summary](test-improvements.md)
+
 Historical record of test enhancements:
+
 - Improvements made over time
 - Test infrastructure evolution
 - Lessons learned
@@ -39,6 +55,7 @@ Historical record of test enhancements:
 ## Understanding the Reports
 
 These reports provide transparency about:
+
 - **What works** - High-quality, production-ready components
 - **Known limitations** - Documented gaps and workarounds
 - **Future improvements** - Planned enhancements
@@ -50,6 +67,7 @@ If you're a pipeline user, the **[Validation Report](validation.md)** is most re
 ## For Developers
 
 All reports are relevant for understanding:
+
 - Code quality standards
 - Testing expectations
 - Areas for contribution
@@ -58,6 +76,7 @@ All reports are relevant for understanding:
 ## Report Updates
 
 Reports are updated:
+
 - After major releases
 - When significant code changes occur
 - Following security audits

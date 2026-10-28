@@ -1,0 +1,36 @@
+name: "ete3_build_taxdb"
+description: Build the ete3 NCBI taxonomy sqlite database from a pinned NCBI taxdump archive
+keywords:
+  - taxonomy
+  - NCBI
+  - ete3
+  - reproducibility
+tools:
+  - ete3:
+      description: Python toolkit for phylogenetic trees including an NCBI taxonomy interface
+      homepage: http://etetoolkit.org/
+      documentation: http://etetoolkit.org/docs/latest/tutorial/tutorial_ncbitaxonomy.html
+      licence: ["GPL-3.0"]
+
+input:
+  - taxdump:
+      type: file
+      description: |
+        NCBI taxonomy dump archive (taxdump.tar.gz containing nodes.dmp, names.dmp and merged.dmp),
+        for example from https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/ or a reduced archive for testing.
+      pattern: "*.tar.gz"
+
+output:
+  - db:
+      type: file
+      description: ete3 sqlite taxonomy database (taxa.sqlite) and its traverse index (taxa.sqlite.traverse.pkl)
+      pattern: "taxa.sqlite*"
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+
+authors:
+  - "@andreassjodin"
+maintainers:
+  - "@andreassjodin"

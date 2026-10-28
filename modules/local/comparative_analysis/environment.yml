@@ -11,4 +11,4 @@ dependencies:
   - scipy>=1.11
   - statsmodels>=0.14
   - numpy>=1.24
-  - python-kaleido>=1.0  # For plotly static image export (conda-forge package)
+  - python-kaleido>=1.0 # For plotly static image export (conda-forge package)

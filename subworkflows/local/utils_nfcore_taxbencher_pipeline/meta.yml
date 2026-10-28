@@ -1,17 +1,45 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
 name: utils_nfcore_taxbencher_pipeline
-description: Utility subworkflow for taxbencher pipeline initialization and completion
+description: Subworkflow with functionality specific to the FOI-Bioinformatics/taxbencher pipeline (initialisation, samplesheet validation, completion)
 keywords:
   - utility
-  - initialization
-  - completion
-components: []
+  - pipeline
+  - initialise
+  - version
+components:
+  - utils_nextflow_pipeline
+  - utils_nfcore_pipeline
+  - utils_nfschema_plugin
+  - completionemail
+  - completionsummary
+  - imnotification
 input:
+  - version:
+      type: boolean
+      description: Display version and exit
+  - validate_params:
+      type: boolean
+      description: Validate parameters against the schema at runtime
+  - monochrome_logs:
+      type: boolean
+      description: Do not use coloured log outputs
+  - nextflow_cli_args:
+      type: list
+      description: List of positional Nextflow CLI args
+  - outdir:
+      type: string
+      description: The output directory where the results will be saved
   - input:
-      type: channel
-      description: Pipeline input parameters and configuration
+      type: string
+      description: Path to the input samplesheet (validated against assets/schema_input.json)
 output:
+  - samplesheet:
+      type: channel
+      description: Channel of [ meta, input_file ] tuples with resolved input paths
   - versions:
       type: channel
       description: Channel of software versions
 authors:
+  - "@andreassjodin"
+maintainers:
   - "@andreassjodin"

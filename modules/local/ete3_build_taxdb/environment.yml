@@ -1,0 +1,8 @@
+name: ete3_build_taxdb
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.11
+  - pandas>=2.0
+  - ete3>=3.1.3

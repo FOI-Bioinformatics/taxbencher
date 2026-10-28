@@ -15,6 +15,8 @@ repos:
               .*ro-crate-metadata.json$|
               modules/nf-core/.*|
               subworkflows/nf-core/.*|
+              assets/test_data/.*|
+              modules/local/.*/testdata/.*|
               .*\.snap$
           )$
       - id: end-of-file-fixer

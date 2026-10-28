@@ -46,6 +46,42 @@
                     "help_text": "When using raw profiler outputs, optionally save the standardised intermediate files to the taxpasta_standardise directory in the output folder.",
                     "fa_icon": "fas fa-save"
                 },
+                "taxdump": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "mimetype": "application/gzip",
+                    "pattern": "^\\S+\\.(tar\\.gz|tgz)$",
+                    "description": "NCBI taxonomy dump archive (taxdump.tar.gz) used to build a pinned ete3 taxonomy database for lineage lookups.",
+                    "help_text": "Strongly recommended for reproducible runs. Download from https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz (or use a dated taxdump_archive). Without it, ete3 downloads the current NCBI taxonomy into $HOME/.etetoolkit inside every TAXPASTA_TO_BIOBOXES task, which requires network access and makes results depend on the download date.",
+                    "fa_icon": "fas fa-sitemap"
+                },
+                "include_unclassified": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Express profile abundances relative to all reads (classified + unclassified) instead of classified reads only.",
+                    "help_text": "By default taxid 0 (unclassified) is excluded from the denominator when converting profiles to CAMI format, so per-rank abundances of a profile sum to ~100%. Enable to keep the unclassified fraction as missing abundance (per-rank sums < 100%).",
+                    "fa_icon": "fas fa-percentage"
+                },
+                "opal_normalize": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Pass -n to OPAL to normalise all profiles (gold standard and predictions) so abundances sum to 100% per rank.",
+                    "fa_icon": "fas fa-balance-scale"
+                },
+                "opal_filter": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100,
+                    "description": "Pass -f to OPAL: filter out predictions with the smallest relative abundances summing up to this percentage within a rank (also reports unfiltered metrics).",
+                    "fa_icon": "fas fa-filter"
+                },
+                "opal_ranks": {
+                    "type": "string",
+                    "pattern": "^(superkingdom|phylum|class|order|family|genus|species|strain),(superkingdom|phylum|class|order|family|genus|species|strain)$",
+                    "description": "Highest and lowest taxonomic rank OPAL uses for performance rankings, comma separated (OPAL default: superkingdom,species).",
+                    "fa_icon": "fas fa-layer-group"
+                },
                 "email": {
                     "type": "string",
                     "description": "Email address for completion summary.",

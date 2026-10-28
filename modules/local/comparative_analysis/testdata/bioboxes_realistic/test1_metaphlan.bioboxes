@@ -1,0 +1,47 @@
+@SampleID:test1
+@Version:0.9.1
+@Ranks:superkingdom|phylum|class|order|family|genus|species|strain
+@TaxonomyID:NCBI
+@@TAXID	RANK	TAXPATH	TAXPATHSN	PERCENTAGE
+2	superkingdom	2	Bacteria	100.000000
+1224	phylum	2|1224	Bacteria|Pseudomonadota	98.696380
+1236	class	2|1224|1236	Bacteria|Pseudomonadota|Gammaproteobacteria	98.487997
+72273	order	2|1224|1236|72273	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales	97.863826
+34064	family	2|1224|1236|72273|34064	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae	97.849850
+135617	family	2|1224|1236|72273|135617	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Thiotrichaceae	0.000089
+262	genus	2|1224|1236|72273|34064|262	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella	96.964064
+1869285	genus	2|1224|1236|72273|34064|1869285	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Allofrancisella	0.006676
+263	species	2|1224|1236|72273|34064|262|263	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella tularensis	70.214347
+622488	species	2|1224|1236|72273|34064|262|622488	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella hispaniensis	0.086344
+954	species	2|1224|1236|72273|34064|262|954	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella persica	0.035784
+28110	species	2|1224|1236|72273|34064|262|28110	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella philomiragia	0.012729
+1542390	species	2|1224|1236|72273|34064|262|1542390	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella frigiditurris	0.004361
+299583	species	2|1224|1236|72273|34064|262|299583	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella orientalis	0.003115
+2599927	species	2|1224|1236|72273|34064|262|2599927	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella salimarina	0.003026
+653937	species	2|1224|1236|72273|34064|262|653937	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Candidatus Francisella endociliophora	0.002760
+1085647	species	2|1224|1236|72273|34064|1869285|1085647	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Allofrancisella|Allofrancisella inopinata	0.002403
+573570	species	2|1224|1236|72273|34064|262|573570	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella uliginis	0.001958
+1085644	species	2|1224|1236|72273|34064|1869285|1085644	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Allofrancisella|Allofrancisella frigidaquae	0.001869
+1395624	species	2|1224|1236|72273|34064|262|1395624	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella sp. LA112445	0.001781
+549298	species	2|1224|1236|72273|34064|262|549298	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella halioticida	0.001514
+594679	species	2|1224|1236|72273|34064|1869285|594679	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Allofrancisella|Allofrancisella guangzhouensis	0.001068
+573569	species	2|1224|1236|72273|34064|262|573569	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella salina	0.000535
+2007306	species	2|1224|1236|72273|34064|262|2007306	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella adeliensis	0.000445
+2589986	species	2|1224|1236|72273|34064|262|2589986	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella sp. Scap27	0.000445
+2249302	species	2|1224|1236|72273|34064|262|2249302	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella marina	0.000356
+264	strain	2|1224|1236|72273|34064|262|263|264	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella tularensis|Francisella tularensis subsp. novicida	0.206781
+119857	strain	2|1224|1236|72273|34064|262|263|119857	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella tularensis|Francisella tularensis subsp. holarctica	0.069165
+1086726	strain	2|1224|1236|72273|34064|262|954|1086726	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella persica|Francisella persica ATCC VR-331	0.035695
+1432652	strain	2|1224|1236|72273|34064|262|263|119857	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella tularensis|Francisella tularensis subsp. holarctica	0.021809
+984129	strain	2|1224|1236|72273|34064|262|263|264	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella tularensis|Francisella tularensis subsp. novicida	0.016824
+1088883	strain	2|1224|1236|72273|34064|262|622488|1088883	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella hispaniensis|Francisella hispaniensis FSC454	0.013085
+1450527	strain	2|1224|1236|72273|34064|262|263|264	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella tularensis|Francisella tularensis subsp. novicida	0.012729
+1386968	strain	2|1224|1236|72273|34064|262|263|264	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella tularensis|Francisella tularensis subsp. novicida	0.007299
+119856	strain	2|1224|1236|72273|34064|262|263|119856	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella tularensis|Francisella tularensis subsp. tularensis	0.006587
+401614	strain	2|1224|1236|72273|34064|262|263|264	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella tularensis|Francisella tularensis subsp. novicida	0.005964
+1232394	strain	2|1224|1236|72273|34064|262|263|119857	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella tularensis|Francisella tularensis subsp. holarctica	0.002493
+393011	strain	2|1224|1236|72273|34064|262|263|119857	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella tularensis|Francisella tularensis subsp. holarctica	0.000535
+539329	strain	2|1224|1236|72273|34064|262|28110|539329	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella philomiragia|Francisella philomiragia subsp. philomiragia ATCC 25015	0.000356
+177416	strain	2|1224|1236|72273|34064|262|263|119856	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella tularensis|Francisella tularensis subsp. tularensis	0.000267
+1001534	strain	2|1224|1236|72273|34064|262|263|119856	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella tularensis|Francisella tularensis subsp. tularensis	0.000267
+393115	strain	2|1224|1236|72273|34064|262|263|119856	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella tularensis|Francisella tularensis subsp. tularensis	0.000178

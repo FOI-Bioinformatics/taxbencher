@@ -3,6 +3,7 @@
 This guide provides comprehensive instructions for contributing to taxbencher. For architecture details, see [Architecture](architecture.md). For workflow patterns, see [Workflow Patterns](workflow-patterns.md).
 
 ## Table of Contents
+
 - [Getting Started](#getting-started)
 - [Development Environment Setup](#development-environment-setup)
 - [Development Workflow](#development-workflow)
@@ -20,6 +21,7 @@ This guide provides comprehensive instructions for contributing to taxbencher. F
 ### Prerequisites
 
 **Required**:
+
 - Nextflow ≥24.10.5
 - Docker, Singularity, or Conda
 - Git
@@ -27,6 +29,7 @@ This guide provides comprehensive instructions for contributing to taxbencher. F
 - Python 3.11+ (for bin/ scripts)
 
 **Recommended**:
+
 - nf-core tools (`pip install nf-core`)
 - nf-test (`nf-core tools install nf-test`)
 - Visual Studio Code with Nextflow extension
@@ -34,18 +37,21 @@ This guide provides comprehensive instructions for contributing to taxbencher. F
 ### Initial Setup
 
 1. **Fork the repository** on GitHub:
+
    ```bash
    # Visit: https://github.com/FOI-Bioinformatics/taxbencher
    # Click "Fork" button
    ```
 
 2. **Clone your fork**:
+
    ```bash
    git clone https://github.com/YOUR_USERNAME/taxbencher.git
    cd taxbencher
    ```
 
 3. **Add upstream remote**:
+
    ```bash
    git remote add upstream https://github.com/FOI-Bioinformatics/taxbencher.git
    git fetch upstream
@@ -81,6 +87,7 @@ taxbencher/
 ### Option 1: Local Development
 
 **Install dependencies**:
+
 ```bash
 # Install Nextflow
 curl -s https://get.nextflow.io | bash
@@ -97,6 +104,7 @@ pip install pandas ete3 biopython
 ```
 
 **Configure editor**:
+
 ```bash
 # VS Code extensions (recommended)
 code --install-extension nextflow.nextflow
@@ -106,11 +114,13 @@ code --install-extension ms-python.python
 ### Option 2: GitHub Codespaces
 
 **Launch Codespace**:
+
 1. Visit repository on GitHub
 2. Click "Code" → "Codespaces" → "Create codespace on dev"
 3. Wait for environment setup (includes Nextflow + nf-core)
 
 **Verify installation**:
+
 ```bash
 nextflow -version
 nf-core --version
@@ -120,6 +130,7 @@ nf-test version
 ### Option 3: Docker Development Container
 
 **Use devcontainer**:
+
 ```bash
 # Install Docker and VS Code Dev Containers extension
 code --install-extension ms-vscode-remote.remote-containers
@@ -136,17 +147,20 @@ Configuration: `.devcontainer/devcontainer.json`
 ### Before Starting Development
 
 1. **Check for existing issues**:
+
    ```bash
    # Visit: https://github.com/FOI-Bioinformatics/taxbencher/issues
    # Avoid duplicating work
    ```
 
 2. **Create or comment on issue**:
+
    ```
    "I'm working on adding module X / fixing bug Y"
    ```
 
 3. **Sync with upstream**:
+
    ```bash
    git fetch upstream
    git checkout dev
@@ -202,11 +216,13 @@ git push origin feature/my-new-feature
 #### 1. Create Module Structure
 
 **Option A: Using nf-core tools** (recommended for nf-core modules):
+
 ```bash
 nf-core modules create MODULE_NAME
 ```
 
 **Option B: Manual creation** (for local modules):
+
 ```bash
 mkdir -p modules/local/mymodule
 cd modules/local/mymodule
@@ -284,6 +300,7 @@ process MYMODULE {
 ```
 
 **Key patterns to follow**:
+
 - Use `tag "$meta.id"` for process identification
 - Always include `when:` block
 - Implement input validation
@@ -353,6 +370,7 @@ dependencies:
 ```
 
 **Or use Wave containers** (preferred for Python scientific stack):
+
 ```groovy
 // In main.nf
 conda "${moduleDir}/environment.yml"
@@ -428,6 +446,7 @@ nextflow_process {
 ```
 
 **Run tests**:
+
 ```bash
 # Run module tests
 nf-test test modules/local/mymodule/tests/
@@ -455,6 +474,7 @@ withName: 'MYMODULE' {
 ```
 
 **Optional parameters** in `nextflow_schema.json`:
+
 ```json
 {
   "mymodule_option": {
@@ -490,6 +510,7 @@ workflow TAXBENCHER {
 #### 8. Update Documentation
 
 **Update files**:
+
 - `docs/output.md` - Document output files
 - `docs/development/modules.md` - Add module specification
 - `README.md` - Update pipeline steps if major feature
@@ -515,6 +536,7 @@ nextflow run . -profile test,docker -resume
 taxbencher uses **nf-test** for module and pipeline testing.
 
 **Test types**:
+
 1. **Functional tests**: Run module with real data
 2. **Stub tests**: Verify module structure without running tool
 3. **Negative tests**: Test error handling
@@ -589,30 +611,26 @@ nextflow_process {
 ### Snapshot Management
 
 **Update snapshots** when outputs legitimately change:
+
 ```bash
 nf-test test --update-snapshot
 ```
 
 **Review snapshot changes**:
+
 ```bash
 git diff tests/
 ```
 
 **Snapshot files** are stored in `tests/*.nf.test.snap`:
+
 ```json
 {
   "Test 1: Basic functionality": {
     "content": [
       {
-        "0": [
-          [
-            { "id": "test1" },
-            "test1.output:md5,abc123"
-          ]
-        ],
-        "1": [
-          "versions.yml:md5,def456"
-        ]
+        "0": [[{ "id": "test1" }, "test1.output:md5,abc123"]],
+        "1": ["versions.yml:md5,def456"]
       }
     ]
   }
@@ -624,6 +642,7 @@ git diff tests/
 **Location**: `assets/test_data/`
 
 **Add test data**:
+
 ```bash
 # Small files can be committed
 cp new_test.tsv assets/test_data/
@@ -633,11 +652,13 @@ cp new_test.tsv assets/test_data/
 ```
 
 **Reference test data** in tests:
+
 ```groovy
 file(params.test_data['taxpasta']['sample1_kraken2'], checkIfExists: true)
 ```
 
 **Define test data** in `conf/test.config`:
+
 ```groovy
 params {
     test_data = [
@@ -654,6 +675,7 @@ params {
 ### Configuration Files
 
 **`nextflow.config`** - Main configuration:
+
 ```groovy
 params {
     // Input/output options
@@ -674,6 +696,7 @@ includeConfig 'conf/modules.config'
 ```
 
 **`conf/base.config`** - Resource labels:
+
 ```groovy
 process {
     // Default resources
@@ -710,6 +733,7 @@ process {
 ```
 
 **`conf/modules.config`** - Per-module config:
+
 ```groovy
 process {
     withName: 'MYMODULE' {
@@ -727,6 +751,7 @@ process {
 ### Adding New Parameters
 
 1. **Add to `nextflow.config`**:
+
 ```groovy
 params {
     new_parameter = 'default_value'
@@ -734,11 +759,13 @@ params {
 ```
 
 2. **Generate schema**:
+
 ```bash
 nf-core pipelines schema build
 ```
 
 3. **Customize in `nextflow_schema.json`**:
+
 ```json
 {
   "new_parameter": {
@@ -752,6 +779,7 @@ nf-core pipelines schema build
 ```
 
 4. **Validate schema**:
+
 ```bash
 nf-core pipelines schema validate
 ```
@@ -761,6 +789,7 @@ nf-core pipelines schema validate
 ### Nextflow Style
 
 **Naming conventions**:
+
 ```groovy
 // Channels: ch_ prefix
 ch_input
@@ -779,6 +808,7 @@ def outputFile = "${prefix}.output"
 **Indentation**: 4 spaces (Nextflow standard)
 
 **Comments**:
+
 ```groovy
 //
 // SECTION: Brief section description
@@ -794,6 +824,7 @@ def value = compute()  // Explain non-obvious logic
 ### Groovy Best Practices
 
 **Safe file handling**:
+
 ```groovy
 // Good: Check if file exists
 def myFile = file(params.input, checkIfExists: true)
@@ -806,6 +837,7 @@ def files = predictions instanceof List ? predictions : [predictions]
 ```
 
 **String interpolation**:
+
 ```groovy
 // Good: Use """ for multi-line, variables
 """
@@ -823,6 +855,7 @@ echo "Literal text with $variable not interpolated"
 ### Python Style
 
 **Follow PEP 8** for bin/ scripts:
+
 ```python
 #!/usr/bin/env python3
 """
@@ -861,6 +894,7 @@ if __name__ == '__main__':
 ### nf-core Compliance
 
 **Run linting** before committing:
+
 ```bash
 nf-core pipelines lint
 ```
@@ -878,10 +912,12 @@ nf-core pipelines lint
 ### Branch Strategy
 
 **Main branches**:
+
 - `main` - Stable releases only
 - `dev` - Active development (target for PRs)
 
 **Feature branches**:
+
 ```bash
 # Format: type/description
 git checkout -b feat/add-new-classifier-support
@@ -903,6 +939,7 @@ git checkout -b test/improve-coverage
 ```
 
 **Types**:
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation only
@@ -912,6 +949,7 @@ git checkout -b test/improve-coverage
 - `chore`: Changes to build process or auxiliary tools
 
 **Examples**:
+
 ```bash
 git commit -m "feat(modules): Add TAXPASTA_STANDARDISE module"
 
@@ -950,6 +988,7 @@ git push origin feature/my-feature --force-with-lease
 ### Before Creating PR
 
 **Checklist**:
+
 - [ ] All tests pass locally
 - [ ] Code linted successfully
 - [ ] Documentation updated
@@ -960,6 +999,7 @@ git push origin feature/my-feature --force-with-lease
 ### Creating Pull Request
 
 1. **Push branch** to your fork:
+
 ```bash
 git push origin feature/my-feature
 ```
@@ -970,40 +1010,49 @@ git push origin feature/my-feature
    - Description: Use PR template
 
 3. **PR description template**:
+
 ```markdown
 ## Description
+
 Brief description of changes
 
 ## Motivation
+
 Why is this change needed?
 
 ## Changes
+
 - Change 1
 - Change 2
 - Change 3
 
 ## Testing
+
 How was this tested?
 
 ## Checklist
+
 - [ ] Tests pass
 - [ ] Lint passes
 - [ ] Documentation updated
 - [ ] CHANGELOG.md updated
 
 ## Related Issues
+
 Closes #123
 ```
 
 ### CI/CD Checks
 
 **Automated checks run on PR**:
+
 1. **nf-test**: All tests must pass
 2. **Linting**: nf-core lint must pass
 3. **Prettier**: Markdown formatting
 4. **GitHub Actions**: Workflow syntax
 
 **If CI fails**:
+
 ```bash
 # Check logs on GitHub Actions tab
 # Fix issues locally
@@ -1018,12 +1067,14 @@ git push origin feature/my-feature
 **Review timeline**: Expect response within 1-2 weeks
 
 **Common review comments**:
+
 - "Please add tests for this functionality"
 - "Can you update the documentation?"
 - "This should follow nf-core guidelines"
 - "Consider using existing pattern from module X"
 
 **Addressing feedback**:
+
 ```bash
 # Make requested changes
 git add .
@@ -1038,6 +1089,7 @@ git push origin feature/my-feature
 ### Required Documentation
 
 **For new modules**:
+
 1. `meta.yml` - Complete module metadata
 2. Inline comments in `main.nf`
 3. Entry in `docs/development/modules.md`
@@ -1045,12 +1097,14 @@ git push origin feature/my-feature
 5. Test description in tests
 
 **For new features**:
+
 1. Update `README.md`
 2. Update `docs/usage.md`
 3. Add to `CHANGELOG.md`
 4. Update `docs/development/architecture.md` if significant
 
 **For bug fixes**:
+
 1. Add to `CHANGELOG.md`
 2. Update troubleshooting docs if relevant
 3. Add test to prevent regression
@@ -1058,12 +1112,14 @@ git push origin feature/my-feature
 ### Documentation Standards
 
 **Markdown formatting**:
+
 - Use headers hierarchically (##, ###, ####)
 - Code blocks with language specification
 - Tables for structured data
 - Links to related documentation
 
 **Code documentation**:
+
 ```groovy
 //
 // MODULE: Brief module description
@@ -1084,6 +1140,7 @@ ch_results = MYMODULE.out.results
 ### Common Issues
 
 #### Issue: Tests fail locally but examples work
+
 ```bash
 # Solution: Check test data paths
 nf-test test --verbose
@@ -1095,6 +1152,7 @@ ls assets/test_data/
 ```
 
 #### Issue: Module not found
+
 ```bash
 # Solution: Check include statement
 # workflows/taxbencher.nf
@@ -1105,6 +1163,7 @@ ls modules/local/mymodule/main.nf
 ```
 
 #### Issue: Lint fails with "TODO comment"
+
 ```bash
 # Solution: Remove TODOs or create GitHub issues
 grep -r "TODO" modules/ workflows/
@@ -1114,6 +1173,7 @@ grep -r "TODO" modules/ workflows/
 ```
 
 #### Issue: Container not found
+
 ```bash
 # Solution: Check container exists on quay.io/biocontainers
 # Or use Wave for custom dependencies
@@ -1126,6 +1186,7 @@ container "community.wave.seqera.io/library/package:hash"
 ```
 
 #### Issue: Tests pass but real data fails
+
 ```bash
 # Solution: Test with larger dataset
 nextflow run . -profile test_realistic,docker
@@ -1139,6 +1200,7 @@ cat work/*/.command.log
 ```
 
 #### Issue: nf-test snapshot mismatch
+
 ```bash
 # Solution: Review differences
 nf-test test --verbose
@@ -1153,11 +1215,13 @@ git diff tests/
 ### Debugging Workflows
 
 **Enable debug mode**:
+
 ```bash
 nextflow run . -profile test,docker -with-trace -with-report -with-timeline
 ```
 
 **Check process outputs**:
+
 ```bash
 # Work directory structure
 ls work/
@@ -1169,6 +1233,7 @@ cat work/ab/cd1234*/.command.err
 ```
 
 **Use `.view()` for channel debugging**:
+
 ```groovy
 ch_input
     .view { "DEBUG: $it" }
@@ -1178,12 +1243,14 @@ ch_input
 ### Getting Help
 
 **Resources**:
+
 1. **GitHub Issues**: https://github.com/FOI-Bioinformatics/taxbencher/issues
 2. **nf-core Slack**: https://nf-co.re/join/slack
 3. **Nextflow Slack**: https://www.nextflow.io/slack-invite.html
 4. **Documentation**: https://nf-co.re/docs/
 
 **When asking for help**:
+
 - Provide error logs
 - Share `.nextflow.log`
 - Include command used

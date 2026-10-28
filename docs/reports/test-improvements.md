@@ -7,10 +7,12 @@ Successfully improved test coverage from **64% to 78.3%** (+14.3 percentage poin
 ## Final Results
 
 **Docker Profile:**
+
 - **Passing:** 18/23 tests (78.3%)
 - **Failing:** 5/23 tests (21.7%) - all TAXPASTA_TO_BIOBOXES (requires conda)
 
 **Conda Profile:**
+
 - **Passing:** 23/28 tests (82.1%)
 - **Failing:** 5/28 tests (17.9%) - COMPARATIVE_ANALYSIS (requires kaleido on x86_64)
 
@@ -22,12 +24,14 @@ Successfully improved test coverage from **64% to 78.3%** (+14.3 percentage poin
 **After:** 5 functional tests + 1 stub test (full behavior validation)
 
 **Changes:**
+
 - Added `gold_standard_realistic.bioboxes` (36+ taxa, 8 ranks)
 - Created 3 prediction variant files for multi-classifier testing
 - Converted all tests from stub to functional with comprehensive assertions
 - All tests passing in ~11s each with docker profile
 
 **Files Modified:**
+
 - `modules/local/opal_per_sample/tests/main.nf.test`
 - Added 4 realistic test data files
 
@@ -39,12 +43,14 @@ Successfully improved test coverage from **64% to 78.3%** (+14.3 percentage poin
 **After:** 4/4 passing (all tests functional)
 
 **Changes:**
+
 - Copied realistic test data from OPAL_PER_SAMPLE
 - Updated tests to use `gold_standard_realistic.bioboxes` and realistic predictions
 - Regenerated snapshots with `--update-snapshot`
 - Kept 1 stub test for CI/CD environments
 
 **Files Modified:**
+
 - `modules/local/opal/tests/main.nf.test`
 - Added 3 realistic test data files
 - Updated 3 test snapshots
@@ -56,16 +62,19 @@ Successfully improved test coverage from **64% to 78.3%** (+14.3 percentage poin
 ### OPAL 1.0.13 Visualization Bug
 
 **Problem:** OPAL's spider plot and HTML generation fails with minimal data (< 10 taxa):
+
 ```
 IndexError: list index out of range
 at cami_opal/html_opal.py line 513
 ```
 
 **Solution:** Use realistic test data with 36+ taxa across 8 taxonomic ranks:
+
 - Minimal data: 3 taxa, 8 lines → IndexError
 - Realistic data: 36+ taxa, 39 lines → Works perfectly
 
 **Impact:**
+
 - All OPAL and OPAL_PER_SAMPLE tests now pass
 - Test data mirrors production use cases
 - HTML reports, confusion matrices, and by_rank analysis all generated successfully
@@ -73,6 +82,7 @@ at cami_opal/html_opal.py line 513
 ### OPAL Label Matching Requirement
 
 **Critical Insight:** All bioboxes files for the same sample MUST have identical `@SampleID` headers:
+
 - Gold standard: `@SampleID:test1`
 - Prediction 1: `@SampleID:test1` ✅
 - Prediction 2: `@SampleID:test1` ✅
@@ -81,35 +91,39 @@ at cami_opal/html_opal.py line 513
 ### Platform Dependencies
 
 **TAXPASTA_TO_BIOBOXES (5 failing tests with docker):**
+
 - Issue: `python:3.11` container missing pandas, numpy, ete3
 - Solution: Use conda profile (works perfectly)
 - Status: Known limitation, documented
 
 **COMPARATIVE_ANALYSIS (not converted to functional):**
+
 - Issue: `kaleido` package not available for osx-arm64 (Apple Silicon)
 - Solution: Requires Linux x86_64 system or Docker on x86_64
 - Status: Kept as stub tests (4/4 passing)
 
 ## Test Breakdown by Module
 
-| Module | Tests | Passing | Status | Notes |
-|--------|-------|---------|---------|-------|
-| COMPARATIVE_ANALYSIS | 4 | 4 | ✅ Passing | Stub tests (platform constraints) |
-| OPAL | 4 | 4 | ✅ **Fixed** | Used realistic data |
-| OPAL_PER_SAMPLE | 6 | 6 | ✅ **Improved** | Converted to functional |
-| TAXPASTA_STANDARDISE | 4 | 4 | ✅ Passing | Already working |
-| TAXPASTA_TO_BIOBOXES | 5 | 0 | ❌ Failing | Requires conda (missing pandas) |
-| **Total (Docker)** | **23** | **18** | **78.3%** | +14.3% improvement |
+| Module               | Tests  | Passing | Status          | Notes                             |
+| -------------------- | ------ | ------- | --------------- | --------------------------------- |
+| COMPARATIVE_ANALYSIS | 4      | 4       | ✅ Passing      | Stub tests (platform constraints) |
+| OPAL                 | 4      | 4       | ✅ **Fixed**    | Used realistic data               |
+| OPAL_PER_SAMPLE      | 6      | 6       | ✅ **Improved** | Converted to functional           |
+| TAXPASTA_STANDARDISE | 4      | 4       | ✅ Passing      | Already working                   |
+| TAXPASTA_TO_BIOBOXES | 5      | 0       | ❌ Failing      | Requires conda (missing pandas)   |
+| **Total (Docker)**   | **23** | **18**  | **78.3%**       | +14.3% improvement                |
 
 ## Test Execution Times
 
 **Module Tests:**
+
 - OPAL_PER_SAMPLE: ~11-13s per functional test, ~4s stub test
 - OPAL: ~11-12s per functional test, ~4s stub test
 - TAXPASTA_STANDARDISE: ~9-10s per test
 - COMPARATIVE_ANALYSIS: ~4-5s per stub test
 
 **Full Test Suite:**
+
 - Docker profile: ~180s (3 minutes)
 - Conda profile: ~300-600s (5-10 minutes, includes env building)
 
@@ -118,16 +132,19 @@ at cami_opal/html_opal.py line 513
 ### 1. TAXPASTA_TO_BIOBOXES Tests (5 tests)
 
 **Issue:** Docker container `quay.io/biocontainers/python:3.11` is missing dependencies:
+
 ```
 ModuleNotFoundError: No module named 'pandas'
 ```
 
 **Workaround:** Use conda profile
+
 ```bash
 nf-test test --profile conda
 ```
 
 **Why Not Fixed:**
+
 - No suitable pre-built container with all dependencies
 - Module documentation already notes conda requirement
 - Pipeline works correctly in production
@@ -139,6 +156,7 @@ nf-test test --profile conda
 **Current Status:** 4/4 stub tests passing (sufficient for CI/CD)
 
 **Why Not Converted:**
+
 - Platform-specific conda dependency issue
 - Stub tests validate module structure adequately
 - Would work on Linux x86_64 systems
@@ -146,6 +164,7 @@ nf-test test --profile conda
 ### 3. Full Pipeline Tests
 
 **Not Addressed:**
+
 - Pipeline integration tests exist but use minimal data
 - Would benefit from realistic data conversion
 - Lower priority than module tests
@@ -155,6 +174,7 @@ nf-test test --profile conda
 ### For Production Use
 
 1. **Use conda or wave profile** for full functionality:
+
    ```bash
    nextflow run FOI-Bioinformatics/taxbencher \
      -profile conda \
@@ -183,6 +203,7 @@ nf-test test --profile conda
 ## Documentation Updates
 
 Updated files:
+
 - ✅ `CLAUDE.md` - Added OPAL requirements and test coverage notes
 - ✅ `VALIDATION_REPORT.md` - Documented honest test coverage
 - ✅ Created `TEST_IMPROVEMENTS_SUMMARY.md` (this file)
@@ -195,6 +216,7 @@ Updated files:
 ## Conclusion
 
 Successfully improved test coverage by **+14.3 percentage points** through:
+
 - Converting 5 OPAL_PER_SAMPLE stub tests to functional
 - Fixing 3 failing OPAL functional tests
 - Using realistic data (36+ taxa) that avoids OPAL 1.0.13 bugs
@@ -206,5 +228,5 @@ The remaining 21.7% failures are due to known platform/dependency constraints (T
 
 ---
 
-*Generated with Claude Code*
-*Date: 2025-10-12*
+_Generated with Claude Code_
+_Date: 2025-10-12_

@@ -29,44 +29,27 @@ include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_taxb
 workflow FOIBIOINFORMATICS_TAXBENCHER {
 
     take:
-    samplesheet // channel: samplesheet read in from --input
+    samplesheet // channel: [ [meta], path(input_file) ] read in from --input
 
     main:
 
     //
-    // Create gold standard channel from parameter
+    // Create gold standard channel from parameter (value channel, reused for every sample)
     //
     ch_gold_standard = Channel.fromPath(params.gold_standard, checkIfExists: true).first()
 
     //
-    // Parse samplesheet to create input channel
-    // Samplesheet format: sample_id,label,classifier,taxpasta_file,taxonomy_db
-    // taxpasta_file can be either:
-    //   - Pre-standardized taxpasta TSV (.tsv, .txt)
-    //   - Raw profiler output (will be standardized automatically based on file extension)
-    // Channel emits maps with column names as keys from splitCsv
+    // Optional pinned NCBI taxonomy dump for reproducible, offline lineage lookups
     //
-    ch_input = samplesheet.map { row ->
-        def meta = [
-            id: row.label,
-            sample_id: row.sample_id,
-            label: row.label,
-            classifier: row.classifier,
-            taxonomy_db: row.taxonomy_db
-        ]
-        // Resolve file path relative to projectDir if it's not absolute
-        def input_path = row.taxpasta_file.startsWith('/') ?
-            file(row.taxpasta_file) :
-            file("${projectDir}/${row.taxpasta_file}")
-        [meta, input_path]
-    }
+    ch_taxdump = params.taxdump ? Channel.fromPath(params.taxdump, checkIfExists: true).first() : Channel.empty()
 
     //
     // WORKFLOW: Run pipeline
     //
     TAXBENCHER (
-        ch_input,
-        ch_gold_standard
+        samplesheet,
+        ch_gold_standard,
+        ch_taxdump
     )
 
     emit:

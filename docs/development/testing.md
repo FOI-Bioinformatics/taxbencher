@@ -823,7 +823,9 @@ comm -23 \
 
 ### 1. OPAL 1.0.13 Upstream Bugs
 
-**Issue**: OPAL fails to generate spider plots with minimal test data
+**Issue (historical)**: OPAL failed to generate spider plots with the old minimal test data.
+**Status (2026-10)**: not reproducible with valid CAMI profiles; the failing inputs were header-only or
+non-cumulative profiles produced by the previous converter. All three test profiles now pass OPAL.
 
 **Error**:
 ```
@@ -876,7 +878,7 @@ at cami_opal/plots.py:382 in spider_plot
 
 3. **Pre-pull Wave containers**:
    ```bash
-   docker pull community.wave.seqera.io/library/pip_ete3_pandas:hash
+   docker pull community.wave.seqera.io/library/python_pandas_ete3:0aabbd50f04018cb
    ```
 
 ### 3. Conda Environment Build Time

@@ -9,38 +9,43 @@ taxbencher automatically detects and standardizes raw profiler outputs using the
 1. **Pre-standardized** taxpasta TSV files (`.tsv`, `.txt`)
 2. **Raw profiler outputs** (automatically standardized during pipeline execution)
 
-The pipeline determines which inputs need standardization based on file extension.
+The pipeline determines which inputs need standardization from the file extension **and** the header: a `.tsv`/`.txt` file whose header row contains `taxonomy_id` and `count` is treated as taxpasta output, anything else is standardised with taxpasta (so raw DIAMOND or MEGAN6 text files are handled correctly).
 
 ## Supported Profilers
 
 taxbencher supports all profilers compatible with [taxpasta](https://taxpasta.readthedocs.io/):
 
-| Profiler | Supported Versions | Common Extensions | Format Description |
-|----------|-------------------|-------------------|-------------------|
-| **Bracken** | Latest | `.kreport`, `.bracken` | Kraken-style report with re-estimated abundances |
-| **Centrifuge** | Latest | `.report` | 6-column TSV: percentage, numReads, numUniqueReads, rank, taxID, name |
-| **DIAMOND** | Latest | `.diamond`, `.tsv` | Taxonomic assignment output from DIAMOND+MEGAN workflow |
-| **ganon** | Latest | `.ganon`, `.out` | ganon taxonomic profiling output |
-| **Kaiju** | Latest | `.kaiju`, `.out` | Kaiju taxonomic classification summary |
-| **KMCP** | Latest | `.kmcp`, `.out` | KMCP profiling results |
-| **Kraken2** | Latest | `.kreport`, `.kreport2` | 6-column report: percentage, clade_reads, taxon_reads, rank, taxID, name |
-| **KrakenUniq** | Latest | `.krakenuniq`, `.kreport` | KrakenUniq-specific report format |
-| **MEGAN6/MALT** | MEGAN6 | `.megan`, `.rma6` | MEGAN6 taxonomic summary files |
-| **MetaPhlAn** | 3.x, 4.x | `.profile`, `.mpa`, `.mpa3` | 4-column TSV: clade_name, NCBI_tax_id, relative_abundance, additional_species |
-| **mOTUs** | Latest | `.motus`, `.out` | mOTUs taxonomic profiling output |
+| Profiler        | Supported Versions | Common Extensions           | Format Description                                                            |
+| --------------- | ------------------ | --------------------------- | ----------------------------------------------------------------------------- |
+| **Bracken**     | Latest             | `.kreport`, `.bracken`      | Kraken-style report with re-estimated abundances                              |
+| **Centrifuge**  | Latest             | `.report`                   | 6-column TSV: percentage, numReads, numUniqueReads, rank, taxID, name         |
+| **DIAMOND**     | Latest             | `.diamond`, `.tsv`          | Taxonomic assignment output from DIAMOND+MEGAN workflow                       |
+| **ganon**       | Latest             | `.ganon`, `.out`            | ganon taxonomic profiling output                                              |
+| **Kaiju**       | Latest             | `.kaiju`, `.out`            | Kaiju taxonomic classification summary                                        |
+| **KMCP**        | Latest             | `.kmcp`, `.out`             | KMCP profiling results                                                        |
+| **Kraken2**     | Latest             | `.kreport`, `.kreport2`     | 6-column report: percentage, clade_reads, taxon_reads, rank, taxID, name      |
+| **KrakenUniq**  | Latest             | `.krakenuniq`, `.kreport`   | KrakenUniq-specific report format                                             |
+| **MEGAN6/MALT** | MEGAN6             | `.megan`, `.rma6`           | MEGAN6 taxonomic summary files                                                |
+| **MetaPhlAn**   | 3.x, 4.x           | `.profile`, `.mpa`, `.mpa3` | 4-column TSV: clade_name, NCBI_tax_id, relative_abundance, additional_species |
+| **mOTUs**       | Latest             | `.motus`, `.out`            | mOTUs taxonomic profiling output                                              |
 
 ## File Extension Detection
 
-The pipeline uses file extensions to determine processing:
+The pipeline inspects extension and header to determine processing:
 
 ### Standardized Format (Pass-Through)
-- `.tsv` - taxpasta standardized TSV
-- `.txt` - taxpasta standardized text file
 
-**These files bypass standardization** and go directly to bioboxes conversion.
+- `.tsv` / `.txt` files whose first line contains the columns `taxonomy_id` and `count`
+  (taxpasta `standardise`/`merge` output, optionally with `--add-name`, `--add-rank`,
+  `--add-lineage`, `--add-id-lineage`, `--add-rank-lineage` columns)
+
+**These files bypass standardization** and go directly to bioboxes conversion. When the lineage
+columns are present they are used for TAXPATH/TAXPATHSN and no NCBI taxonomy database is needed.
 
 ### Raw Formats (Auto-Standardized)
-All other extensions trigger the TAXPASTA_STANDARDISE module:
+
+All other files (including `.tsv`/`.txt` files without a taxpasta header) trigger the TAXPASTA_STANDARDISE module; the `classifier` column must then be one of taxpasta's profiler names (`bracken`, `centrifuge`, `diamond`, `ganon`, `kaiju`, `kmcp`, `kraken2`, `krakenuniq`, `megan6`, `metaphlan`, `motus`):
+
 - `.kreport`, `.kreport2` - Kraken2/Bracken
 - `.report` - Centrifuge
 - `.out` - Kaiju/ganon/KMCP/mOTUs
@@ -59,75 +64,101 @@ All other extensions trigger the TAXPASTA_STANDARDISE module:
 ### Example with Raw Profiler Outputs
 
 ```csv
-sample,classifier,taxpasta_file,taxonomy_db
-sample1,kraken2,/path/to/sample1.kreport,NCBI
-sample1,metaphlan,/path/to/sample1.profile,NCBI
-sample1,centrifuge,/path/to/sample1.report,NCBI
-sample2,kaiju,/path/to/sample2.kaiju.out,NCBI
-sample2,bracken,/path/to/sample2.bracken,NCBI
+sample_id,label,classifier,taxpasta_file,taxonomy_db
+sample1,sample1_kraken2,kraken2,/path/to/sample1.kreport,NCBI
+sample1,sample1_metaphlan,metaphlan,/path/to/sample1.profile,NCBI
+sample1,sample1_centrifuge,centrifuge,/path/to/sample1.report,NCBI
+sample2,sample2_kaiju,kaiju,/path/to/sample2.kaiju.out,NCBI
+sample2,sample2_bracken,bracken,/path/to/sample2.bracken,NCBI
 ```
 
 ### Example with Pre-Standardized Files
 
 ```csv
-sample,classifier,taxpasta_file,taxonomy_db
-sample1,kraken2,/path/to/sample1_kraken2.tsv,NCBI
-sample1,metaphlan,/path/to/sample1_metaphlan.tsv,NCBI
+sample_id,label,classifier,taxpasta_file,taxonomy_db
+sample1,sample1_kraken2,kraken2,/path/to/sample1_kraken2.tsv,NCBI
+sample1,sample1_metaphlan,metaphlan,/path/to/sample1_metaphlan.tsv,NCBI
 ```
 
 ### Mixed Format (Both Raw and Standardized)
 
 ```csv
-sample,classifier,taxpasta_file,taxonomy_db
-sample1,kraken2,/path/to/sample1.kreport,NCBI
-sample1,metaphlan,/path/to/sample1_metaphlan.tsv,NCBI
-sample2,centrifuge,/path/to/sample2_centrifuge.tsv,NCBI
+sample_id,label,classifier,taxpasta_file,taxonomy_db
+sample1,sample1_kraken2,kraken2,/path/to/sample1.kreport,NCBI
+sample1,sample1_metaphlan,metaphlan,/path/to/sample1_metaphlan.tsv,NCBI
+sample2,sample2_centrifuge,centrifuge,/path/to/sample2_centrifuge.tsv,NCBI
 ```
 
-The pipeline handles mixed inputs automatically based on file extension.
+The pipeline handles mixed inputs automatically. Relative paths are resolved against the samplesheet's
+directory, then the launch directory; absolute paths and remote URIs (`s3://`, `https://`, ...) are used as given.
 
 ## Column Specifications
 
 ### Required Columns
 
-1. **sample** (string, no spaces)
-   - Sample identifier for grouping results
+1. **sample_id** (string, no spaces, commas or pipes)
+   - Biological sample identifier for grouping results; must equal a `@SampleID` of the gold standard
    - Example: `sample1`, `patient_42`, `site_A`
 
-2. **classifier** (string, no spaces)
+2. **label** (string, unique, no spaces, commas or pipes)
+   - Name of this profile in OPAL and in all outputs, e.g. `sample1_kraken2`
+
+3. **classifier** (string, no spaces)
    - Taxonomic profiler name
    - Must match one of the supported profilers
    - Example: `kraken2`, `metaphlan`, `centrifuge`
 
-3. **taxpasta_file** (file path)
-   - Path to profiler output file
+4. **taxpasta_file** (file path)
+   - Path to profiler output file (absolute, relative to the samplesheet, or a remote URI)
    - Must exist and be readable
-   - Extension determines processing (standardized vs. raw)
+   - Extension and header determine processing (standardized vs. raw)
 
 ### Optional Columns
 
-4. **taxonomy_db** (string, default: `NCBI`)
+5. **taxonomy_db** (string, default: `NCBI`)
    - Taxonomy database used by the profiler
    - Options: `NCBI`, `GTDB`
-   - Used for taxonomy lookups during bioboxes conversion
+   - `NCBI` profiles get their lineages from ete3 (`--taxdump`); `GTDB` profiles must carry taxpasta lineage
+     columns (`--add-id-lineage --add-rank-lineage --add-lineage` with a GTDB taxonomy) because ete3 only
+     knows the NCBI taxonomy
+
+## Abundance semantics
+
+taxpasta's `count` column has different meanings per profiler and the conversion to CAMI format accounts for
+that (`--abundance-mode` of `bin/taxpasta_to_bioboxes.py`, chosen from the `classifier` column):
+
+| Mode     | Profilers                                                                            | Meaning of `count`                                                  | Conversion                                                      |
+| -------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------- | --------------------------------------------------------------- |
+| `direct` | kraken2, krakenuniq, centrifuge, bracken, kaiju, kmcp, ganon, diamond, megan6, motus | reads assigned directly to the taxon                                | summed over all descendants to obtain clade abundances per rank |
+| `clade`  | metaphlan                                                                            | cumulative clade relative abundance (every lineage level is listed) | used as is                                                      |
+
+Choosing the wrong mode produces per-rank sums above 100 % and the conversion fails with an explicit message.
+Override per row with `abundance_mode` in the module `meta` map if a custom profile needs the other mode.
 
 ## Format Requirements by Profiler
 
 ### Bracken
+
 **Format**: Kraken-style report (6 columns, tab-separated)
+
 ```
 percentage  clade_reads  taxon_reads  rank  taxID  scientific_name
 ```
+
 **Extensions**: `.kreport`, `.bracken`
 
 ### Centrifuge
+
 **Format**: Report format (6 columns, tab-separated)
+
 ```
 percentage  numReads  numUniqueReads  rank  taxID  name
 ```
+
 **Extensions**: `.report`
 
 **Example**:
+
 ```
 50.00	5	5	S	562	Escherichia coli
 30.00	3	3	S	1280	Staphylococcus aureus
@@ -135,29 +166,37 @@ percentage  numReads  numUniqueReads  rank  taxID  name
 ```
 
 ### DIAMOND
+
 **Format**: DIAMOND taxonomic assignment output
 **Extensions**: `.diamond`, `.tsv`
 
 ### ganon
+
 **Format**: ganon profiling output
 **Extensions**: `.ganon`, `.out`
 
 ### Kaiju
+
 **Format**: Kaiju summary table
 **Extensions**: `.kaiju`, `.out`
 
 ### KMCP
+
 **Format**: KMCP profiling results
 **Extensions**: `.kmcp`, `.out`
 
 ### Kraken2
+
 **Format**: Report format (6 columns, tab-separated)
+
 ```
 percentage  clade_reads  taxon_reads  rank  taxID  scientific_name
 ```
+
 **Extensions**: `.kreport`, `.kreport2`
 
 **Example**:
+
 ```
  99.95	9995	9995	U	0	unclassified
   0.05	5	0	R	1	root
@@ -167,21 +206,27 @@ percentage  clade_reads  taxon_reads  rank  taxID  scientific_name
 ```
 
 ### KrakenUniq
+
 **Format**: KrakenUniq-specific report
 **Extensions**: `.krakenuniq`, `.kreport`
 
 ### MEGAN6/MALT
+
 **Format**: MEGAN6 taxonomic summary
 **Extensions**: `.megan`, `.rma6`
 
 ### MetaPhlAn
+
 **Format**: Profile format (4 columns, tab-separated)
+
 ```
 clade_name  NCBI_tax_id  relative_abundance  additional_species
 ```
+
 **Extensions**: `.profile`, `.mpa`, `.mpa3`
 
 **Example**:
+
 ```
 #clade_name	NCBI_tax_id	relative_abundance	additional_species
 k__Bacteria	2	98.5
@@ -196,6 +241,7 @@ s__Escherichia_coli	562	50.0
 **Note**: MetaPhlAn files must have 4 columns. The `additional_species` column may be empty but must be present.
 
 ### mOTUs
+
 **Format**: mOTUs profiling output
 **Extensions**: `.motus`, `.out`
 
@@ -237,11 +283,13 @@ Results
    - `standardised`: Files ready for bioboxes conversion
 
 2. **Standardize**: Run taxpasta on raw files
+
    ```groovy
    TAXPASTA_STANDARDISE(ch_branched.raw)
    ```
 
 3. **Mix**: Combine standardized outputs
+
    ```groovy
    ch_taxpasta = TAXPASTA_STANDARDISE.out.tsv.mix(ch_branched.standardised)
    ```
@@ -265,6 +313,7 @@ taxprofiler_results/taxpasta/*.tsv
 ```
 
 **Samplesheet**:
+
 ```csv
 sample,classifier,taxpasta_file,taxonomy_db
 sample1,kraken2,taxprofiler_results/taxpasta/sample1_kraken2.tsv,NCBI
@@ -281,6 +330,7 @@ taxprofiler_results/centrifuge/*.report
 ```
 
 **Samplesheet**:
+
 ```csv
 sample,classifier,taxpasta_file,taxonomy_db
 sample1,kraken2,taxprofiler_results/kraken2/sample1.kreport,NCBI
@@ -295,6 +345,7 @@ sample1,centrifuge,taxprofiler_results/centrifuge/sample1.report,NCBI
 Before running the pipeline, validate your files:
 
 **For raw profiler outputs** (NEW in v1.0.2):
+
 ```bash
 # Validate file format matches profiler expectations
 python3 bin/validate_profiler_format.py kraken2 /path/to/sample.kreport
@@ -306,11 +357,13 @@ python3 bin/validate_profiler_format.py kraken2 --show-spec
 ```
 
 **For standardized files**:
+
 ```bash
 python3 bin/validate_taxpasta.py /path/to/sample.tsv
 ```
 
 **For gold standard**:
+
 ```bash
 python3 bin/validate_bioboxes.py gold_standard.bioboxes
 ```
@@ -322,6 +375,7 @@ python3 bin/validate_bioboxes.py gold_standard.bioboxes
 **Cause**: Profiler output format doesn't match taxpasta expectations
 
 **Solutions**:
+
 - Verify profiler version compatibility
 - Check that output file is in the correct format (e.g., Centrifuge report, not classification output)
 - Consult profiler documentation for output format options
@@ -331,6 +385,7 @@ python3 bin/validate_bioboxes.py gold_standard.bioboxes
 **Cause**: Missing required columns in profiler output
 
 **Solutions**:
+
 - MetaPhlAn files must have 4 columns (including `additional_species`)
 - Centrifuge must use report format (6 columns), not classification format (8 columns)
 - Check profiler run parameters to ensure correct output format
@@ -340,6 +395,7 @@ python3 bin/validate_bioboxes.py gold_standard.bioboxes
 **Cause**: File extension not in schema validation pattern
 
 **Solutions**:
+
 - Use one of the supported extensions listed above
 - Rename file to use standard extension (e.g., `.kreport` for Kraken2)
 - For standardized files, use `.tsv` or `.txt`
@@ -349,16 +405,19 @@ python3 bin/validate_bioboxes.py gold_standard.bioboxes
 The pipeline includes comprehensive tests for raw profiler inputs:
 
 **Test raw profiler standardization**:
+
 ```bash
 nf-test test modules/local/taxpasta_standardise/tests/main.nf.test
 ```
 
 **Test full pipeline with raw inputs**:
+
 ```bash
 nextflow run . -profile test_raw,conda
 ```
 
 **Test with your own data**:
+
 ```bash
 nextflow run . \
   --input samplesheet_raw.csv \
@@ -368,6 +427,7 @@ nextflow run . \
 ```
 
 **Save standardised profiles** (optional):
+
 ```bash
 nextflow run . \
   --input samplesheet_raw.csv \
@@ -384,11 +444,13 @@ When `--save_standardised_profiles` is used, the intermediate taxpasta TSV files
 ### When to Pre-Standardize
 
 **Use raw inputs** when:
+
 - Working with fresh profiler outputs
 - Processing outputs from nf-core/taxprofiler without taxpasta
 - Simplifying workflow (one less manual step)
 
 **Pre-standardize with taxpasta** when:
+
 - Processing large batches (can parallelize independently)
 - Reusing standardized files across multiple analyses
 - Troubleshooting format issues (easier to inspect TSV)
@@ -396,11 +458,13 @@ When `--save_standardised_profiles` is used, the intermediate taxpasta TSV files
 ### Resource Requirements
 
 The TAXPASTA_STANDARDISE module is lightweight:
+
 - CPU: 2 cores (default)
 - Memory: 6 GB (default)
 - Time: < 1 minute per file (typically)
 
 For large files or many samples, consider:
+
 - Running on compute cluster with parallel execution
 - Using `-profile conda` or `-profile singularity` for better reproducibility
 - Adjusting `conf/base.config` resource allocations if needed
@@ -475,6 +539,7 @@ nextflow run . -profile test_raw,docker -with-trace -with-report -with-timeline
 ### Check Standardization Output
 
 Standardized files are published to:
+
 ```
 results/taxpasta_standardise/
 ├── sample1_kraken2_standardised.tsv
@@ -483,11 +548,13 @@ results/taxpasta_standardise/
 ```
 
 Inspect these files to verify standardization:
+
 ```bash
 head results/taxpasta_standardise/sample1_kraken2_standardised.tsv
 ```
 
 Expected format:
+
 ```
 taxonomy_id	count
 562	50
@@ -498,6 +565,7 @@ taxonomy_id	count
 ### Check Bioboxes Conversion
 
 Bioboxes files are published to:
+
 ```
 results/taxpasta_to_bioboxes/
 ├── sample1_kraken2.bioboxes
@@ -506,6 +574,7 @@ results/taxpasta_to_bioboxes/
 ```
 
 Validate bioboxes format:
+
 ```bash
 python3 bin/validate_bioboxes.py results/taxpasta_to_bioboxes/sample1_kraken2.bioboxes
 ```
@@ -513,6 +582,7 @@ python3 bin/validate_bioboxes.py results/taxpasta_to_bioboxes/sample1_kraken2.bi
 ### Debug Profile Detection
 
 Add this to your samplesheet to test detection:
+
 ```csv
 sample,classifier,taxpasta_file,taxonomy_db
 test_raw,kraken2,test.kreport,NCBI

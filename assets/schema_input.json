@@ -9,30 +9,36 @@
         "properties": {
             "sample_id": {
                 "type": "string",
-                "pattern": "^\\S+$",
-                "errorMessage": "Sample ID (biological sample identifier) must be provided and cannot contain spaces"
+                "pattern": "^[^\\s,|]+$",
+                "errorMessage": "Sample ID (biological sample identifier, must match a @SampleID in the gold standard) must be provided and cannot contain spaces, commas or pipes",
+                "meta": ["sample_id"]
             },
             "label": {
                 "type": "string",
-                "pattern": "^\\S+$",
-                "errorMessage": "Label (unique identifier for this taxonomic profile) must be provided and cannot contain spaces"
+                "pattern": "^[^\\s,|]+$",
+                "errorMessage": "Label (unique identifier for this taxonomic profile) must be provided and cannot contain spaces, commas or pipes",
+                "meta": ["id", "label"]
             },
             "classifier": {
                 "type": "string",
                 "pattern": "^\\S+$",
-                "errorMessage": "Classifier name must be provided and cannot contain spaces"
+                "errorMessage": "Classifier name must be provided and cannot contain spaces (use taxpasta profiler names for raw outputs: bracken, centrifuge, diamond, ganon, kaiju, kmcp, kraken2, krakenuniq, megan6, metaphlan, motus)",
+                "meta": ["classifier"]
             },
             "taxpasta_file": {
                 "type": "string",
-                "pattern": "^\\S+\\.(tsv|txt|kreport|kreport2|report|out|profile|mpa|mpa3|kraken|kraken2|krakenuniq|centrifuge|kaiju|bracken|ganon|diamond|motus|megan|rma6|kmcp)$",
-                "errorMessage": "Input file must be provided and have a valid extension (.tsv/.txt for taxpasta standardized format, or raw profiler outputs: .kreport/.kreport2 (Kraken2/Bracken), .report (Centrifuge), .out (Kaiju/ganon/KMCP), .profile/.mpa/.mpa3 (MetaPhlAn), .diamond (DIAMOND), .motus (mOTUs), .megan/.rma6 (MEGAN6), .krakenuniq (KrakenUniq))"
+                "pattern": "^\\S+$",
+                "errorMessage": "Input file path must be provided and cannot contain spaces. Relative paths are resolved against the samplesheet location, then the launch directory."
             },
             "taxonomy_db": {
                 "type": "string",
+                "enum": ["NCBI", "GTDB"],
                 "default": "NCBI",
-                "errorMessage": "Taxonomy database should be specified (default: NCBI)"
+                "errorMessage": "Taxonomy database must be NCBI or GTDB (default: NCBI)",
+                "meta": ["taxonomy_db"]
             }
         },
         "required": ["sample_id", "label", "classifier", "taxpasta_file"]
-    }
+    },
+    "uniqueEntries": ["label"]
 }

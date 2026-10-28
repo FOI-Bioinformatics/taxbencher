@@ -1,0 +1,18 @@
+@SampleID:test1
+@Version:0.9.1
+@Ranks:superkingdom|phylum|class|order|family|genus|species|strain
+@TaxonomyID:NCBI
+@@TAXID	RANK	PERCENTAGE
+401614	strain	22.0
+177416	strain	18.0
+393011	strain	15.0
+1232394	strain	5.0
+1088883	strain	12.0
+1086726	strain	6.0
+539329	strain	5.0
+1542390	species	4.0
+299583	species	3.0
+2599927	species	2.0
+1085647	species	3.0
+594679	species	2.0
+2173	species	3.0

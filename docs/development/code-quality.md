@@ -3,6 +3,7 @@
 This document provides comprehensive guidelines for maintaining high code quality in taxbencher. For specific implementation details, see [Development Guide](development-guide.md).
 
 ## Table of Contents
+
 - [Code Quality Overview](#code-quality-overview)
 - [nf-core Compliance](#nf-core-compliance)
 - [Nextflow Best Practices](#nextflow-best-practices)
@@ -25,11 +26,13 @@ This document provides comprehensive guidelines for maintaining high code qualit
 **Grade: A-**
 
 **nf-core Lint Results**:
+
 - ✅ 205/205 tests passing
 - ❌ 0 failures
 - ⚠️ 5 minor warnings
 
 **Innovative Patterns**:
+
 1. Tuple-embedded channels for per-sample evaluation
 2. Automatic format detection and branching
 3. Per-sample grouping with groupTuple()
@@ -39,6 +42,7 @@ See [Code Quality Report](../reports/code-quality.md) for detailed analysis.
 ### Quality Standards
 
 **We prioritize**:
+
 1. **Correctness** - Code does what it's supposed to
 2. **Readability** - Easy to understand and maintain
 3. **Reliability** - Handles errors gracefully
@@ -46,6 +50,7 @@ See [Code Quality Report](../reports/code-quality.md) for detailed analysis.
 5. **Maintainability** - Easy to modify and extend
 
 **Quality gates**:
+
 - nf-core lint must pass (205/205)
 - All tests must pass (or known failures documented)
 - Code review approved
@@ -58,12 +63,14 @@ See [Code Quality Report](../reports/code-quality.md) for detailed analysis.
 #### 1. DSL2 Syntax
 
 **Required**:
+
 ```groovy
 // nextflow.config
 nextflow.enable.dsl = 2
 ```
 
 **Process structure**:
+
 ```groovy
 process MYPROCESS {
     tag "$meta.id"
@@ -105,6 +112,7 @@ process MYPROCESS {
 #### 2. Meta Map Pattern
 
 **Always use meta maps** for sample tracking:
+
 ```groovy
 // Required fields
 def meta = [
@@ -123,6 +131,7 @@ def meta = [
 ```
 
 **Meta propagation**:
+
 ```groovy
 // Input
 input:
@@ -136,6 +145,7 @@ tuple val(meta), path("*.out"), emit: results
 #### 3. Version Tracking
 
 **All processes must emit versions**:
+
 ```groovy
 output:
 path "versions.yml", emit: versions
@@ -153,6 +163,7 @@ END_VERSIONS
 ```
 
 **Workflow version collection**:
+
 ```groovy
 ch_versions = Channel.empty()
 ch_versions = ch_versions.mix(PROCESS1.out.versions.first())
@@ -165,6 +176,7 @@ softwareVersionsToYAML(ch_versions)
 #### 4. Process Labels
 
 **Use standard resource labels**:
+
 ```groovy
 label 'process_single'   // 1 CPU, 6 GB memory
 label 'process_low'      // 2 CPUs, 12 GB memory
@@ -173,6 +185,7 @@ label 'process_high'     // 12 CPUs, 72 GB memory
 ```
 
 **Custom labels** (defined in `conf/base.config`):
+
 ```groovy
 withLabel: process_custom {
     cpus   = { 4 * task.attempt }
@@ -184,6 +197,7 @@ withLabel: process_custom {
 #### 5. Stub Implementation
 
 **All processes must support stub mode**:
+
 ```groovy
 stub:
 def prefix = task.ext.prefix ?: "${meta.id}"
@@ -202,6 +216,7 @@ END_VERSIONS
 #### 6. when: Directive
 
 **Always include when block**:
+
 ```groovy
 when:
 task.ext.when == null || task.ext.when
@@ -212,11 +227,13 @@ This allows users to conditionally skip processes via config.
 ### nf-core Linting
 
 **Run before every commit**:
+
 ```bash
 nf-core pipelines lint
 ```
 
 **Common lint requirements**:
+
 1. `meta.yml` for every module
 2. `tests/main.nf.test` for every module
 3. Container specifications for all processes
@@ -224,6 +241,7 @@ nf-core pipelines lint
 5. All parameters in `nextflow_schema.json`
 
 **Fix lint issues**:
+
 ```bash
 # Auto-fix formatting
 nf-core pipelines lint --fix
@@ -237,6 +255,7 @@ nf-core pipelines sync
 ### 1. Naming Conventions
 
 **Channels**: `ch_` prefix
+
 ```groovy
 ch_input
 ch_taxpasta
@@ -244,12 +263,14 @@ ch_bioboxes_per_sample
 ```
 
 **Processes**: UPPERCASE
+
 ```groovy
 TAXPASTA_TO_BIOBOXES
 OPAL_PER_SAMPLE
 ```
 
 **Variables**: camelCase
+
 ```groovy
 def sampleId = meta.sample_id
 def outputFile = "${prefix}.output"
@@ -259,6 +280,7 @@ def numClassifiers = labels.size()
 ### 2. Channel Operations
 
 **Use descriptive variable names**:
+
 ```groovy
 // Good
 ch_input
@@ -272,6 +294,7 @@ ch_input
 ```
 
 **Document complex transformations**:
+
 ```groovy
 //
 // Group bioboxes by sample_id for per-sample OPAL evaluation
@@ -286,6 +309,7 @@ ch_bioboxes_per_sample = TAXPASTA_TO_BIOBOXES.out.bioboxes
 ```
 
 **Avoid channel reuse**:
+
 ```groovy
 // Bad: Channel consumed twice
 ch_input = Channel.fromPath('*.tsv')
@@ -307,6 +331,7 @@ PROCESS2(ch_input2, ch_reference)  // Can reuse
 ### 3. Process Organization
 
 **One purpose per process**:
+
 ```groovy
 // Good: Clear, single responsibility
 process CONVERT_FORMAT {
@@ -324,6 +349,7 @@ process CONVERT_AND_VALIDATE {
 ```
 
 **Input/output clarity**:
+
 ```groovy
 // Good: Clear input/output structure
 input:
@@ -341,6 +367,7 @@ path "*"  // What files? What format?
 ### 4. Script Organization
 
 **Use heredoc for multi-line scripts**:
+
 ```groovy
 script:
 """
@@ -368,6 +395,7 @@ fi
 ```
 
 **Escape variables properly**:
+
 ```groovy
 """
 # Nextflow variables (evaluated by Nextflow)
@@ -383,6 +411,7 @@ echo "Processing \$NUM_LINES lines"
 ### 5. Error Handling
 
 **Validate inputs in script**:
+
 ```groovy
 """
 # Validate input exists and is not empty
@@ -400,6 +429,7 @@ fi
 ```
 
 **Use error strategies**:
+
 ```groovy
 // In conf/base.config
 process {
@@ -416,6 +446,7 @@ withName: 'OPAL_PER_SAMPLE' {
 ```
 
 **Provide helpful error messages**:
+
 ```groovy
 """
 if ! tool --validate ${input_file}; then
@@ -438,6 +469,7 @@ fi
 ### 1. Safe Navigation
 
 **Use safe navigation operator**:
+
 ```groovy
 // Good: Safe navigation
 def value = params.optional_param ?: 'default'
@@ -451,6 +483,7 @@ def length = meta.labels.size()  // Crashes if labels is null
 ### 2. String Handling
 
 **Choose appropriate quote type**:
+
 ```groovy
 // Single quotes: Literal strings (no interpolation)
 def literal = 'This is $variable'  // Output: "This is $variable"
@@ -475,6 +508,7 @@ Just literal text
 ### 3. Collections
 
 **Use appropriate collection methods**:
+
 ```groovy
 // Map
 def mapped = list.collect { it * 2 }
@@ -496,6 +530,7 @@ def joined = list.join(', ')
 ### 4. Closures
 
 **Understand closure scope**:
+
 ```groovy
 // Good: Clear closure parameter
 def doubled = list.collect { item ->
@@ -515,6 +550,7 @@ def result = list.collect {
 ### 5. Type Safety
 
 **Use type declarations when helpful**:
+
 ```groovy
 // Good: Clear types for complex structures
 def Map<String, Integer> countMap = [:]
@@ -533,6 +569,7 @@ def result = compute()  // Type inferred
 ### 1. Script Structure
 
 **Standard template for bin/ scripts**:
+
 ```python
 #!/usr/bin/env python3
 """
@@ -625,6 +662,7 @@ if __name__ == '__main__':
 ### 2. Error Handling
 
 **Specific exception handling**:
+
 ```python
 # Good: Specific exceptions
 try:
@@ -650,6 +688,7 @@ except:  # Too broad
 ### 3. Type Hints
 
 **Use type hints for clarity**:
+
 ```python
 from typing import List, Dict, Optional, Tuple
 
@@ -679,6 +718,7 @@ def process_taxonomy(
 ### 4. File Operations
 
 **Use pathlib for file operations**:
+
 ```python
 from pathlib import Path
 
@@ -703,6 +743,7 @@ if not os.path.exists(args.input):
 ### 5. Code Style
 
 **Follow PEP 8**:
+
 ```python
 # Good: PEP 8 compliant
 def process_sample_data(
@@ -727,6 +768,7 @@ def processSampleData(sampleId,taxonomyDb="NCBI"):
 ```
 
 **Format with black and ruff**:
+
 ```bash
 # Format code
 black bin/*.py
@@ -923,6 +965,7 @@ process PYTHON_SCRIPT {
 ### Use Tuple-Embedded Pattern for Multi-File Processes
 
 **Problem**: Separate channels cause cardinality mismatch
+
 ```groovy
 // Bad: ALL predictions sent to EVERY invocation
 input:
@@ -935,6 +978,7 @@ tuple val(meta), path(gold_standard), path(predictions)
 ```
 
 **Implementation**:
+
 ```groovy
 ch_grouped = ch_input
     .map { meta, file -> [meta.sample_id, meta.label, file] }
@@ -949,6 +993,7 @@ ch_grouped = ch_input
 ### Optimize Version Collection
 
 **Use `.first()` for identical parallel outputs**:
+
 ```groovy
 // Good: Collect only one copy
 ch_versions = ch_versions.mix(PROCESS.out.versions.first())
@@ -1105,11 +1150,13 @@ withName: 'OPTIONAL_PROCESS' {
 ### Module Documentation
 
 **Required files**:
+
 1. `main.nf` - Inline comments
 2. `meta.yml` - Complete metadata
 3. `README.md` - Usage examples (optional)
 
 **meta.yml template**:
+
 ```yaml
 name: module_name
 description: Brief description of what this module does
@@ -1155,6 +1202,7 @@ maintainers:
 ### Inline Comments
 
 **Process-level comments**:
+
 ```groovy
 //
 // MODULE: TAXPASTA_TO_BIOBOXES
@@ -1169,6 +1217,7 @@ TAXPASTA_TO_BIOBOXES(ch_taxpasta)
 ```
 
 **Complex logic comments**:
+
 ```groovy
 // Convert predictions to list if it's a single file
 // OPAL accepts either single file or list, but we need consistent handling
@@ -1178,6 +1227,7 @@ def pred_files = predictions instanceof List ? predictions : [predictions]
 ### Workflow Documentation
 
 **Section headers**:
+
 ```groovy
 //
 // SECTION: Input validation and format detection
@@ -1189,6 +1239,7 @@ def pred_files = predictions instanceof List ? predictions : [predictions]
 ```
 
 **Rationale comments**:
+
 ```groovy
 // NOTE: .first() optimization - versions.yml content is identical across all invocations
 // Taking first emission prevents collecting redundant files (memory optimization)
@@ -1200,6 +1251,7 @@ ch_versions = ch_versions.mix(TAXPASTA_TO_BIOBOXES.out.versions.first())
 ### Resource Allocation
 
 **Start conservative, scale with retries**:
+
 ```groovy
 withName: 'MEMORY_INTENSIVE' {
     memory = { check_max( 12.GB * task.attempt, 'memory' ) }
@@ -1209,6 +1261,7 @@ withName: 'MEMORY_INTENSIVE' {
 ```
 
 **Profile-specific overrides**:
+
 ```groovy
 profiles {
     bigmem {
@@ -1224,6 +1277,7 @@ profiles {
 ### Channel Operations
 
 **Avoid premature `.collect()`**:
+
 ```groovy
 // Bad: Collects all files into memory early
 ch_all_files = ch_input.collect()
@@ -1236,6 +1290,7 @@ FINAL_AGGREGATION(PROCESS.out.collect())
 ```
 
 **Use `.first()` for optimization**:
+
 ```groovy
 // Save memory by taking only one version file
 ch_versions = ch_versions.mix(PROCESS.out.versions.first())
@@ -1244,6 +1299,7 @@ ch_versions = ch_versions.mix(PROCESS.out.versions.first())
 ### Process Optimization
 
 **Minimize container layers**:
+
 ```groovy
 // Good: Single conda/container
 conda "bioconda::tool=1.0"
@@ -1254,6 +1310,7 @@ conda "bioconda::tool1=1.0 bioconda::tool2=1.0 bioconda::tool3=1.0"
 ```
 
 **Use scratch for temp files**:
+
 ```groovy
 process BIG_TEMP_FILES {
     scratch true  // Use local scratch space
@@ -1271,6 +1328,7 @@ process BIG_TEMP_FILES {
 ### Input Validation
 
 **Sanitize user inputs**:
+
 ```python
 # Good: Validate input
 def validate_sample_id(sample_id: str) -> str:
@@ -1284,6 +1342,7 @@ sample_id = args.sample_id  # Could contain shell injection
 ```
 
 **Avoid command injection**:
+
 ```groovy
 // Good: Variables in Nextflow
 """
@@ -1299,6 +1358,7 @@ tool --sample \$(echo ${user_input}) --output ${output_file}
 ### File Permissions
 
 **Set appropriate permissions**:
+
 ```bash
 # In bin/ scripts
 chmod 755 bin/*.py
@@ -1306,6 +1366,7 @@ chmod 644 assets/test_data/*
 ```
 
 **Don't commit secrets**:
+
 ```bash
 # .gitignore
 *.key
@@ -1317,6 +1378,7 @@ credentials.json
 ### Container Security
 
 **Use specific versions**:
+
 ```groovy
 // Good: Pinned version
 container "quay.io/biocontainers/tool:1.0.0--abc123"
@@ -1326,6 +1388,7 @@ container "quay.io/biocontainers/tool:latest"
 ```
 
 **Prefer official containers**:
+
 ```groovy
 // Best: Official biocontainers
 container "quay.io/biocontainers/tool:version"
@@ -1342,6 +1405,7 @@ container "dockerhub/user/tool:version"
 ### Code Organization
 
 **Logical file grouping**:
+
 ```
 modules/local/
 ├── format_conversion/      # Group related modules
@@ -1355,6 +1419,7 @@ modules/local/
 ```
 
 **Consistent naming**:
+
 - Processes: `VERB_NOUN` (e.g., `CONVERT_FORMAT`, `VALIDATE_INPUT`)
 - Channels: `ch_description` (e.g., `ch_bioboxes_per_sample`)
 - Variables: `camelCase` (e.g., `sampleId`, `numClassifiers`)
@@ -1377,6 +1442,7 @@ if (count > MIN_COUNT_THRESHOLD) {
 ### DRY Principle
 
 **Extract reusable code**:
+
 ```groovy
 // Bad: Repeated logic
 def meta1 = [id: sample1, sample_id: sample1, ...]
@@ -1395,15 +1461,17 @@ def createMeta(sample_id, classifier) {
 ### Dependency Management
 
 **Pin versions**:
+
 ```yaml
 # environment.yml
 dependencies:
   - python=3.11
-  - pandas=2.0.0      # Specific version
-  - ete3>=3.1.2,<4.0  # Version range
+  - pandas=2.0.0 # Specific version
+  - ete3>=3.1.2,<4.0 # Version range
 ```
 
 **Document dependencies**:
+
 ```groovy
 // In module main.nf
 // NOTE: This module requires:

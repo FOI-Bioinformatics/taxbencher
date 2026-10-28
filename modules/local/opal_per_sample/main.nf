@@ -5,8 +5,6 @@ process OPAL_PER_SAMPLE {
     // NOTE: OPAL 1.0.13 has known issues with minimal datasets (<100 taxa)
     // Spider plots may fail with small test data. Use realistic datasets for production.
     // See: https://github.com/CAMI-challenge/OPAL/issues
-    // NOTE: This module uses Seqera Wave for dynamic container building
-    // If Wave is unavailable, use -profile conda
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/cami-opal:1.0.13--pyhdfd78af_0' :
@@ -16,8 +14,8 @@ process OPAL_PER_SAMPLE {
     tuple val(meta), path(gold_standard), path(predictions)
 
     output:
-    tuple val(meta), path("*", type: 'dir'), emit: results
-    path "versions.yml"                     , emit: versions
+    tuple val(meta), path("${task.ext.prefix ?: meta.id}", type: 'dir'), emit: results
+    path "versions.yml"                                                 , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -26,19 +24,21 @@ process OPAL_PER_SAMPLE {
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
 
-    // Handle labels for predictions
-    def labels = meta.labels ?: predictions.collect { it.baseName }.join(',')
-    def label_arg = labels ? "-l \"${labels}\"" : ''
-
-    // Handle optional filtering and normalization
-    def filter_arg = meta.filter ? "-f ${meta.filter}" : ''
-    def normalize_arg = meta.normalize ? '-n' : ''
-
-    // Handle rank range if specified
-    def rank_arg = meta.rank ? "-r ${meta.rank}" : ''
-
     // Convert predictions to list if it's a single file
     def pred_files = predictions instanceof List ? predictions : [predictions]
+
+    // Labels: meta.labels (comma separated, same order as predictions) or file basenames
+    def label_list = meta.labels ? meta.labels.toString().split(',').collect { it.trim() } : pred_files.collect { it.baseName }
+    if (label_list.size() != pred_files.size()) {
+        error("OPAL_PER_SAMPLE ${meta.id}: ${label_list.size()} labels for ${pred_files.size()} prediction files")
+    }
+    def labels = label_list.join(',')
+    def label_arg = "-l \"${labels}\""
+
+    // Optional filtering, normalisation and rank range (also settable via ext.args)
+    def filter_arg = meta.filter ? "-f ${meta.filter}" : ''
+    def normalize_arg = meta.normalize ? '-n' : ''
+    def rank_arg = meta.rank ? "-r ${meta.rank}" : ''
 
     """
     # Validate prediction count
@@ -57,6 +57,14 @@ process OPAL_PER_SAMPLE {
         echo "ERROR: Gold standard file ${gold_standard} does not exist or is empty" >&2
         exit 1
     fi
+
+    # Validate every prediction file has data rows (OPAL fails obscurely on header-only files)
+    for f in ${pred_files.join(' ')}; do
+        if [ ! -s "\$f" ] || [ "\$(grep -vc '^@' "\$f" || true)" -eq 0 ]; then
+            echo "ERROR: Prediction file \$f is empty or contains no data rows" >&2
+            exit 1
+        fi
+    done
 
     # Create output directory explicitly
     mkdir -p ${prefix}
@@ -93,9 +101,28 @@ process OPAL_PER_SAMPLE {
         exit 1
     fi
 
+    # OPAL silently skips profiles whose @SampleID does not match the gold standard
+    # ("Skipping assessment of <label> for sample <id>"). Treat this as an error so that
+    # mismatches cannot produce an empty-looking but "successful" evaluation.
+    if grep -q "Skipping assessment" opal.log; then
+        echo "ERROR: OPAL skipped one or more profiles because their @SampleID does not match the gold standard:" >&2
+        grep "Skipping assessment" opal.log >&2
+        echo "Gold standard sample IDs: \$(grep -h '^@SampleID' ${gold_standard} | cut -d: -f2- | tr '\\n' ' ')" >&2
+        exit 1
+    fi
+    IFS=',' read -r -a LABEL_ARRAY <<< "${labels}"
+    for label in "\${LABEL_ARRAY[@]}"; do
+        if ! cut -f1 ${prefix}/results.tsv | grep -qxF "\$label"; then
+            echo "ERROR: No OPAL metrics were produced for profile '\$label' (see opal.log)" >&2
+            exit 1
+        fi
+    done
+
+    # Keep the OPAL log with the results
+    mv opal.log ${prefix}/opal.log
+
     echo "[OPAL_PER_SAMPLE] Successfully evaluated ${meta.id}" >&2
     echo "[OPAL_PER_SAMPLE] Output directory: ${prefix}" >&2
-    ls -lh ${prefix}/*.{html,tsv} 2>/dev/null | head -5 || true
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -108,7 +135,8 @@ process OPAL_PER_SAMPLE {
     """
     mkdir -p ${prefix}
     touch ${prefix}/results.html
-    touch ${prefix}/metrics.txt
+    printf 'tool\\trank\\tmetric\\tsample\\tvalue\\n' > ${prefix}/results.tsv
+    touch ${prefix}/confusion.tsv
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

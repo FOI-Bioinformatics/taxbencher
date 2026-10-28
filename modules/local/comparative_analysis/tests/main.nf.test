@@ -8,12 +8,10 @@ nextflow_process {
     tag "modules_local"
     tag "comparative_analysis"
 
-    // NOTE: COMPARATIVE_ANALYSIS requires pandas, scikit-learn, plotly, scipy, and statsmodels
-    // for full statistical analysis. These dependencies may not be available in all test environments.
-    // Stub tests verify module structure and output channels without requiring the full dependency stack.
-    // Functional tests require -profile conda or wave for dependency installation.
+    // NOTE: Functional tests need pandas, scikit-learn and plotly (conda or wave profile).
+    // Stub tests verify module structure and output channels without the dependency stack.
 
-    test("comparative_analysis - functional - realistic data") {
+    test("comparative_analysis - functional - realistic data with profiles") {
 
         tag "conda"
         tag "wave"
@@ -23,12 +21,72 @@ nextflow_process {
                 """
                 input[0] = [
                     [
-                        id: 'sample1',
-                        sample_id: 'sample1',
-                        labels: 'kraken2,metaphlan,centrifuge',
+                        id: 'test1',
+                        sample_id: 'test1',
+                        labels: 'test1_kraken2,test1_metaphlan,test1_centrifuge',
                         num_classifiers: 3
                     ],
-                    file('${moduleDir}/testdata/opal_results_realistic', checkIfExists: true)
+                    file('${moduleDir}/testdata/opal_results_realistic', checkIfExists: true),
+                    [
+                        file('${moduleDir}/testdata/bioboxes_realistic/test1_kraken2.bioboxes', checkIfExists: true),
+                        file('${moduleDir}/testdata/bioboxes_realistic/test1_metaphlan.bioboxes', checkIfExists: true),
+                        file('${moduleDir}/testdata/bioboxes_realistic/test1_centrifuge.bioboxes', checkIfExists: true)
+                    ]
+                ]
+                input[1] = file('${moduleDir}/testdata/gold_standard_realistic.bioboxes', checkIfExists: true)
+                """
+            }
+        }
+
+        then {
+            def diff = path(process.out.diff_taxa.get(0).get(1)).readLines()
+            def mqc = path(process.out.multiqc.get(0).get(1)).readLines()
+            def wide = path(process.out.metrics_wide.get(0).get(1)).readLines()
+            assertAll(
+                { assert process.success },
+                // Deterministic tabular outputs are snapshotted; HTML (Plotly) is not
+                { assert snapshot(
+                    process.out.diff_taxa,
+                    process.out.metrics_wide,
+                    process.out.multiqc,
+                    process.out.versions
+                ).match() },
+                { assert process.out.comparison_report.size() == 1 },
+                { assert file(process.out.comparison_report.get(0).get(1)).name.endsWith('_comparison.html') },
+                { assert file(process.out.pca_plot.get(0).get(1)).text.contains('plotly') },
+                // one header + comparisons for all three classifiers, with TP/FP/FN status
+                { assert diff[0] == 'classifier\trank\ttaxid\ttaxname\tobserved_pct\texpected_pct\tabs_diff_pct\tlog2_ratio\tstatus' },
+                { assert ['test1_kraken2', 'test1_metaphlan', 'test1_centrifuge'].every { l -> diff.any { it.startsWith(l + '\t') } } },
+                { assert diff.any { it.endsWith('\tFN') } && diff.any { it.endsWith('\tFP') } && diff.any { it.endsWith('\tTP') } },
+                // MultiQC custom content: header comments + one row per classifier at species rank
+                { assert mqc[0] == "# id: 'taxbencher_opal_summary'" },
+                { assert mqc.findAll { !it.startsWith('#') }.size() == 4 },
+                { assert mqc.any { it.startsWith('test1|test1_kraken2\ttest1_kraken2\tspecies\t') } },
+                // wide table: one row per tool and rank (3 tools + gold standard) x 8 ranks
+                { assert wide.size() == 1 + 4 * 8 },
+                { assert wide[0].split('\t').toList().containsAll(['tool', 'rank', 'Completeness', 'Purity', 'Weighted UniFrac error']) }
+            )
+        }
+
+    }
+
+    test("comparative_analysis - functional - without profiles") {
+
+        tag "conda"
+        tag "wave"
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [
+                        id: 'test1',
+                        sample_id: 'test1',
+                        labels: 'test1_kraken2,test1_metaphlan,test1_centrifuge',
+                        num_classifiers: 3
+                    ],
+                    file('${moduleDir}/testdata/opal_results_realistic', checkIfExists: true),
+                    []
                 ]
                 input[1] = file('${moduleDir}/testdata/gold_standard_realistic.bioboxes', checkIfExists: true)
                 """
@@ -38,16 +96,8 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
-                // Snapshot PCA and diff_taxa outputs (deterministic)
-                { assert snapshot(
-                    process.out.pca_plot,
-                    process.out.diff_taxa,
-                    process.out.versions
-                ).match() },
-                // Verify comparison report exists but don't snapshot MD5 (Plotly HTML is non-deterministic)
-                { assert process.out.comparison_report.size() == 1 },
-                { assert process.out.comparison_report.get(0).get(0).id == 'sample1' },
-                { assert file(process.out.comparison_report.get(0).get(1)).name.endsWith('_comparison.html') }
+                { assert path(process.out.diff_taxa.get(0).get(1)).readLines().size() == 2 },
+                { assert path(process.out.multiqc.get(0).get(1)).readLines().findAll { !it.startsWith('#') }.size() == 4 }
             )
         }
 
@@ -62,7 +112,8 @@ nextflow_process {
                 """
                 input[0] = [
                     [ id: 'sample1' ],
-                    file('${moduleDir}/testdata/opal_results', checkIfExists: true)
+                    file('${moduleDir}/testdata/opal_results', checkIfExists: true),
+                    []
                 ]
                 input[1] = file('${moduleDir}/testdata/gold_standard.bioboxes', checkIfExists: true)
                 """
@@ -78,35 +129,7 @@ nextflow_process {
 
     }
 
-    test("comparative_analysis - stub - with sample_id") {
-
-        options "-stub"
-
-        when {
-            process {
-                """
-                input[0] = [
-                    [
-                        id: 'sample1',
-                        sample_id: 'test_sample'
-                    ],
-                    file('${moduleDir}/testdata/opal_results', checkIfExists: true)
-                ]
-                input[1] = file('${moduleDir}/testdata/gold_standard.bioboxes', checkIfExists: true)
-                """
-            }
-        }
-
-        then {
-            assertAll(
-                { assert process.success },
-                { assert snapshot(process.out).match() }
-            )
-        }
-
-    }
-
-    test("comparative_analysis - stub - with labels") {
+    test("comparative_analysis - stub - with sample_id and labels") {
 
         options "-stub"
 
@@ -119,7 +142,8 @@ nextflow_process {
                         sample_id: 'test_sample',
                         labels: 'Kraken2,MetaPhlAn'
                     ],
-                    file('${moduleDir}/testdata/opal_results', checkIfExists: true)
+                    file('${moduleDir}/testdata/opal_results', checkIfExists: true),
+                    []
                 ]
                 input[1] = file('${moduleDir}/testdata/gold_standard.bioboxes', checkIfExists: true)
                 """
@@ -135,32 +159,7 @@ nextflow_process {
 
     }
 
-    test("comparative_analysis - stub - custom prefix") {
-
-        options "-stub"
-
-        when {
-            process {
-                """
-                input[0] = [
-                    [ id: 'custom_id' ],
-                    file('${moduleDir}/testdata/opal_results', checkIfExists: true)
-                ]
-                input[1] = file('${moduleDir}/testdata/gold_standard.bioboxes', checkIfExists: true)
-                """
-            }
-        }
-
-        then {
-            assertAll(
-                { assert process.success },
-                { assert snapshot(process.out).match() }
-            )
-        }
-
-    }
-
-    // Negative tests - error handling
+    // Edge cases
 
     test("comparative_analysis - empty opal results handles gracefully") {
 
@@ -177,7 +176,8 @@ nextflow_process {
                         labels: 'test1,test2',
                         num_classifiers: 2
                     ],
-                    file('${moduleDir}/testdata/empty_opal_results', checkIfExists: true)
+                    file('${moduleDir}/testdata/empty_opal_results', checkIfExists: true),
+                    []
                 ]
                 input[1] = file('${moduleDir}/testdata/gold_standard.bioboxes', checkIfExists: true)
                 """
@@ -185,16 +185,16 @@ nextflow_process {
         }
 
         then {
-            // Empty OPAL results should still complete but with limited output
             assertAll(
                 { assert process.success },
-                { assert process.out.versions.size() == 1 }
+                { assert process.out.versions.size() == 1 },
+                { assert path(process.out.pca_plot.get(0).get(1)).text.contains('could not be computed') }
             )
         }
 
     }
 
-    test("comparative_analysis - single classifier warning") {
+    test("comparative_analysis - single classifier") {
 
         tag "conda"
         tag "wave"
@@ -204,12 +204,13 @@ nextflow_process {
                 """
                 input[0] = [
                     [
-                        id: 'sample_single',
-                        sample_id: 'single_sample',
-                        labels: 'single_classifier',
+                        id: 'test1',
+                        sample_id: 'test1',
+                        labels: 'test1_kraken2',
                         num_classifiers: 1
                     ],
-                    file('${moduleDir}/testdata/opal_results_realistic', checkIfExists: true)
+                    file('${moduleDir}/testdata/opal_results_realistic', checkIfExists: true),
+                    [ file('${moduleDir}/testdata/bioboxes_realistic/test1_kraken2.bioboxes', checkIfExists: true) ]
                 ]
                 input[1] = file('${moduleDir}/testdata/gold_standard_realistic.bioboxes', checkIfExists: true)
                 """
@@ -217,10 +218,10 @@ nextflow_process {
         }
 
         then {
-            // Single classifier runs should still succeed but may produce limited output
             assertAll(
                 { assert process.success },
-                { assert process.out.versions.size() == 1 }
+                { assert process.out.versions.size() == 1 },
+                { assert path(process.out.diff_taxa.get(0).get(1)).readLines().size() > 1 }
             )
         }
 

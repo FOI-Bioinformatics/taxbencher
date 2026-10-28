@@ -15,6 +15,7 @@ python3 bin/validate_bioboxes.py gold_standard.bioboxes
 ### Issue 1: Column Count Mismatch
 
 **Error:**
+
 ```
 CRITICAL: Column count mismatch! Header has 5 columns but first data row has 4 columns.
 ```
@@ -22,6 +23,7 @@ CRITICAL: Column count mismatch! Header has 5 columns but first data row has 4 c
 **Cause:** The column header lists TAXPATH but the data rows are missing that column.
 
 **Fix:**
+
 ```bash
 python3 bin/fix_gold_standard.py \
   -i gold_standard.bioboxes \
@@ -32,6 +34,7 @@ python3 bin/fix_gold_standard.py \
 ### Issue 2: Unsupported Ranks
 
 **Error:**
+
 ```
 CRITICAL: Data contains unsupported ranks for OPAL: ['cellular root', 'domain', 'no rank', 'root', 'unknown']
 ```
@@ -39,20 +42,55 @@ CRITICAL: Data contains unsupported ranks for OPAL: ['cellular root', 'domain', 
 **Cause:** OPAL only supports standard CAMI ranks: `superkingdom`, `phylum`, `class`, `order`, `family`, `genus`, `species`, `strain`
 
 **Fix:** The `fix_gold_standard.py` script automatically:
-- Reconstructs full TAXPATH lineages from NCBI taxonomy database using ete3
-- Generates matching TAXPATHSN with all intermediate scientific names
-- Filters out unsupported ranks (root, no rank, unknown, cellular root, etc.)
-- Maps `subspecies` → `strain` and `domain`/`kingdom` → `superkingdom`
-- Renormalizes percentages to sum to 100%
+
+- Reconstructs TAXPATH/TAXPATHSN from the NCBI taxonomy (ete3), one element per rank of `@Ranks`
+- Filters out unsupported ranks (root, no rank, kingdom, cellular root, etc.)
+- Maps `domain` → `superkingdom` and `subspecies`/`no rank` below species → `strain`; taxa below the strain
+  level are aggregated into their strain ancestor
+- Optionally derives higher ranks from species/strain level truth (`--fill-higher-ranks`)
+- Optionally rescales every rank to exactly 100 % (`--renormalise`)
+
+Pass `--taxdump taxdump.tar.gz` to use the same pinned NCBI taxonomy as the pipeline (`--taxdump`); without
+it ete3 downloads the current taxonomy into `~/.etetoolkit`.
+
+### Issue 2b: Abundances do not sum to 100 % per rank
+
+CAMI profiles are _per rank_: the entries of each rank (all species, all genera, ...) sum to 100 %, so a file
+with eight ranks sums to 800 % in total. A gold standard whose ranks sum to much less than 100 % (for example
+one that was normalised across all ranks) makes every OPAL abundance metric (L1 norm, Bray-Curtis, UniFrac)
+meaningless. `validate_bioboxes.py` reports the per-rank sums; fix with
+`fix_gold_standard.py --renormalise` when every organism of the sample is represented at each rank.
+
+### Issue 2c: Only species (or strain) level truth is available
+
+Simulated datasets often provide the truth at the species or strain level only. OPAL evaluates every rank in
+`@Ranks`, so missing higher ranks count as "nothing is true at this rank" and every prediction becomes a false
+positive. Derive the higher ranks from the leaves:
+
+```bash
+python3 bin/fix_gold_standard.py -i truth_species.tsv -o gold_standard.bioboxes \
+  -s my_sample --taxdump taxdump.tar.gz --fill-higher-ranks
+```
+
+The input may be a plain `TAXID<TAB>RANK<TAB>PERCENTAGE` table with the four `@` header lines.
+
+### Issue 2d: Sample ID does not match the samplesheet
+
+OPAL matches predictions to the gold standard by `@SampleID` and silently skips profiles without a match.
+The pipeline therefore refuses to start when a `sample_id` from the samplesheet has no `@SampleID` block in the
+gold standard. Multi-sample gold standards (several `@SampleID` blocks in one file, separated by their own
+header lines) are supported; validate them with `validate_bioboxes.py --sample-id <id> ...`.
 
 ### Issue 3: Missing Required Headers
 
 **Error:**
+
 ```
 Missing required header: @TaxonomyID
 ```
 
 **Fix:** Add required metadata headers to your file:
+
 ```
 @SampleID:your_sample_name
 @Version:0.9.1
@@ -88,12 +126,14 @@ nextflow run . \
 The enhanced `validate_bioboxes.py` script checks:
 
 ✓ **Critical Issues (will cause OPAL to fail):**
+
 - Missing required headers (@SampleID, @Version, @Ranks, @TaxonomyID)
 - Missing required columns (TAXID, RANK, TAXPATH, TAXPATHSN, PERCENTAGE)
 - Column count mismatch between header and data rows
 - Unsupported ranks in data (root, no rank, unknown, cellular root, domain, kingdom, subspecies)
 
 ✓ **Data Quality Issues:**
+
 - Invalid TAXIDs (non-integer or non-positive)
 - Invalid percentages (out of range 0-100)
 - Percentages not summing to ~100%
@@ -102,6 +142,7 @@ The enhanced `validate_bioboxes.py` script checks:
 - TAXPATHSN/TAXPATH element count matching
 
 ✓ **Statistics:**
+
 - Total data rows
 - Unique TAXIDs
 - Percentage range and sum
@@ -123,6 +164,7 @@ The enhanced `validate_bioboxes.py` script checks:
 ```
 
 Output:
+
 ```
 ✓ VALID: File conforms to CAMI Bioboxes format
 ```
@@ -140,6 +182,7 @@ Output:
 ```
 
 Output:
+
 ```
 ✗ CRITICAL: Column count mismatch! Header has 5 columns but first data row has 4 columns.
 ✗ CRITICAL: Data contains unsupported ranks: ['root']
