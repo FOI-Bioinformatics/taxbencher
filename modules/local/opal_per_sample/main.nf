@@ -110,9 +110,10 @@ process OPAL_PER_SAMPLE {
         echo "Gold standard sample IDs: \$(grep -h '^@SampleID' ${gold_standard} | cut -d: -f2- | tr '\\n' ' ')" >&2
         exit 1
     fi
+    # (awk reads the file directly: 'cut | grep -q' can exit via SIGPIPE under 'pipefail')
     IFS=',' read -r -a LABEL_ARRAY <<< "${labels}"
     for label in "\${LABEL_ARRAY[@]}"; do
-        if ! cut -f1 ${prefix}/results.tsv | grep -qxF "\$label"; then
+        if ! awk -F'\\t' -v l="\$label" '\$1 == l { found = 1 } END { exit !found }' ${prefix}/results.tsv; then
             echo "ERROR: No OPAL metrics were produced for profile '\$label' (see opal.log)" >&2
             exit 1
         fi

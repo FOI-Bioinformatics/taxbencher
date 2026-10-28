@@ -4,19 +4,19 @@
             7,
             {
                 "COMPARATIVE_ANALYSIS": {
-                    "python": "3.10.22",
+                    "python": "3.11.18",
                     "comparative_analysis": "2.0.0"
                 },
                 "ETE3_BUILD_TAXDB": {
-                    "python": "3.10.22",
+                    "python": "3.11.18",
                     "ete3": "3.1.3"
                 },
                 "OPAL_PER_SAMPLE": {
                     "opal": "opal.py 1.0.13"
                 },
                 "TAXPASTA_TO_BIOBOXES": {
-                    "python": "3.10.22",
-                    "pandas": "2.3.3",
+                    "python": "3.11.18",
+                    "pandas": "3.1.0",
                     "ete3": "3.1.3",
                     "taxpasta_to_bioboxes": "2.0.0"
                 },
@@ -33,9 +33,8 @@
                 "comparative_analysis/test1_pca.html",
                 "multiqc",
                 "multiqc/multiqc_data",
-                "multiqc/multiqc_data/llms-full.txt",
+                "multiqc/multiqc_data/BETA-multiqc.parquet",
                 "multiqc/multiqc_data/multiqc.log",
-                "multiqc/multiqc_data/multiqc.parquet",
                 "multiqc/multiqc_data/multiqc_citations.txt",
                 "multiqc/multiqc_data/multiqc_data.json",
                 "multiqc/multiqc_data/multiqc_software_versions.txt",
@@ -101,28 +100,28 @@
             ],
             [
                 "test1_diff_taxa.tsv:md5,4ff996f3d0198bace429e1a6f5adb460",
-                "test1_metrics_wide.tsv:md5,028baee46ff9f6d2fcba5783805e1cc8",
-                "test1_opal_summary_mqc.tsv:md5,435434ea4b6a0c34d35163cd263852cc",
-                "class.tsv:md5,531e82fbc2e76d53a222041af8b5a6e5",
-                "family.tsv:md5,ea4e4800cb20a7a4e0ac1aaf949f9053",
-                "genus.tsv:md5,53352ea033ece1af774688a6eb6e4979",
-                "order.tsv:md5,91959a21a4aeb0235490aa48f946c834",
-                "phylum.tsv:md5,8c0221f071a742b1e80873d01312acd6",
-                "species.tsv:md5,d20ba4b1d184be3debc799e7db16179d",
-                "strain.tsv:md5,860010748089f0a5ee0948c3d7e7bb54",
-                "superkingdom.tsv:md5,8cf591193e0dc2189a97532f1080464d",
-                "test1_centrifuge.tsv:md5,a69ffffb4dc562f0c1cf75a49e31778a",
-                "test1_kraken2.tsv:md5,3505b524c0cbf6534b62a2aa96467b01",
-                "test1_metaphlan.tsv:md5,10d2f687044bf3d87d0a258968799d6d",
+                "test1_metrics_wide.tsv:md5,83f6f27b1c986763d8d816914a92f8a3",
+                "test1_opal_summary_mqc.tsv:md5,912d1d0b98d5b48e40cab9e864a1f0a8",
+                "class.tsv:md5,e4f7c3599730419b6219b75cbc091a4a",
+                "family.tsv:md5,f6a679e177aa01f2f2493efdd399c894",
+                "genus.tsv:md5,9ad78f1396a5acae7b9df7e061a65234",
+                "order.tsv:md5,b75bd21bbac2297b96cf1d88b5d5cb07",
+                "phylum.tsv:md5,7d98411cd66c728ac35a9cb1d92a1a99",
+                "species.tsv:md5,97d83311b6027dd96b12fe7115359cb9",
+                "strain.tsv:md5,ad0ebe4d5617005095e68ca12ca979b1",
+                "superkingdom.tsv:md5,31e6f32f7d91312eeabe7c80d0ddadb6",
+                "test1_centrifuge.tsv:md5,21c635769b97d9830786b8794e7d0b78",
+                "test1_kraken2.tsv:md5,c189aa221f0f25e3e065ff85c3e8d5db",
+                "test1_metaphlan.tsv:md5,4f78ee5d9fde1aec2f3f37ab8f50363c",
                 "confusion.tsv:md5,d991cea50a40acb84af500e7fdb90b59",
-                "log.txt:md5,207238e37cd4e66a7bd39810b4821250",
-                "results.tsv:md5,eb98d05dbbdde27d168b5257ba540781",
+                "log.txt:md5,9427649a68a3ac8fa1a06a665972d805",
+                "results.tsv:md5,693096966b4d6f8f29ce4a84c5d6d106",
                 "test1_centrifuge.bioboxes:md5,d2fffdce69f033fa7c1857f4d97118aa",
                 "test1_kraken2.bioboxes:md5,8b5fcde17837274461d94693aba528e0",
                 "test1_metaphlan.bioboxes:md5,58fb9e12fc5169c555987c0090ad8566"
             ]
         ],
-        "timestamp": "2026-10-28T13:04:29.567981689",
+        "timestamp": "2026-10-28T13:37:02.977173605",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.4"
@@ -133,19 +132,19 @@
             7,
             {
                 "COMPARATIVE_ANALYSIS": {
-                    "python": "3.10.22",
+                    "python": "3.11.18",
                     "comparative_analysis": "2.0.0"
                 },
                 "ETE3_BUILD_TAXDB": {
-                    "python": "3.10.22",
+                    "python": "3.11.18",
                     "ete3": "3.1.3"
                 },
                 "OPAL_PER_SAMPLE": {
                     "opal": "opal.py 1.0.13"
                 },
                 "TAXPASTA_TO_BIOBOXES": {
-                    "python": "3.10.22",
-                    "pandas": "2.3.3",
+                    "python": "3.11.18",
+                    "pandas": "3.1.0",
                     "ete3": "3.1.3",
                     "taxpasta_to_bioboxes": "2.0.0"
                 },
@@ -162,9 +161,8 @@
                 "comparative_analysis/test_sample_pca.html",
                 "multiqc",
                 "multiqc/multiqc_data",
-                "multiqc/multiqc_data/llms-full.txt",
+                "multiqc/multiqc_data/BETA-multiqc.parquet",
                 "multiqc/multiqc_data/multiqc.log",
-                "multiqc/multiqc_data/multiqc.parquet",
                 "multiqc/multiqc_data/multiqc_citations.txt",
                 "multiqc/multiqc_data/multiqc_data.json",
                 "multiqc/multiqc_data/multiqc_software_versions.txt",
@@ -230,28 +228,28 @@
             ],
             [
                 "test_sample_diff_taxa.tsv:md5,b7cb168b60f4bc5d6ccac619e3586aa7",
-                "test_sample_metrics_wide.tsv:md5,fa0e820bc29f340ec9865b520e2e33e7",
+                "test_sample_metrics_wide.tsv:md5,ad839f3dcff06e84c1dd8f1c25cef3da",
                 "test_sample_opal_summary_mqc.tsv:md5,db25a9ba1db92028fa6f4c46c2859af9",
-                "class.tsv:md5,f6ef7c0157ac3dcd9f9eae80a1127a1e",
-                "family.tsv:md5,bf1b8138b591dd6d834b52c8002e9686",
-                "genus.tsv:md5,3ce6a5dd55b8d0dbe8eec5add60960da",
-                "order.tsv:md5,bf1b8138b591dd6d834b52c8002e9686",
-                "phylum.tsv:md5,60d8a583002bfaa8d10230ba1aafe1ae",
-                "species.tsv:md5,e541cb2b9514bca8ca18d3b3faf42f30",
-                "strain.tsv:md5,3987eca13058b8c90c433e7d4daa354c",
-                "superkingdom.tsv:md5,5db628779e4a48dddecc3568f3ac4f8f",
-                "test_sample_centrifuge.tsv:md5,dc42de4ba5a347e51808de5f2a4a7bba",
-                "test_sample_kraken2.tsv:md5,54f664398f97be26e64144ff4e0d533f",
-                "test_sample_metaphlan.tsv:md5,4c0aea0f9dfd3bb976e1c74e356c002b",
+                "class.tsv:md5,a0ff1bfbef628594612604fa58e0ecff",
+                "family.tsv:md5,3e2762a8915f0f9991cbe57478020ef6",
+                "genus.tsv:md5,494efb82852977c1c3c45089ad613894",
+                "order.tsv:md5,3e2762a8915f0f9991cbe57478020ef6",
+                "phylum.tsv:md5,c5a0e3063e2e83c5c3c90190081e9ecc",
+                "species.tsv:md5,32121ed07d0876d1e8d51ab85940eaec",
+                "strain.tsv:md5,2bca6e18030cc811945f42f4952f94d6",
+                "superkingdom.tsv:md5,585ee9205f2ad69f02e27a068eca6d7e",
+                "test_sample_centrifuge.tsv:md5,03acdfc839c2bb94a5c48fd8fee96ae0",
+                "test_sample_kraken2.tsv:md5,65ade566afb6e43c46ea08dc9c7849a0",
+                "test_sample_metaphlan.tsv:md5,c488a498c8b910c9f5253af4ed6b59fc",
                 "confusion.tsv:md5,42c4ad35652fef32b2fe9e32e4b0b0e3",
-                "log.txt:md5,01160d509576ebecae0021984d05131a",
-                "results.tsv:md5,e8790354e0654ffed378c095af4e3257",
+                "log.txt:md5,f5ce573fc5a1f51773773554fa657f5e",
+                "results.tsv:md5,bf9b525e1a9bb339963649559cdb79df",
                 "test_sample_centrifuge.bioboxes:md5,61b297f6094f9b92ae1e6bd3ced6ab97",
                 "test_sample_kraken2.bioboxes:md5,9238470f20a02816636b1b41b72882e8",
                 "test_sample_metaphlan.bioboxes:md5,c613540109335133ce3a1219a59e4a6f"
             ]
         ],
-        "timestamp": "2026-10-28T13:02:47.876857486",
+        "timestamp": "2026-10-28T13:35:16.107913709",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.4"
@@ -262,11 +260,11 @@
             10,
             {
                 "COMPARATIVE_ANALYSIS": {
-                    "python": "3.10.22",
+                    "python": "3.11.18",
                     "comparative_analysis": "2.0.0"
                 },
                 "ETE3_BUILD_TAXDB": {
-                    "python": "3.10.22",
+                    "python": "3.11.18",
                     "ete3": "3.1.3"
                 },
                 "OPAL_PER_SAMPLE": {
@@ -276,8 +274,8 @@
                     "taxpasta": "0.7.0"
                 },
                 "TAXPASTA_TO_BIOBOXES": {
-                    "python": "3.10.22",
-                    "pandas": "2.3.3",
+                    "python": "3.11.18",
+                    "pandas": "3.1.0",
                     "ete3": "3.1.3",
                     "taxpasta_to_bioboxes": "2.0.0"
                 },
@@ -294,9 +292,8 @@
                 "comparative_analysis/test_sample_pca.html",
                 "multiqc",
                 "multiqc/multiqc_data",
-                "multiqc/multiqc_data/llms-full.txt",
+                "multiqc/multiqc_data/BETA-multiqc.parquet",
                 "multiqc/multiqc_data/multiqc.log",
-                "multiqc/multiqc_data/multiqc.parquet",
                 "multiqc/multiqc_data/multiqc_citations.txt",
                 "multiqc/multiqc_data/multiqc_data.json",
                 "multiqc/multiqc_data/multiqc_software_versions.txt",
@@ -362,28 +359,28 @@
             ],
             [
                 "test_sample_diff_taxa.tsv:md5,866bf8dfca63cc19496c60e4a6a63f0b",
-                "test_sample_metrics_wide.tsv:md5,7097921b5659de35af62e05a7b9ce9c1",
+                "test_sample_metrics_wide.tsv:md5,a96391117d9360dd68686e00a6494a1c",
                 "test_sample_opal_summary_mqc.tsv:md5,3a1e1d901012e4baade0053e88c534b9",
-                "class.tsv:md5,bee26d2d2f68a66f1b5ae103e736ed2c",
-                "family.tsv:md5,bee26d2d2f68a66f1b5ae103e736ed2c",
-                "genus.tsv:md5,bee26d2d2f68a66f1b5ae103e736ed2c",
-                "order.tsv:md5,bee26d2d2f68a66f1b5ae103e736ed2c",
-                "phylum.tsv:md5,ede8ab2f3998b798ce9b36cc03c9bfe1",
-                "species.tsv:md5,7ecb4145f8b742480acb8fecf1cf9d24",
-                "strain.tsv:md5,1ca0419a2dbbeac4b4a8dd8875c2ee19",
-                "superkingdom.tsv:md5,a39ac4154d6ebc7d64a3f798fcbe6289",
+                "class.tsv:md5,5923438daa46f9d4978572dd0b14fe60",
+                "family.tsv:md5,5923438daa46f9d4978572dd0b14fe60",
+                "genus.tsv:md5,5923438daa46f9d4978572dd0b14fe60",
+                "order.tsv:md5,5923438daa46f9d4978572dd0b14fe60",
+                "phylum.tsv:md5,cb90121c16330f883f2c908863a85338",
+                "species.tsv:md5,97d00f4cefe4c0e9499cabfe1e9903d9",
+                "strain.tsv:md5,acbee4e06b58ed45466f11ebe3ace2e6",
+                "superkingdom.tsv:md5,4f9eeb86391d8c256e384dfb874ad5bc",
                 "test_sample_centrifuge.tsv:md5,b5d0a2dadab2e4cd27c6293b038cda52",
-                "test_sample_kraken2.tsv:md5,f8cf801b59709cc021df3a28f6e07442",
-                "test_sample_metaphlan.tsv:md5,f0fb158c9e7687b9b68de527d09fcbe1",
+                "test_sample_kraken2.tsv:md5,8dffe851e36979d43bba4264bc6f079e",
+                "test_sample_metaphlan.tsv:md5,b30682d6ca45bff65d3f174a274882fb",
                 "confusion.tsv:md5,0fcb8821a9f702e1bc6e80f061e21493",
-                "log.txt:md5,90753dfdf41221cd2acd71fd86a6b15d",
-                "results.tsv:md5,6f052ceec8068817abdf68ac10c67dba",
+                "log.txt:md5,f3098169c0aa1491e4bb0e504b784608",
+                "results.tsv:md5,d6c13b7e3e6dc50361ddc6e19b44cf59",
                 "test_sample_centrifuge.bioboxes:md5,9b138d6723d9b6eb4aea7a349420e7b1",
                 "test_sample_kraken2.bioboxes:md5,e2a585c4cf13b7988dab5368e404faa2",
                 "test_sample_metaphlan.bioboxes:md5,04cbed529e64daf77e9f4888f4443d46"
             ]
         ],
-        "timestamp": "2026-10-28T13:03:42.527578623",
+        "timestamp": "2026-10-28T13:36:12.873810543",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.4"

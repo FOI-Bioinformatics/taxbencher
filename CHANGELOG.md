@@ -43,12 +43,14 @@ See [docs/reports/audit-2026-10.md](docs/reports/audit-2026-10.md) for the full 
   Both now use per-rank semantics, support multi-sample files, empty `TAXPATH` fields and non-`@@` inputs;
   `fix_gold_standard.py` gained `--fill-higher-ranks` (derive higher ranks from species/strain truth),
   `--taxdump`, and aggregates sub-strain taxa into their strain ancestor.
-- **OPAL label/file order** is now deterministic (sorted by label) and validated to have equal length.
+- **OPAL label/file order** is now deterministic (sorted by label) and validated to have equal length. The
+  post-run label check reads `results.tsv` with awk; a `cut | grep -q` pipeline can be killed by SIGPIPE under
+  `pipefail` and report missing metrics although OPAL succeeded (seen only with the Docker profile).
 - **Containers**: the ete3 image (`pip_ete3_pandas:3d986008f4614a7f`) runs Python 3.14, on which ete3 3.1.3
   fails to import (`cgi` module removed), and the comparative-analysis image was a temporary Wave build URL
   that no longer exists, so `-profile docker/singularity` could not run either module. Both modules now use
   frozen Seqera Wave community images built from their `environment.yml` (Python 3.11), with `oras://`
-  Singularity variants.
+  Singularity variants; `-profile test,docker` now runs end-to-end and nf-test snapshots are recorded with Docker.
 
 ### Added
 

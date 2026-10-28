@@ -9,7 +9,7 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,f6b2c10f92a9bc9f2e13ec01d86bc05e"
+                    "versions.yml:md5,d3ad8d5706b9ac6a8739daa529cd4baf"
                 ],
                 "db": [
                     [
@@ -18,11 +18,11 @@
                     ]
                 ],
                 "versions": [
-                    "versions.yml:md5,f6b2c10f92a9bc9f2e13ec01d86bc05e"
+                    "versions.yml:md5,d3ad8d5706b9ac6a8739daa529cd4baf"
                 ]
             }
         ],
-        "timestamp": "2026-10-28T12:55:49.23679109",
+        "timestamp": "2026-10-28T13:21:15.286967138",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.4"
@@ -31,10 +31,10 @@
     "ete3 build taxdb - reduced taxdump": {
         "content": [
             [
-                "versions.yml:md5,f6b2c10f92a9bc9f2e13ec01d86bc05e"
+                "versions.yml:md5,d3ad8d5706b9ac6a8739daa529cd4baf"
             ]
         ],
-        "timestamp": "2026-10-28T12:55:40.795594146",
+        "timestamp": "2026-10-28T13:21:06.56210819",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.4"

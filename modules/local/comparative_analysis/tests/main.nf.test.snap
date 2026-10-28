@@ -137,7 +137,7 @@
                         "labels": "test1_kraken2,test1_metaphlan,test1_centrifuge",
                         "num_classifiers": 3
                     },
-                    "test1_metrics_wide.tsv:md5,2995e5a0a937c0a33ce3b558023729c8"
+                    "test1_metrics_wide.tsv:md5,b687d471a6521c2930c7b779c9afde0e"
                 ]
             ],
             [
@@ -152,10 +152,10 @@
                 ]
             ],
             [
-                "versions.yml:md5,014d2ee957ac097a5e7bb00b6f9b309d"
+                "versions.yml:md5,dda16ff44dcf4d4b063a3fc392f29a4b"
             ]
         ],
-        "timestamp": "2026-10-28T12:54:38.911043611",
+        "timestamp": "2026-10-28T13:20:03.48510792",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.4"
