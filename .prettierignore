@@ -1,6 +1,4 @@
 email_template.html
-adaptivecard.json
-slackreport.json
 .nextflow*
 work/
 data/
@@ -12,6 +10,8 @@ testing*
 bin/
 .nf-test/
 ro-crate-metadata.json
+modules/nf-core/
+subworkflows/nf-core/
 
 # Test fixtures must keep their exact bytes (profiler formats, OPAL output)
 assets/test_data/

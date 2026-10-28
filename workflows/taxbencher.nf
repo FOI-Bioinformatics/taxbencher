@@ -47,7 +47,7 @@ def isStandardisedProfile(input_file) {
     if (header == null) {
         return true
     }
-    def columns = header.split('\t').collect { it.trim().toLowerCase() }
+    def columns = header.split('\t').collect { column -> column.trim().toLowerCase() }
     return columns.contains('taxonomy_id') && columns.contains('count')
 }
 
@@ -63,32 +63,35 @@ workflow TAXBENCHER {
     ch_input         // channel: [ [meta], path(input_file) ] - Can be taxpasta TSV or raw profiler output
     ch_gold_standard // channel: path(gold_standard.bioboxes) (value channel)
     ch_taxdump       // channel: path(taxdump.tar.gz) (value channel) or empty
+    multiqc_config
+    multiqc_logo
+    multiqc_methods_description
+    outdir
 
     main:
 
-    ch_versions = Channel.empty()
-    ch_multiqc_files = Channel.empty()
+    def ch_versions = channel.empty()
+    def ch_multiqc_files = channel.empty()
 
     //
     // MODULE: Validate the gold standard (CAMI format, per-rank sums, one @SampleID block per sample)
     // Downstream processes use the validated file so that OPAL never runs on a malformed gold standard.
     //
-    ch_sample_ids = ch_input.map { meta, _file -> meta.sample_id }.unique().collect()
+    def ch_sample_ids = ch_input.map { meta, _file -> meta.sample_id }.unique().collect()
     VALIDATE_GOLD_STANDARD(ch_gold_standard, ch_sample_ids)
     ch_versions = ch_versions.mix(VALIDATE_GOLD_STANDARD.out.versions)
-    ch_gold_standard_validated = VALIDATE_GOLD_STANDARD.out.gold_standard.first()
+    def ch_gold_standard_validated = VALIDATE_GOLD_STANDARD.out.gold_standard
 
     //
     // BRANCH: Separate inputs that need standardisation from those that don't
     //
-    ch_input
+    def ch_branched = ch_input
         .branch { meta, input_file ->
             standardised: isStandardisedProfile(input_file)
                 return [meta, input_file]
             needs_standardisation: true
                 return [meta, input_file]
         }
-        .set { ch_branched }
 
     ch_branched.standardised
         .subscribe { meta, input_file ->
@@ -106,7 +109,7 @@ workflow TAXBENCHER {
     TAXPASTA_STANDARDISE(ch_branched.needs_standardisation)
     ch_versions = ch_versions.mix(TAXPASTA_STANDARDISE.out.versions.first())
 
-    ch_taxpasta = ch_branched.standardised
+    def ch_taxpasta = ch_branched.standardised
         .mix(TAXPASTA_STANDARDISE.out.standardised)
 
     //
@@ -115,7 +118,7 @@ workflow TAXBENCHER {
     //
     ETE3_BUILD_TAXDB(ch_taxdump)
     ch_versions = ch_versions.mix(ETE3_BUILD_TAXDB.out.versions)
-    ch_taxdb = ETE3_BUILD_TAXDB.out.db.toList().map { files -> files ? files.flatten() : [] }
+    def ch_taxdb = ETE3_BUILD_TAXDB.out.db.toList().map { files -> files ? files.flatten() : [] }
 
     //
     // MODULE: Convert taxpasta profiles to CAMI Bioboxes format
@@ -130,13 +133,13 @@ workflow TAXBENCHER {
     // Group bioboxes by sample_id for per-sample OPAL evaluation.
     // Labels and files are kept in the same order so OPAL's -l matches the file list.
     //
-    ch_bioboxes_per_sample = TAXPASTA_TO_BIOBOXES.out.bioboxes
+    def ch_bioboxes_per_sample = TAXPASTA_TO_BIOBOXES.out.bioboxes
         .map { meta, bioboxes -> [meta.sample_id, meta.label, bioboxes] }
         .groupTuple()
         .map { sample_id, labels, bioboxes_files ->
-            def order = (0..<labels.size()).toList().sort { labels[it] }
-            def sorted_labels = order.collect { labels[it] }
-            def sorted_files = order.collect { bioboxes_files[it] }
+            def order = (0..<labels.size()).toList().sort { index -> labels[index] }
+            def sorted_labels = order.collect { index -> labels[index] }
+            def sorted_files = order.collect { index -> bioboxes_files[index] }
             def meta_grouped = [
                 id: sample_id,
                 sample_id: sample_id,
@@ -160,7 +163,7 @@ workflow TAXBENCHER {
     // MODULE: Comparative analysis of classifiers per sample
     // Joined with the sample's bioboxes files so that per-taxon comparisons are possible.
     //
-    ch_comparative_input = OPAL_PER_SAMPLE.out.results
+    def ch_comparative_input = OPAL_PER_SAMPLE.out.results
         .map { meta, opal_dir -> [meta.id, meta, opal_dir] }
         .join(ch_bioboxes_per_sample.map { meta, bioboxes_files -> [meta.id, bioboxes_files] }, failOnMismatch: true)
         .map { _id, meta, opal_dir, bioboxes_files -> [meta, opal_dir, bioboxes_files] }
@@ -183,60 +186,65 @@ workflow TAXBENCHER {
 
     //
     // Collate and save software versions
+    // Local modules emit versions.yml files; nf-core modules publish to the 'versions' topic.
     //
-    softwareVersionsToYAML(ch_versions)
+    def topic_versions = channel.topic("versions")
+        .distinct()
+        .branch { entry ->
+            versions_file: entry instanceof Path
+            versions_tuple: true
+        }
+
+    def topic_versions_string = topic_versions.versions_tuple
+        .map { process, tool, version ->
+            [ process[process.lastIndexOf(':')+1..-1], "  ${tool}: ${version}" ]
+        }
+        .groupTuple(by:0)
+        .map { process, tool_versions ->
+            tool_versions.unique().sort()
+            "${process}:\n${tool_versions.join('\n')}"
+        }
+
+    def ch_collated_versions = softwareVersionsToYAML(ch_versions.mix(topic_versions.versions_file))
+        .mix(topic_versions_string)
         .collectFile(
-            storeDir: "${params.outdir}/pipeline_info",
+            storeDir: "${outdir}/pipeline_info",
             name:  'taxbencher_software_'  + 'mqc_'  + 'versions.yml',
             sort: true,
             newLine: true
-        ).set { ch_collated_versions }
-
+        )
 
     //
     // MODULE: MultiQC
     //
-    ch_multiqc_config        = Channel.fromPath(
-        "$projectDir/assets/multiqc_config.yml", checkIfExists: true)
-    ch_multiqc_custom_config = params.multiqc_config ?
-        Channel.fromPath(params.multiqc_config, checkIfExists: true) :
-        Channel.empty()
-    ch_multiqc_logo          = params.multiqc_logo ?
-        Channel.fromPath(params.multiqc_logo, checkIfExists: true) :
-        Channel.empty()
-
-    summary_params      = paramsSummaryMap(
-        workflow, parameters_schema: "nextflow_schema.json")
-    ch_workflow_summary = Channel.value(paramsSummaryMultiqc(summary_params))
-    ch_multiqc_files = ch_multiqc_files.mix(
-        ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
-    ch_multiqc_custom_methods_description = params.multiqc_methods_description ?
-        file(params.multiqc_methods_description, checkIfExists: true) :
-        file("$projectDir/assets/methods_description_template.yml", checkIfExists: true)
-    ch_methods_description                = Channel.value(
-        methodsDescriptionText(ch_multiqc_custom_methods_description))
-
     ch_multiqc_files = ch_multiqc_files.mix(ch_collated_versions)
-    ch_multiqc_files = ch_multiqc_files.mix(
-        ch_methods_description.collectFile(
-            name: 'methods_description_mqc.yaml',
-            sort: true
-        )
-    )
-
-    MULTIQC (
-        ch_multiqc_files.collect(),
-        ch_multiqc_config.toList(),
-        ch_multiqc_custom_config.toList(),
-        ch_multiqc_logo.toList(),
-        [],
-        []
+    def ch_summary_params = paramsSummaryMap(workflow, parameters_schema: "nextflow_schema.json")
+    def ch_workflow_summary = channel.value(paramsSummaryMultiqc(ch_summary_params))
+    ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
+    def ch_multiqc_custom_methods_description = multiqc_methods_description
+        ? file(multiqc_methods_description, checkIfExists: true)
+        : file("${projectDir}/assets/methods_description_template.yml", checkIfExists: true)
+    def ch_methods_description = channel.value(methodsDescriptionText(ch_multiqc_custom_methods_description))
+    ch_multiqc_files = ch_multiqc_files.mix(ch_methods_description.collectFile(name: 'methods_description_mqc.yaml', sort: true))
+    MULTIQC(
+        ch_multiqc_files.flatten().collect().map { files ->
+            [
+                [id: 'taxbencher'],
+                files,
+                multiqc_config
+                    ? file(multiqc_config, checkIfExists: true)
+                    : file("${projectDir}/assets/multiqc_config.yml", checkIfExists: true),
+                multiqc_logo ? file(multiqc_logo, checkIfExists: true) : [],
+                [],
+                [],
+            ]
+        }
     )
 
     emit:
-    opal_results   = OPAL_PER_SAMPLE.out.results // channel: [ [meta], path(opal_results/) ]
-    multiqc_report = MULTIQC.out.report.toList() // channel: /path/to/multiqc_report.html
-    versions       = ch_versions                 // channel: [ path(versions.yml) ]
+    opal_results   = OPAL_PER_SAMPLE.out.results                                    // channel: [ [meta], path(opal_results/) ]
+    multiqc_report = MULTIQC.out.report.map { _meta, report -> [report] }.toList()  // channel: /path/to/multiqc_report.html
+    versions       = ch_versions                                                    // channel: [ path(versions.yml) ]
 
 }
 

@@ -16,7 +16,6 @@
 include { TAXBENCHER  } from './workflows/taxbencher'
 include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_taxbencher_pipeline'
 include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_taxbencher_pipeline'
-
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     NAMED WORKFLOWS FOR PIPELINE
@@ -34,14 +33,12 @@ workflow FOIBIOINFORMATICS_TAXBENCHER {
     main:
 
     //
-    // Create gold standard channel from parameter (value channel, reused for every sample)
+    // Gold standard (value channel, reused for every sample) and optional pinned NCBI taxonomy dump
     //
-    ch_gold_standard = Channel.fromPath(params.gold_standard, checkIfExists: true).first()
-
-    //
-    // Optional pinned NCBI taxonomy dump for reproducible, offline lineage lookups
-    //
-    ch_taxdump = params.taxdump ? Channel.fromPath(params.taxdump, checkIfExists: true).first() : Channel.empty()
+    def ch_gold_standard = channel.fromPath(params.gold_standard, checkIfExists: true).first()
+    def ch_taxdump = params.taxdump
+        ? channel.fromPath(params.taxdump, checkIfExists: true).first()
+        : channel.empty()
 
     //
     // WORKFLOW: Run pipeline
@@ -49,9 +46,12 @@ workflow FOIBIOINFORMATICS_TAXBENCHER {
     TAXBENCHER (
         samplesheet,
         ch_gold_standard,
-        ch_taxdump
+        ch_taxdump,
+        params.multiqc_config,
+        params.multiqc_logo,
+        params.multiqc_methods_description,
+        params.outdir,
     )
-
     emit:
     opal_results   = TAXBENCHER.out.opal_results   // channel: [ [meta], path(opal_results/) ]
     multiqc_report = TAXBENCHER.out.multiqc_report // channel: /path/to/multiqc_report.html
@@ -65,9 +65,6 @@ workflow FOIBIOINFORMATICS_TAXBENCHER {
 workflow {
 
     main:
-
-    ch_versions = Channel.empty()
-
     //
     // SUBWORKFLOW: Run initialisation tasks
     //
@@ -77,9 +74,11 @@ workflow {
         params.monochrome_logs,
         args,
         params.outdir,
-        params.input
+        params.input,
+        params.help,
+        params.help_full,
+        params.show_hidden
     )
-    ch_versions = ch_versions.mix(PIPELINE_INITIALISATION.out.versions)
 
     //
     // WORKFLOW: Run main workflow
@@ -96,7 +95,6 @@ workflow {
         params.plaintext_email,
         params.outdir,
         params.monochrome_logs,
-        params.hook_url,
         FOIBIOINFORMATICS_TAXBENCHER.out.multiqc_report
     )
 }

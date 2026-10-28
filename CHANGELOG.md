@@ -77,6 +77,12 @@ See [docs/reports/audit-2026-10.md](docs/reports/audit-2026-10.md) for the full 
 
 ### Changed
 
+- **nf-core template synced to tools 4.2.1** (from 3.5.1): Nextflow >= 25.10.4 and nf-schema 2.7.3 required;
+  software versions collected through the `versions` topic channel; new MultiQC module interface; container
+  configuration files (`conf/containers_*.config`) and conda lock files for nf-core modules; `--help`,
+  `--help_full` and `--show_hidden` handled by the nf-schema plugin; `arm64`/`emulate_amd64` profiles replace
+  `arm`; `gitpod` profile, `hook_url` (Slack/Teams notifications), `.github/CONTRIBUTING.md` (now
+  `docs/CONTRIBUTING.md`) and the unused FastQC module removed; pre-commit gains nf-lint and large-file checks.
 - `COMPARATIVE_ANALYSIS` input is now `tuple(meta, opal_dir, bioboxes)`; `TAXPASTA_TO_BIOBOXES` takes an
   optional taxonomy database as second input.
 - `*_diff_taxa.tsv` columns: `classifier, rank, taxid, taxname, observed_pct, expected_pct, abs_diff_pct,

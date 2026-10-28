@@ -23,7 +23,7 @@ process VALIDATE_GOLD_STANDARD {
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: gold_standard.baseName
     def ids = sample_ids instanceof List ? sample_ids : [sample_ids]
-    def sample_args = ids.collect { "--sample-id '${it}'" }.join(' ')
+    def sample_args = ids.collect { id -> "--sample-id '${id}'" }.join(' ')
     """
     # Validate the CAMI profiling format (per-rank sums, TAXPATH structure, required headers)
     # and make sure every sample of the samplesheet has a gold standard block.

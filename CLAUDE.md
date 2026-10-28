@@ -12,8 +12,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Key characteristics:**
 
-- Nextflow DSL2 workflow (≥24.10.5)
-- nf-core template v3.4.1 compliance
+- Nextflow DSL2 workflow (≥25.10.4)
+- nf-core template v4.2.1 compliance
 - **Accepts both raw profiler outputs AND pre-standardized taxpasta TSV files**
 - Automatic format detection and standardization
 - Supports 10+ taxonomic profilers (Kraken2, MetaPhlAn, Centrifuge, Kaiju, Bracken, and more)
@@ -47,7 +47,7 @@ nextflow run . \
 ## Technical Stack
 
 - **Workflow Language**: Nextflow DSL2
-- **Framework**: nf-core template v3.4.1
+- **Framework**: nf-core template v4.2.1
 - **Testing**: nf-test
 - **Containers**: Docker/Singularity/Conda
 - **Languages**: Python for utility scripts
