@@ -28,7 +28,7 @@ process OPAL_PER_SAMPLE {
     def pred_files = predictions instanceof List ? predictions : [predictions]
 
     // Labels: meta.labels (comma separated, same order as predictions) or file basenames
-    def label_list = meta.labels ? meta.labels.toString().split(',').collect { it.trim() } : pred_files.collect { it.baseName }
+    def label_list = meta.labels ? meta.labels.toString().split(',').collect { label -> label.trim() } : pred_files.collect { pred -> pred.baseName }
     if (label_list.size() != pred_files.size()) {
         error("OPAL_PER_SAMPLE ${meta.id}: ${label_list.size()} labels for ${pred_files.size()} prediction files")
     }
@@ -41,6 +41,15 @@ process OPAL_PER_SAMPLE {
     def rank_arg = meta.rank ? "-r ${meta.rank}" : ''
 
     """
+    # Give matplotlib a writable cache directory: with a read-only HOME it prints a warning
+    # on every call (including 'opal.py --version'), which would corrupt versions.yml.
+    export MPLCONFIGDIR=\$PWD/.mplconfig
+    mkdir -p "\$MPLCONFIGDIR"
+    # OPAL iterates over Python sets of taxon IDs when it sums abundances (UniFrac, L1 norm, ...).
+    # With Python's randomised string hashing the summation order, and therefore the last digits of
+    # several metrics, change from run to run. A fixed hash seed makes the results reproducible.
+    export PYTHONHASHSEED=0
+
     # Validate prediction count
     NUM_PREDICTIONS=${pred_files.size()}
     if [ \$NUM_PREDICTIONS -lt 1 ]; then
@@ -127,7 +136,7 @@ process OPAL_PER_SAMPLE {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        opal: \$(opal.py --version 2>&1 | sed 's/OPAL //g')
+        opal: \$(opal.py --version 2>&1 | grep -oE 'opal.py [0-9][0-9.]*' | head -n 1 | sed 's/opal.py //')
     END_VERSIONS
     """
 

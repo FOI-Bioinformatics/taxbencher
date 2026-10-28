@@ -21,7 +21,7 @@ env:
 
 jobs:
   configure:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04 # apptainer .deb needs libfuse3-3, missing on ubuntu-26.04
     outputs:
       REPO_LOWERCASE: ${{ steps.get_repo_properties.outputs.REPO_LOWERCASE }}
       REPOTITLE_LOWERCASE: ${{ steps.get_repo_properties.outputs.REPOTITLE_LOWERCASE }}
@@ -35,7 +35,7 @@ jobs:
           echo "REPO_BRANCH=${{ github.event.inputs.testbranch || 'dev' }}" >> "$GITHUB_OUTPUT"
 
   download:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04 # apptainer .deb needs libfuse3-3, missing on ubuntu-26.04
     needs: configure
     steps:
       - name: Check out pipeline code

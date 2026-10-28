@@ -12,4 +12,5 @@ opal/*/*.{html,png,pdf}
 opal/*/*/*.{html,png,pdf}
 opal/*/*/*/*.{html,png,pdf}
 opal/*/opal.log
+opal/*/log.txt
 comparative_analysis/*.html

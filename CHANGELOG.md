@@ -75,6 +75,23 @@ See [docs/reports/audit-2026-10.md](docs/reports/audit-2026-10.md) for the full 
   consistency); pipeline nf-tests now snapshot OPAL and comparative outputs instead of only the converted
   profiles.
 
+### Fixed (CI and reproducibility)
+
+- `OPAL_PER_SAMPLE` wrote a corrupt `versions.yml` whenever matplotlib printed its "not a writable directory"
+  warning (read-only `$HOME` in containers on CI), which aborted the pipeline while collating software
+  versions. The module now sets `MPLCONFIGDIR` inside the task directory and extracts the bare version number.
+- OPAL results were not bit-for-bit reproducible between runs (last digits of UniFrac and other summed
+  metrics changed with Python's randomised string hashing, so nf-test snapshots failed on CI). The module
+  now runs OPAL with `PYTHONHASHSEED=0`.
+- `TAXPASTA_STANDARDISE` failed under `-profile conda` for MetaPhlAn and KMCP profiles: taxpasta 0.7.0 does not
+  constrain pandas and its pandera schemas reject pandas >= 3 (`additional_species` typed as string). The conda
+  environment now pins pandas/numpy to the versions of the biocontainer.
+- All local module `environment.yml` files pin Python and library versions to those inside their containers,
+  so `-profile conda` and `-profile docker` produce identical software versions and nf-test snapshots.
+- The Python unit-test workflow no longer requests a pip cache (there is no requirements file to key it on).
+- The `included_configs` nf-core lint test is ignored: the pipeline-specific `nf-core/configs` file does not
+  exist for this non-nf-core pipeline and including it makes Nextflow fail on the missing remote file.
+
 ### Changed
 
 - **nf-core template synced to tools 4.2.1** (from 3.5.1): Nextflow >= 25.10.4 and nf-schema 2.7.3 required;

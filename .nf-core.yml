@@ -3,6 +3,9 @@ repository_type: pipeline
 nf_core_version: 4.2.1
 
 lint:
+  # The pipeline-specific nf-core/configs file does not exist for this non-nf-core pipeline,
+  # so the includeConfig line must stay commented out (Nextflow fails on the missing remote file).
+  included_configs: false
   files_unchanged:
     - CODE_OF_CONDUCT.md
     - assets/nf-core-taxbencher_logo_light.png

@@ -1,6 +1,8 @@
+# Pinned to the Python version inside quay.io/biocontainers/python:3.11
+# so that -profile conda and -profile docker report identical software versions.
 name: validate_gold_standard
 channels:
   - conda-forge
   - bioconda
 dependencies:
-  - python=3.11
+  - conda-forge::python=3.11.10
