@@ -1,0 +1,42 @@
+name: "benchmark_summary"
+description: Aggregate per-sample OPAL metrics across all samples of a run (mean, median, sd, classifier ranking) and provide MultiQC custom content
+keywords:
+  - benchmarking
+  - summary
+  - ranking
+  - multiqc
+tools:
+  - summarise_benchmark:
+      description: Pipeline script (bin/summarise_benchmark.py) built on pandas
+      homepage: https://github.com/FOI-Bioinformatics/taxbencher
+      documentation: https://github.com/FOI-Bioinformatics/taxbencher/blob/main/docs/output.md
+      licence: ["MIT"]
+
+input:
+  - metrics:
+      type: file
+      description: Wide per-sample metric tables (sample, tool, rank, metrics...) from COMPARATIVE_ANALYSIS
+      pattern: "*_metrics_wide.tsv"
+
+output:
+  - summary:
+      type: file
+      description: "Per classifier, rank and metric: n_samples, mean, median, sd, min, max"
+      pattern: "*_summary.tsv"
+  - ranking:
+      type: file
+      description: Direction-aware ranking of classifiers per metric at the summary rank plus an overall mean rank
+      pattern: "*_ranking.tsv"
+  - multiqc:
+      type: file
+      description: MultiQC custom content (summary table, F1 and L1 norm error by rank line graphs)
+      pattern: "*_mqc.tsv"
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+
+authors:
+  - "@andreassjodin"
+maintainers:
+  - "@andreassjodin"

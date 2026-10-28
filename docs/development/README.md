@@ -10,12 +10,13 @@ This directory contains comprehensive technical documentation for taxbencher dev
 - **[Modules](modules.md)** - Detailed module specifications and implementation details
 - **[Workflow Patterns](workflow-patterns.md)** - Channel operations and Nextflow patterns
 - **[Development Guide](development-guide.md)** - How to add modules, modify workflows, and configure
-- **[Testing](testing.md)** - Test framework, nf-test usage, and coverage
+- **[Testing](testing.md)** - Test framework, nf-test usage, Python unit tests, and coverage
 - **[Code Quality](code-quality.md)** - Best practices, innovative patterns, container strategy
 
 ### Reports
 
-- [Code Quality Report](../reports/code-quality.md) - Latest quality assessment
+- [Audit 2026-10](../reports/audit-2026-10.md) - Latest code & functionality audit (findings, gap analysis, SWOT)
+- [Code Quality Report](../reports/code-quality.md) - Earlier quality assessment
 - [Test Coverage Report](../reports/test-coverage.md) - Detailed test analysis
 - [Validation Report](../reports/validation.md) - Validation infrastructure overview
 - [Test Improvements Summary](../reports/test-improvements.md) - Historical improvements

@@ -16,21 +16,27 @@ This document describes the technical architecture of the taxbencher pipeline, i
 ### Overview
 
 ```
-Input: Raw profiler outputs OR taxpasta TSV files + gold standard bioboxes
+Input: Raw profiler outputs OR taxpasta TSV files + gold standard bioboxes (+ optional --taxdump)
     ↓
-[TAXPASTA_STANDARDISE] - Standardize raw profiler outputs (optional, automatic)
+[VALIDATE_GOLD_STANDARD] - CAMI format and per-rank checks, one @SampleID block per sample
     ↓
-[TAXPASTA_TO_BIOBOXES] - Convert to CAMI format
+[TAXPASTA_STANDARDISE] - Standardise raw profiler outputs (automatic, header/extension based)
     ↓
-[Group by sample_id] - Group classifiers by biological sample
+[ETE3_BUILD_TAXDB] - Build the ete3 taxonomy database once from --taxdump
+    ↓
+[TAXPASTA_TO_BIOBOXES] - Convert to CAMI format (per-rank clade abundances, direct/clade count modes)
+    ↓
+[Group by sample_id] - Group classifiers by biological sample (labels sorted)
     ↓
 [OPAL_PER_SAMPLE] - Per-sample evaluation (one OPAL run per biological sample)
     ↓
-[COMPARATIVE_ANALYSIS] - Per-sample classifier comparison (PCA, differential taxa)
+[COMPARATIVE_ANALYSIS] - Per-sample comparison (metrics pivot, PCA, per-taxon TP/FP/FN, MultiQC table)
+    ↓
+[BENCHMARK_SUMMARY] - Cross-sample mean/median/sd and classifier ranking, MultiQC content
     ↓
 [MULTIQC] - Aggregate reports
     ↓
-Output: Per-sample reports + comparative analysis + aggregated metrics
+Output: validation report + per-sample reports + cross-sample summary + MultiQC
 ```
 
 ### Detailed Flow

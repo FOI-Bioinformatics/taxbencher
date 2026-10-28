@@ -1,0 +1,7 @@
+name: benchmark_summary
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.11
+  - pandas>=2.0

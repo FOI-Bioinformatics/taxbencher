@@ -55,6 +55,22 @@ This document provides comprehensive documentation of taxbencher's testing frame
 
 See [Test Coverage Report](../reports/test-coverage.md) for detailed analysis.
 
+## Python Unit Tests
+
+The scientific core of the pipeline lives in `bin/` (`taxpasta_to_bioboxes.py`, `fix_gold_standard.py`,
+`validate_bioboxes.py`, `summarise_benchmark.py`). These scripts are unit tested with pytest, independently of
+Nextflow, against the reduced pinned taxonomy in `assets/test_data/taxonomy/`:
+
+```bash
+pip install pandas ete3 pytest        # or: conda activate an env with these packages
+pytest -v tests/python
+```
+
+The tests cover per-rank CAMI semantics (clade accumulation, clade vs direct counts, kingdom handling,
+strain mapping, unclassified handling), validator errors vs warnings, gold standard repair
+(`--fill-higher-ranks`, per-rank renormalisation, sub-strain aggregation) and the cross-sample summary and
+ranking. They run in CI via `.github/workflows/python-tests.yml`.
+
 ## nf-test Framework
 
 ### What is nf-test?
@@ -456,6 +472,11 @@ Snapshots capture the exact output of a test run for future comparison. They pro
 ```
 
 ### Creating Snapshots
+
+Snapshots are recorded with the Docker profile (`nf-test test --profile +docker --update-snapshot`), as the
+container images pin the tool versions that appear in `versions.yml`. The conda profile reproduces the same
+results when the `environment.yml` files resolve to the same versions.
+
 
 **First run** (creates snapshot):
 ```bash

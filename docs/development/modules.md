@@ -16,12 +16,18 @@ This document provides detailed specifications for all modules in the taxbencher
 
 ### Local Modules
 
-| Module               | Purpose                                      | Status        | Container Strategy |
-| -------------------- | -------------------------------------------- | ------------- | ------------------ |
-| TAXPASTA_STANDARDISE | Convert raw profiler outputs to taxpasta TSV | ✅ Production | Biocontainer       |
-| TAXPASTA_TO_BIOBOXES | Convert taxpasta TSV to CAMI Bioboxes        | ✅ Production | Wave (pandas+ete3) |
-| OPAL_PER_SAMPLE      | Per-sample OPAL evaluation                   | ✅ Production | Biocontainer       |
-| COMPARATIVE_ANALYSIS | Classifier comparison per sample             | ⚠️ Stub       | Wave (scipy stack) |
+| Module                 | Purpose                                                     | Status        | Container Strategy                  |
+| ---------------------- | ----------------------------------------------------------- | ------------- | ----------------------------------- |
+| VALIDATE_GOLD_STANDARD | Validate gold standard CAMI profile before evaluation       | ✅ Production | Biocontainer (python)               |
+| TAXPASTA_STANDARDISE   | Convert raw profiler outputs to taxpasta TSV                | ✅ Production | Biocontainer (taxpasta)             |
+| ETE3_BUILD_TAXDB       | Build ete3 taxonomy database from a pinned taxdump          | ✅ Production | Frozen Wave community (pandas+ete3) |
+| TAXPASTA_TO_BIOBOXES   | Convert taxpasta TSV to CAMI Bioboxes (per-rank abundances) | ✅ Production | Frozen Wave community (pandas+ete3) |
+| OPAL_PER_SAMPLE        | Per-sample OPAL evaluation                                  | ✅ Production | Biocontainer (cami-opal)            |
+| COMPARATIVE_ANALYSIS   | Classifier comparison per sample (metrics, PCA, per-taxon)  | ✅ Production | Frozen Wave community (scipy stack) |
+| BENCHMARK_SUMMARY      | Cross-sample summary and ranking, MultiQC content           | ✅ Production | Frozen Wave community (scipy stack) |
+
+New modules added in v1.3.0 (`VALIDATE_GOLD_STANDARD`, `ETE3_BUILD_TAXDB`, `BENCHMARK_SUMMARY`) are documented in
+their `meta.yml` files and in [docs/output.md](../output.md); the sections below describe the original modules.
 
 ### nf-core Modules
 

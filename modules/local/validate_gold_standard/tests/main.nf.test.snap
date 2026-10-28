@@ -1,0 +1,46 @@
+{
+    "validate gold standard - stub": {
+        "content": [
+            {
+                "0": [
+                    "gold_standard.bioboxes:md5,1136852c47ccb3eccc4ec56be981b1f5"
+                ],
+                "1": [
+                    "gold_standard_validation.txt:md5,cfb40d16f6442b8ce8fc9ad930bec9d2"
+                ],
+                "2": [
+                    "versions.yml:md5,16ce4e5a1754d7c3366cf05d8a84835d"
+                ],
+                "gold_standard": [
+                    "gold_standard.bioboxes:md5,1136852c47ccb3eccc4ec56be981b1f5"
+                ],
+                "report": [
+                    "gold_standard_validation.txt:md5,cfb40d16f6442b8ce8fc9ad930bec9d2"
+                ],
+                "versions": [
+                    "versions.yml:md5,16ce4e5a1754d7c3366cf05d8a84835d"
+                ]
+            }
+        ],
+        "timestamp": "2026-10-28T14:20:42.593886214",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.4"
+        }
+    },
+    "validate gold standard - valid file and matching sample id": {
+        "content": [
+            [
+                "gold_standard_realistic.bioboxes:md5,535f11adf141563b9cc5aa4b0f12dc45"
+            ],
+            [
+                "versions.yml:md5,16ce4e5a1754d7c3366cf05d8a84835d"
+            ]
+        ],
+        "timestamp": "2026-10-28T14:20:33.107382146",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.4"
+        }
+    }
+}

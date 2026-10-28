@@ -54,6 +54,13 @@ See [docs/reports/audit-2026-10.md](docs/reports/audit-2026-10.md) for the full 
 
 ### Added
 
+- `VALIDATE_GOLD_STANDARD` module: the gold standard is validated (`validate_bioboxes.py --strict`, including a
+  `@SampleID` block for every sample) before OPAL runs; report in `validation/`.
+- `BENCHMARK_SUMMARY` module (`bin/summarise_benchmark.py`): cross-sample mean/median/sd per classifier, rank
+  and metric, direction-aware classifier ranking, and MultiQC table plus F1/L1-by-rank line graphs in
+  `benchmark_summary/`. The per-sample wide metric table now carries a `sample` column.
+- Python unit tests for the core scripts (`tests/python`, `pytest`) with a GitHub Actions workflow.
+- The taxdump archive name and md5 are recorded in the software versions (`ETE3_BUILD_TAXDB`).
 - `--taxdump`: pinned NCBI `taxdump.tar.gz` built once into an ete3 database (`ETE3_BUILD_TAXDB`) and shared by
   all conversions; no network access or `$HOME` writes inside tasks, reproducible lineages.
 - `--include_unclassified`, `--opal_normalize`, `--opal_filter`, `--opal_ranks` parameters.

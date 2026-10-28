@@ -3,11 +3,13 @@
     IMPORT MODULES / SUBWORKFLOWS / FUNCTIONS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
+include { VALIDATE_GOLD_STANDARD } from '../modules/local/validate_gold_standard/main'
 include { ETE3_BUILD_TAXDB       } from '../modules/local/ete3_build_taxdb/main'
 include { TAXPASTA_STANDARDISE   } from '../modules/local/taxpasta_standardise/main'
 include { TAXPASTA_TO_BIOBOXES   } from '../modules/local/taxpasta_to_bioboxes/main'
 include { OPAL_PER_SAMPLE        } from '../modules/local/opal_per_sample/main'
 include { COMPARATIVE_ANALYSIS   } from '../modules/local/comparative_analysis/main'
+include { BENCHMARK_SUMMARY      } from '../modules/local/benchmark_summary/main'
 include { MULTIQC                } from '../modules/nf-core/multiqc/main'
 include { paramsSummaryMap       } from 'plugin/nf-schema'
 include { paramsSummaryMultiqc   } from '../subworkflows/nf-core/utils_nfcore_pipeline'
@@ -66,6 +68,15 @@ workflow TAXBENCHER {
 
     ch_versions = Channel.empty()
     ch_multiqc_files = Channel.empty()
+
+    //
+    // MODULE: Validate the gold standard (CAMI format, per-rank sums, one @SampleID block per sample)
+    // Downstream processes use the validated file so that OPAL never runs on a malformed gold standard.
+    //
+    ch_sample_ids = ch_input.map { meta, _file -> meta.sample_id }.unique().collect()
+    VALIDATE_GOLD_STANDARD(ch_gold_standard, ch_sample_ids)
+    ch_versions = ch_versions.mix(VALIDATE_GOLD_STANDARD.out.versions)
+    ch_gold_standard_validated = VALIDATE_GOLD_STANDARD.out.gold_standard.first()
 
     //
     // BRANCH: Separate inputs that need standardisation from those that don't
@@ -140,7 +151,7 @@ workflow TAXBENCHER {
     //
     OPAL_PER_SAMPLE (
         ch_bioboxes_per_sample
-            .combine(ch_gold_standard)
+            .combine(ch_gold_standard_validated)
             .map { meta, bioboxes_files, gold_std -> tuple(meta, gold_std, bioboxes_files) }
     )
     ch_versions = ch_versions.mix(OPAL_PER_SAMPLE.out.versions.first())
@@ -156,10 +167,19 @@ workflow TAXBENCHER {
 
     COMPARATIVE_ANALYSIS (
         ch_comparative_input,
-        ch_gold_standard
+        ch_gold_standard_validated
     )
     ch_versions = ch_versions.mix(COMPARATIVE_ANALYSIS.out.versions.first())
     ch_multiqc_files = ch_multiqc_files.mix(COMPARATIVE_ANALYSIS.out.multiqc.map { _meta, mqc -> mqc })
+
+    //
+    // MODULE: Cross-sample summary (mean/median/sd per classifier and rank, ranking) for MultiQC
+    //
+    BENCHMARK_SUMMARY (
+        COMPARATIVE_ANALYSIS.out.metrics_wide.map { _meta, tsv -> tsv }.collect()
+    )
+    ch_versions = ch_versions.mix(BENCHMARK_SUMMARY.out.versions)
+    ch_multiqc_files = ch_multiqc_files.mix(BENCHMARK_SUMMARY.out.multiqc.flatten())
 
     //
     // Collate and save software versions

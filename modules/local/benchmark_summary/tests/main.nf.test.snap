@@ -1,0 +1,70 @@
+{
+    "benchmark summary - stub": {
+        "content": [
+            {
+                "0": [
+                    "benchmark_summary.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                ],
+                "1": [
+                    "benchmark_ranking.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                ],
+                "2": [
+                    [
+                        "benchmark_f1_by_rank_mqc.tsv:md5,d41d8cd98f00b204e9800998ecf8427e",
+                        "benchmark_l1_by_rank_mqc.tsv:md5,d41d8cd98f00b204e9800998ecf8427e",
+                        "benchmark_table_mqc.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "3": [
+                    "versions.yml:md5,2380c8193924ab0686d99cca9fb2c87f"
+                ],
+                "multiqc": [
+                    [
+                        "benchmark_f1_by_rank_mqc.tsv:md5,d41d8cd98f00b204e9800998ecf8427e",
+                        "benchmark_l1_by_rank_mqc.tsv:md5,d41d8cd98f00b204e9800998ecf8427e",
+                        "benchmark_table_mqc.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "ranking": [
+                    "benchmark_ranking.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                ],
+                "summary": [
+                    "benchmark_summary.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                ],
+                "versions": [
+                    "versions.yml:md5,2380c8193924ab0686d99cca9fb2c87f"
+                ]
+            }
+        ],
+        "timestamp": "2026-10-28T14:18:44.520370434",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.4"
+        }
+    },
+    "benchmark summary - two samples": {
+        "content": [
+            [
+                "benchmark_summary.tsv:md5,b3a9621198afdbfaede62120460f406b"
+            ],
+            [
+                "benchmark_ranking.tsv:md5,25b5be754bcf2f371fd806b9aabfaf95"
+            ],
+            [
+                [
+                    "benchmark_f1_by_rank_mqc.tsv:md5,474dfd0b7b31d64823e4291bf7df159a",
+                    "benchmark_l1_by_rank_mqc.tsv:md5,2200e69e9d2cedf9a8febe5ccf5294a8",
+                    "benchmark_table_mqc.tsv:md5,1dbe43da7a1e1fdbdb99aa99aad7a811"
+                ]
+            ],
+            [
+                "versions.yml:md5,31037695c043c50b1cb2bf56d251eb51"
+            ]
+        ],
+        "timestamp": "2026-10-28T14:18:21.651079173",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.4"
+        }
+    }
+}

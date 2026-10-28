@@ -299,6 +299,7 @@ Reference: https://github.com/bioboxes/rfc/tree/master/data-format
     parser.add_argument("--sample-id", action="append", default=[],
                         help="Sample ID that must be present (repeatable)")
     parser.add_argument("--quiet", action="store_true", help="Only print the verdict and problems")
+    parser.add_argument("--version", action="version", version="%(prog)s 2.0.0")
     args = parser.parse_args()
 
     print(f"Validating: {args.input_file}")

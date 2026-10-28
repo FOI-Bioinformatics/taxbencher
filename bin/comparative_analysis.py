@@ -7,7 +7,7 @@ long format: tool, rank, metric, sample, value), the gold standard and,
 optionally, the CAMI profiles of the evaluated classifiers.
 
 Outputs (``<prefix>_...``):
-  * ``_metrics_wide.tsv``      OPAL metrics pivoted to one row per tool and rank
+  * ``_metrics_wide.tsv``      OPAL metrics pivoted to one row per sample, tool and rank
   * ``_pca.html``              PCA of tools on their OPAL metric profile (all ranks)
   * ``_diff_taxa.tsv``         per taxon comparison of each classifier against the
                                gold standard (observed vs expected abundance,
@@ -112,10 +112,11 @@ def parse_opal_metrics(opal_dir: Path, sample_id: str) -> Optional["pd.DataFrame
     return df
 
 
-def pivot_metrics(long_df: "pd.DataFrame") -> "pd.DataFrame":
-    """Long OPAL table -> one row per (tool, rank), one column per metric."""
+def pivot_metrics(long_df: "pd.DataFrame", sample_id: str) -> "pd.DataFrame":
+    """Long OPAL table -> one row per (sample, tool, rank), one column per metric."""
     ranked = long_df[long_df["rank"] != "na"]
     wide = ranked.pivot_table(index=["tool", "rank"], columns="metric", values="value", aggfunc="first").reset_index()
+    wide.insert(0, "sample", sample_id)
     sample_level = long_df[long_df["rank"] == "na"]
     if not sample_level.empty:
         # broadcast rank-independent metrics (e.g. UniFrac) to every rank row of the tool
@@ -354,7 +355,7 @@ def create_comparison_report(sample_id: str, labels: List[str], wide: Optional["
                 figs_html.append(fig.to_html(full_html=False, include_plotlyjs="cdn" if not figs_html else False))
             except Exception as exc:
                 log(f"WARNING: could not plot {metric}: {exc}")
-        show_cols = ["tool", "rank"] + [m for m in SUMMARY_METRICS if m in wide.columns]
+        show_cols = ["tool", "rank"] + [m for m in SUMMARY_METRICS if m in wide.columns]  # sample column omitted (single sample)
         table_html = wide[show_cols].to_html(index=False, float_format=lambda v: f"{v:.4g}", classes="metrics", border=0)
 
     diff_html = "<p><em>Per-taxon comparison not available (no profiles were provided).</em></p>"
@@ -422,7 +423,7 @@ def main() -> None:
     if not FULL_ANALYSIS:
         create_placeholder_pca(args.sample_id, labels, pca_html, "Python dependencies are missing.")
         create_placeholder_diff_taxa(diff_tsv, "analysis dependencies (pandas, scikit-learn, plotly) are missing")
-        wide_tsv.write_text("tool\trank\n")
+        wide_tsv.write_text("sample\ttool\trank\n")
         write_multiqc_table(None, args.sample_id, labels, args.summary_rank, mqc_tsv)
         comparison_html.write_text(f"<html><body><h1>Classifier Comparison - {args.sample_id}</h1>"
                                    f"<p>Full analysis requires pandas, scikit-learn and plotly.</p></body></html>")
@@ -432,14 +433,14 @@ def main() -> None:
     long_df = parse_opal_metrics(args.opal_dir, args.sample_id)
     wide = None
     if long_df is not None and not long_df.empty:
-        wide = pivot_metrics(long_df)
+        wide = pivot_metrics(long_df, args.sample_id)
         wide.to_csv(wide_tsv, sep="\t", index=False)
         missing_labels = [l for l in labels if l not in set(wide["tool"])]
         if missing_labels:
             log(f"WARNING: labels without OPAL metrics: {missing_labels}")
         perform_pca_analysis(long_df, args.sample_id, pca_html)
     else:
-        wide_tsv.write_text("tool\trank\n")
+        wide_tsv.write_text("sample\ttool\trank\n")
         create_placeholder_pca(args.sample_id, labels, pca_html, "OPAL metrics were not found.")
 
     diff_df = None

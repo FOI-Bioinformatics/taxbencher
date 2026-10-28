@@ -17,12 +17,14 @@
 
 **Pipeline steps:**
 
-1. Standardise raw profiler outputs with [taxpasta](https://taxpasta.readthedocs.io/) when needed ([`TAXPASTA_STANDARDISE`](modules/local/taxpasta_standardise/))
-2. Build a pinned NCBI taxonomy database from `--taxdump` ([`ETE3_BUILD_TAXDB`](modules/local/ete3_build_taxdb/))
-3. Convert profiles to CAMI Bioboxes format with per-rank clade abundances ([`TAXPASTA_TO_BIOBOXES`](modules/local/taxpasta_to_bioboxes/))
-4. Evaluate all classifiers of a sample against the gold standard ([`OPAL`](https://github.com/CAMI-challenge/OPAL))
-5. Compare classifiers per sample: metrics tables, PCA, per-taxon agreement ([`COMPARATIVE_ANALYSIS`](modules/local/comparative_analysis/))
-6. Aggregate results ([`MultiQC`](http://multiqc.info/))
+1. Validate the gold standard CAMI profile ([`VALIDATE_GOLD_STANDARD`](modules/local/validate_gold_standard/))
+2. Standardise raw profiler outputs with [taxpasta](https://taxpasta.readthedocs.io/) when needed ([`TAXPASTA_STANDARDISE`](modules/local/taxpasta_standardise/))
+3. Build a pinned NCBI taxonomy database from `--taxdump` ([`ETE3_BUILD_TAXDB`](modules/local/ete3_build_taxdb/))
+4. Convert profiles to CAMI Bioboxes format with per-rank clade abundances ([`TAXPASTA_TO_BIOBOXES`](modules/local/taxpasta_to_bioboxes/))
+5. Evaluate all classifiers of a sample against the gold standard ([`OPAL`](https://github.com/CAMI-challenge/OPAL))
+6. Compare classifiers per sample: metrics tables, PCA, per-taxon agreement ([`COMPARATIVE_ANALYSIS`](modules/local/comparative_analysis/))
+7. Summarise and rank classifiers across samples ([`BENCHMARK_SUMMARY`](modules/local/benchmark_summary/))
+8. Aggregate results ([`MultiQC`](http://multiqc.info/))
 
 ## Features
 

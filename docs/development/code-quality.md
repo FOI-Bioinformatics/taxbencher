@@ -23,7 +23,10 @@ This document provides comprehensive guidelines for maintaining high code qualit
 
 ### Current Status
 
-**Grade: A-**
+See [docs/reports/audit-2026-10.md](../reports/audit-2026-10.md) for the current assessment; the grade below
+predates that audit and is kept for history.
+
+**Historical grade (2025-11): A-**
 
 **nf-core Lint Results**:
 

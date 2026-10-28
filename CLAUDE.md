@@ -84,8 +84,9 @@ nextflow run . \
 ### Pipeline Flow
 
 ```
+VALIDATE_GOLD_STANDARD ─┐
 Input → TAXPASTA_STANDARDISE* → TAXPASTA_TO_BIOBOXES (+ ETE3_BUILD_TAXDB from --taxdump) →
-Group by sample_id → OPAL_PER_SAMPLE → COMPARATIVE_ANALYSIS → MULTIQC
+Group by sample_id → OPAL_PER_SAMPLE → COMPARATIVE_ANALYSIS → BENCHMARK_SUMMARY → MULTIQC
 ```
 
 \*Auto-triggered for files that are not taxpasta output (checked by extension and header)
@@ -169,7 +170,8 @@ See [docs/development/modules.md](docs/development/modules.md) for complete modu
 nf-core pipelines lint
 
 # 2. Run tests
-nf-test test
+nf-test test --profile +docker
+pytest tests/python          # unit tests of bin/ scripts (pandas, ete3, pytest)
 
 # 3. Check for issues
 grep -r "TODO\|FIXME" modules/ workflows/

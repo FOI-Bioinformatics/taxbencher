@@ -1,15 +1,22 @@
 {
     "-profile test_realistic with multi-classifier realistic data": {
         "content": [
-            7,
+            9,
             {
+                "BENCHMARK_SUMMARY": {
+                    "python": "3.11.18",
+                    "pandas": "3.1.0",
+                    "summarise_benchmark": "1.0.0"
+                },
                 "COMPARATIVE_ANALYSIS": {
                     "python": "3.11.18",
                     "comparative_analysis": "2.0.0"
                 },
                 "ETE3_BUILD_TAXDB": {
                     "python": "3.11.18",
-                    "ete3": "3.1.3"
+                    "ete3": "3.1.3",
+                    "taxdump": "taxdump.tar.gz",
+                    "taxdump_md5": "79849d307630344a7046aaeb5d4e72c6"
                 },
                 "OPAL_PER_SAMPLE": {
                     "opal": "opal.py 1.0.13"
@@ -20,11 +27,21 @@
                     "ete3": "3.1.3",
                     "taxpasta_to_bioboxes": "2.0.0"
                 },
+                "VALIDATE_GOLD_STANDARD": {
+                    "python": "3.11.10",
+                    "validate_bioboxes": "2.0.0"
+                },
                 "Workflow": {
                     "FOI-Bioinformatics/taxbencher": "v1.3.0dev"
                 }
             },
             [
+                "benchmark_summary",
+                "benchmark_summary/benchmark_f1_by_rank_mqc.tsv",
+                "benchmark_summary/benchmark_l1_by_rank_mqc.tsv",
+                "benchmark_summary/benchmark_ranking.tsv",
+                "benchmark_summary/benchmark_summary.tsv",
+                "benchmark_summary/benchmark_table_mqc.tsv",
                 "comparative_analysis",
                 "comparative_analysis/test1_comparison.html",
                 "comparative_analysis/test1_diff_taxa.tsv",
@@ -39,13 +56,25 @@
                 "multiqc/multiqc_data/multiqc_data.json",
                 "multiqc/multiqc_data/multiqc_software_versions.txt",
                 "multiqc/multiqc_data/multiqc_sources.txt",
+                "multiqc/multiqc_data/multiqc_taxbencher_benchmark_summary_table.txt",
+                "multiqc/multiqc_data/multiqc_taxbencher_f1_by_rank_plot.txt",
+                "multiqc/multiqc_data/multiqc_taxbencher_l1_by_rank_plot.txt",
                 "multiqc/multiqc_data/multiqc_taxbencher_opal_summary_table.txt",
                 "multiqc/multiqc_plots",
                 "multiqc/multiqc_plots/pdf",
+                "multiqc/multiqc_plots/pdf/taxbencher_benchmark_summary_table.pdf",
+                "multiqc/multiqc_plots/pdf/taxbencher_f1_by_rank_plot.pdf",
+                "multiqc/multiqc_plots/pdf/taxbencher_l1_by_rank_plot.pdf",
                 "multiqc/multiqc_plots/pdf/taxbencher_opal_summary_table.pdf",
                 "multiqc/multiqc_plots/png",
+                "multiqc/multiqc_plots/png/taxbencher_benchmark_summary_table.png",
+                "multiqc/multiqc_plots/png/taxbencher_f1_by_rank_plot.png",
+                "multiqc/multiqc_plots/png/taxbencher_l1_by_rank_plot.png",
                 "multiqc/multiqc_plots/png/taxbencher_opal_summary_table.png",
                 "multiqc/multiqc_plots/svg",
+                "multiqc/multiqc_plots/svg/taxbencher_benchmark_summary_table.svg",
+                "multiqc/multiqc_plots/svg/taxbencher_f1_by_rank_plot.svg",
+                "multiqc/multiqc_plots/svg/taxbencher_l1_by_rank_plot.svg",
                 "multiqc/multiqc_plots/svg/taxbencher_opal_summary_table.svg",
                 "multiqc/multiqc_report.html",
                 "opal",
@@ -96,32 +125,40 @@
                 "taxpasta_to_bioboxes",
                 "taxpasta_to_bioboxes/test1_centrifuge.bioboxes",
                 "taxpasta_to_bioboxes/test1_kraken2.bioboxes",
-                "taxpasta_to_bioboxes/test1_metaphlan.bioboxes"
+                "taxpasta_to_bioboxes/test1_metaphlan.bioboxes",
+                "validation",
+                "validation/gold_standard_realistic_validation.txt"
             ],
             [
+                "benchmark_f1_by_rank_mqc.tsv:md5,525528fc4b4cf51af0770fd43a197f98",
+                "benchmark_l1_by_rank_mqc.tsv:md5,9682590abba9bbbd164d0af759a4074f",
+                "benchmark_ranking.tsv:md5,6e4d87daa413ae276419bc8c55e82416",
+                "benchmark_summary.tsv:md5,1a04e0c245162f335f394da47b4f0fe9",
+                "benchmark_table_mqc.tsv:md5,b68419b1ef185ef003aee44cf0aa9bda",
                 "test1_diff_taxa.tsv:md5,4ff996f3d0198bace429e1a6f5adb460",
-                "test1_metrics_wide.tsv:md5,83f6f27b1c986763d8d816914a92f8a3",
-                "test1_opal_summary_mqc.tsv:md5,912d1d0b98d5b48e40cab9e864a1f0a8",
-                "class.tsv:md5,e4f7c3599730419b6219b75cbc091a4a",
-                "family.tsv:md5,f6a679e177aa01f2f2493efdd399c894",
-                "genus.tsv:md5,9ad78f1396a5acae7b9df7e061a65234",
-                "order.tsv:md5,b75bd21bbac2297b96cf1d88b5d5cb07",
-                "phylum.tsv:md5,7d98411cd66c728ac35a9cb1d92a1a99",
-                "species.tsv:md5,97d83311b6027dd96b12fe7115359cb9",
-                "strain.tsv:md5,ad0ebe4d5617005095e68ca12ca979b1",
-                "superkingdom.tsv:md5,31e6f32f7d91312eeabe7c80d0ddadb6",
+                "test1_metrics_wide.tsv:md5,f156a8959cef0249b802a4bf41781d3d",
+                "test1_opal_summary_mqc.tsv:md5,0087685ab63cc53175095d5b3b0e8286",
+                "class.tsv:md5,224096893cef08d77ca843ee89af4f73",
+                "family.tsv:md5,1a9aba920abda0aa19833ba3e40d4d2b",
+                "genus.tsv:md5,35255909443cc5d520ee2016f51a31bb",
+                "order.tsv:md5,31077d3dab703a61bc6c810717c3542b",
+                "phylum.tsv:md5,18e9addadc4842f821963c937fcf56c2",
+                "species.tsv:md5,371936742ebdebf606f0313247440e60",
+                "strain.tsv:md5,0da31bb901bee0ce64476fba726cdd5f",
+                "superkingdom.tsv:md5,ff52d2d57a2d68235fbbe610961bb28c",
                 "test1_centrifuge.tsv:md5,21c635769b97d9830786b8794e7d0b78",
-                "test1_kraken2.tsv:md5,c189aa221f0f25e3e065ff85c3e8d5db",
-                "test1_metaphlan.tsv:md5,4f78ee5d9fde1aec2f3f37ab8f50363c",
+                "test1_kraken2.tsv:md5,85ee828c9631d656fe837c520ae94861",
+                "test1_metaphlan.tsv:md5,e2c50add7fed112bba548de534f61b7d",
                 "confusion.tsv:md5,d991cea50a40acb84af500e7fdb90b59",
-                "log.txt:md5,9427649a68a3ac8fa1a06a665972d805",
-                "results.tsv:md5,693096966b4d6f8f29ce4a84c5d6d106",
+                "log.txt:md5,863d6d81e9a9943eed686581d0c97408",
+                "results.tsv:md5,8c7c7a5a327a4d6a5828b05cebb730f6",
                 "test1_centrifuge.bioboxes:md5,d2fffdce69f033fa7c1857f4d97118aa",
                 "test1_kraken2.bioboxes:md5,8b5fcde17837274461d94693aba528e0",
-                "test1_metaphlan.bioboxes:md5,58fb9e12fc5169c555987c0090ad8566"
+                "test1_metaphlan.bioboxes:md5,58fb9e12fc5169c555987c0090ad8566",
+                "gold_standard_realistic_validation.txt:md5,a23018476c3c6ab02eb5f1375183f192"
             ]
         ],
-        "timestamp": "2026-10-28T13:37:02.977173605",
+        "timestamp": "2026-10-28T14:23:48.478549447",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.4"
@@ -129,15 +166,22 @@
     },
     "-profile test": {
         "content": [
-            7,
+            9,
             {
+                "BENCHMARK_SUMMARY": {
+                    "python": "3.11.18",
+                    "pandas": "3.1.0",
+                    "summarise_benchmark": "1.0.0"
+                },
                 "COMPARATIVE_ANALYSIS": {
                     "python": "3.11.18",
                     "comparative_analysis": "2.0.0"
                 },
                 "ETE3_BUILD_TAXDB": {
                     "python": "3.11.18",
-                    "ete3": "3.1.3"
+                    "ete3": "3.1.3",
+                    "taxdump": "taxdump.tar.gz",
+                    "taxdump_md5": "79849d307630344a7046aaeb5d4e72c6"
                 },
                 "OPAL_PER_SAMPLE": {
                     "opal": "opal.py 1.0.13"
@@ -148,11 +192,21 @@
                     "ete3": "3.1.3",
                     "taxpasta_to_bioboxes": "2.0.0"
                 },
+                "VALIDATE_GOLD_STANDARD": {
+                    "python": "3.11.10",
+                    "validate_bioboxes": "2.0.0"
+                },
                 "Workflow": {
                     "FOI-Bioinformatics/taxbencher": "v1.3.0dev"
                 }
             },
             [
+                "benchmark_summary",
+                "benchmark_summary/benchmark_f1_by_rank_mqc.tsv",
+                "benchmark_summary/benchmark_l1_by_rank_mqc.tsv",
+                "benchmark_summary/benchmark_ranking.tsv",
+                "benchmark_summary/benchmark_summary.tsv",
+                "benchmark_summary/benchmark_table_mqc.tsv",
                 "comparative_analysis",
                 "comparative_analysis/test_sample_comparison.html",
                 "comparative_analysis/test_sample_diff_taxa.tsv",
@@ -167,13 +221,25 @@
                 "multiqc/multiqc_data/multiqc_data.json",
                 "multiqc/multiqc_data/multiqc_software_versions.txt",
                 "multiqc/multiqc_data/multiqc_sources.txt",
+                "multiqc/multiqc_data/multiqc_taxbencher_benchmark_summary_table.txt",
+                "multiqc/multiqc_data/multiqc_taxbencher_f1_by_rank_plot.txt",
+                "multiqc/multiqc_data/multiqc_taxbencher_l1_by_rank_plot.txt",
                 "multiqc/multiqc_data/multiqc_taxbencher_opal_summary_table.txt",
                 "multiqc/multiqc_plots",
                 "multiqc/multiqc_plots/pdf",
+                "multiqc/multiqc_plots/pdf/taxbencher_benchmark_summary_table.pdf",
+                "multiqc/multiqc_plots/pdf/taxbencher_f1_by_rank_plot.pdf",
+                "multiqc/multiqc_plots/pdf/taxbencher_l1_by_rank_plot.pdf",
                 "multiqc/multiqc_plots/pdf/taxbencher_opal_summary_table.pdf",
                 "multiqc/multiqc_plots/png",
+                "multiqc/multiqc_plots/png/taxbencher_benchmark_summary_table.png",
+                "multiqc/multiqc_plots/png/taxbencher_f1_by_rank_plot.png",
+                "multiqc/multiqc_plots/png/taxbencher_l1_by_rank_plot.png",
                 "multiqc/multiqc_plots/png/taxbencher_opal_summary_table.png",
                 "multiqc/multiqc_plots/svg",
+                "multiqc/multiqc_plots/svg/taxbencher_benchmark_summary_table.svg",
+                "multiqc/multiqc_plots/svg/taxbencher_f1_by_rank_plot.svg",
+                "multiqc/multiqc_plots/svg/taxbencher_l1_by_rank_plot.svg",
                 "multiqc/multiqc_plots/svg/taxbencher_opal_summary_table.svg",
                 "multiqc/multiqc_report.html",
                 "opal",
@@ -224,32 +290,40 @@
                 "taxpasta_to_bioboxes",
                 "taxpasta_to_bioboxes/test_sample_centrifuge.bioboxes",
                 "taxpasta_to_bioboxes/test_sample_kraken2.bioboxes",
-                "taxpasta_to_bioboxes/test_sample_metaphlan.bioboxes"
+                "taxpasta_to_bioboxes/test_sample_metaphlan.bioboxes",
+                "validation",
+                "validation/gold_standard_validation.txt"
             ],
             [
+                "benchmark_f1_by_rank_mqc.tsv:md5,b978ecd8477b5dd755c62d5c9313f35c",
+                "benchmark_l1_by_rank_mqc.tsv:md5,c0a0089b6b2ea1e374b3844ff144b3ab",
+                "benchmark_ranking.tsv:md5,d3378a6d2e56cf053d7749d229a1cdb6",
+                "benchmark_summary.tsv:md5,cdd74bbb8d4f95df6073dc4b1adbfd41",
+                "benchmark_table_mqc.tsv:md5,18e360eb1e34d195a4fe6a14bbe12000",
                 "test_sample_diff_taxa.tsv:md5,b7cb168b60f4bc5d6ccac619e3586aa7",
-                "test_sample_metrics_wide.tsv:md5,ad839f3dcff06e84c1dd8f1c25cef3da",
+                "test_sample_metrics_wide.tsv:md5,fe7b739747ea1183a7c086f57db9c934",
                 "test_sample_opal_summary_mqc.tsv:md5,db25a9ba1db92028fa6f4c46c2859af9",
-                "class.tsv:md5,a0ff1bfbef628594612604fa58e0ecff",
-                "family.tsv:md5,3e2762a8915f0f9991cbe57478020ef6",
-                "genus.tsv:md5,494efb82852977c1c3c45089ad613894",
-                "order.tsv:md5,3e2762a8915f0f9991cbe57478020ef6",
-                "phylum.tsv:md5,c5a0e3063e2e83c5c3c90190081e9ecc",
-                "species.tsv:md5,32121ed07d0876d1e8d51ab85940eaec",
-                "strain.tsv:md5,2bca6e18030cc811945f42f4952f94d6",
-                "superkingdom.tsv:md5,585ee9205f2ad69f02e27a068eca6d7e",
-                "test_sample_centrifuge.tsv:md5,03acdfc839c2bb94a5c48fd8fee96ae0",
-                "test_sample_kraken2.tsv:md5,65ade566afb6e43c46ea08dc9c7849a0",
-                "test_sample_metaphlan.tsv:md5,c488a498c8b910c9f5253af4ed6b59fc",
+                "class.tsv:md5,cddc0dbca575421528c3ee57941107cc",
+                "family.tsv:md5,288e977549bee8ef7a684cb54ac646f8",
+                "genus.tsv:md5,ed229f30551e05feb0179721ebf39b9b",
+                "order.tsv:md5,288e977549bee8ef7a684cb54ac646f8",
+                "phylum.tsv:md5,e0927275dd0386aec29b28763468c574",
+                "species.tsv:md5,857c1b0fcc3ca141af86d1a8ec58dd9a",
+                "strain.tsv:md5,5444e8b83814d635c3233ae6bd8d077e",
+                "superkingdom.tsv:md5,9937d282574aae9986161f46671df683",
+                "test_sample_centrifuge.tsv:md5,dc42de4ba5a347e51808de5f2a4a7bba",
+                "test_sample_kraken2.tsv:md5,54f664398f97be26e64144ff4e0d533f",
+                "test_sample_metaphlan.tsv:md5,549250e7eefd7a0a0a52397dbd84a296",
                 "confusion.tsv:md5,42c4ad35652fef32b2fe9e32e4b0b0e3",
-                "log.txt:md5,f5ce573fc5a1f51773773554fa657f5e",
-                "results.tsv:md5,bf9b525e1a9bb339963649559cdb79df",
+                "log.txt:md5,6f761c4b14bc535bb8d63127f5930ad6",
+                "results.tsv:md5,773d553b09a592086b8d5631739f1fb3",
                 "test_sample_centrifuge.bioboxes:md5,61b297f6094f9b92ae1e6bd3ced6ab97",
                 "test_sample_kraken2.bioboxes:md5,9238470f20a02816636b1b41b72882e8",
-                "test_sample_metaphlan.bioboxes:md5,c613540109335133ce3a1219a59e4a6f"
+                "test_sample_metaphlan.bioboxes:md5,c613540109335133ce3a1219a59e4a6f",
+                "gold_standard_validation.txt:md5,ed24c8b612e2a9ee9e33a98db69b3e59"
             ]
         ],
-        "timestamp": "2026-10-28T13:35:16.107913709",
+        "timestamp": "2026-10-28T14:21:55.528688172",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.4"
@@ -257,15 +331,22 @@
     },
     "-profile test_raw with raw profiler inputs": {
         "content": [
-            10,
+            12,
             {
+                "BENCHMARK_SUMMARY": {
+                    "python": "3.11.18",
+                    "pandas": "3.1.0",
+                    "summarise_benchmark": "1.0.0"
+                },
                 "COMPARATIVE_ANALYSIS": {
                     "python": "3.11.18",
                     "comparative_analysis": "2.0.0"
                 },
                 "ETE3_BUILD_TAXDB": {
                     "python": "3.11.18",
-                    "ete3": "3.1.3"
+                    "ete3": "3.1.3",
+                    "taxdump": "taxdump.tar.gz",
+                    "taxdump_md5": "79849d307630344a7046aaeb5d4e72c6"
                 },
                 "OPAL_PER_SAMPLE": {
                     "opal": "opal.py 1.0.13"
@@ -279,11 +360,21 @@
                     "ete3": "3.1.3",
                     "taxpasta_to_bioboxes": "2.0.0"
                 },
+                "VALIDATE_GOLD_STANDARD": {
+                    "python": "3.11.10",
+                    "validate_bioboxes": "2.0.0"
+                },
                 "Workflow": {
                     "FOI-Bioinformatics/taxbencher": "v1.3.0dev"
                 }
             },
             [
+                "benchmark_summary",
+                "benchmark_summary/benchmark_f1_by_rank_mqc.tsv",
+                "benchmark_summary/benchmark_l1_by_rank_mqc.tsv",
+                "benchmark_summary/benchmark_ranking.tsv",
+                "benchmark_summary/benchmark_summary.tsv",
+                "benchmark_summary/benchmark_table_mqc.tsv",
                 "comparative_analysis",
                 "comparative_analysis/test_sample_comparison.html",
                 "comparative_analysis/test_sample_diff_taxa.tsv",
@@ -298,13 +389,25 @@
                 "multiqc/multiqc_data/multiqc_data.json",
                 "multiqc/multiqc_data/multiqc_software_versions.txt",
                 "multiqc/multiqc_data/multiqc_sources.txt",
+                "multiqc/multiqc_data/multiqc_taxbencher_benchmark_summary_table.txt",
+                "multiqc/multiqc_data/multiqc_taxbencher_f1_by_rank_plot.txt",
+                "multiqc/multiqc_data/multiqc_taxbencher_l1_by_rank_plot.txt",
                 "multiqc/multiqc_data/multiqc_taxbencher_opal_summary_table.txt",
                 "multiqc/multiqc_plots",
                 "multiqc/multiqc_plots/pdf",
+                "multiqc/multiqc_plots/pdf/taxbencher_benchmark_summary_table.pdf",
+                "multiqc/multiqc_plots/pdf/taxbencher_f1_by_rank_plot.pdf",
+                "multiqc/multiqc_plots/pdf/taxbencher_l1_by_rank_plot.pdf",
                 "multiqc/multiqc_plots/pdf/taxbencher_opal_summary_table.pdf",
                 "multiqc/multiqc_plots/png",
+                "multiqc/multiqc_plots/png/taxbencher_benchmark_summary_table.png",
+                "multiqc/multiqc_plots/png/taxbencher_f1_by_rank_plot.png",
+                "multiqc/multiqc_plots/png/taxbencher_l1_by_rank_plot.png",
                 "multiqc/multiqc_plots/png/taxbencher_opal_summary_table.png",
                 "multiqc/multiqc_plots/svg",
+                "multiqc/multiqc_plots/svg/taxbencher_benchmark_summary_table.svg",
+                "multiqc/multiqc_plots/svg/taxbencher_f1_by_rank_plot.svg",
+                "multiqc/multiqc_plots/svg/taxbencher_l1_by_rank_plot.svg",
                 "multiqc/multiqc_plots/svg/taxbencher_opal_summary_table.svg",
                 "multiqc/multiqc_report.html",
                 "opal",
@@ -355,32 +458,40 @@
                 "taxpasta_to_bioboxes",
                 "taxpasta_to_bioboxes/test_sample_centrifuge.bioboxes",
                 "taxpasta_to_bioboxes/test_sample_kraken2.bioboxes",
-                "taxpasta_to_bioboxes/test_sample_metaphlan.bioboxes"
+                "taxpasta_to_bioboxes/test_sample_metaphlan.bioboxes",
+                "validation",
+                "validation/gold_standard_raw_validation.txt"
             ],
             [
+                "benchmark_f1_by_rank_mqc.tsv:md5,a2e14a791aba7121d6ac924379ca83d7",
+                "benchmark_l1_by_rank_mqc.tsv:md5,ab70193762772c47d60013b646a085d1",
+                "benchmark_ranking.tsv:md5,b534d56b0df4c8491f7337117f1d8294",
+                "benchmark_summary.tsv:md5,2cd858d437be84faad470775ca875fb5",
+                "benchmark_table_mqc.tsv:md5,c83ac76d15113fa58615b97df7c7afba",
                 "test_sample_diff_taxa.tsv:md5,866bf8dfca63cc19496c60e4a6a63f0b",
-                "test_sample_metrics_wide.tsv:md5,a96391117d9360dd68686e00a6494a1c",
+                "test_sample_metrics_wide.tsv:md5,5a594fbcab97f69cd3d8fca22ff40af0",
                 "test_sample_opal_summary_mqc.tsv:md5,3a1e1d901012e4baade0053e88c534b9",
-                "class.tsv:md5,5923438daa46f9d4978572dd0b14fe60",
-                "family.tsv:md5,5923438daa46f9d4978572dd0b14fe60",
-                "genus.tsv:md5,5923438daa46f9d4978572dd0b14fe60",
-                "order.tsv:md5,5923438daa46f9d4978572dd0b14fe60",
-                "phylum.tsv:md5,cb90121c16330f883f2c908863a85338",
-                "species.tsv:md5,97d00f4cefe4c0e9499cabfe1e9903d9",
-                "strain.tsv:md5,acbee4e06b58ed45466f11ebe3ace2e6",
-                "superkingdom.tsv:md5,4f9eeb86391d8c256e384dfb874ad5bc",
+                "class.tsv:md5,7af2849fcfcc824b15632dcf771cbb0f",
+                "family.tsv:md5,7af2849fcfcc824b15632dcf771cbb0f",
+                "genus.tsv:md5,7af2849fcfcc824b15632dcf771cbb0f",
+                "order.tsv:md5,7af2849fcfcc824b15632dcf771cbb0f",
+                "phylum.tsv:md5,ec698b546a4f7627843a57135cc90039",
+                "species.tsv:md5,399e8eaba986de756bc0f3cb4a38ac26",
+                "strain.tsv:md5,bc4e8d97fc78c210e2b1155817fcd8c8",
+                "superkingdom.tsv:md5,3ae25a9931af410ed4198cc137019981",
                 "test_sample_centrifuge.tsv:md5,b5d0a2dadab2e4cd27c6293b038cda52",
-                "test_sample_kraken2.tsv:md5,8dffe851e36979d43bba4264bc6f079e",
+                "test_sample_kraken2.tsv:md5,29bcb6cf55382c284c259067df6c2d3d",
                 "test_sample_metaphlan.tsv:md5,b30682d6ca45bff65d3f174a274882fb",
                 "confusion.tsv:md5,0fcb8821a9f702e1bc6e80f061e21493",
-                "log.txt:md5,f3098169c0aa1491e4bb0e504b784608",
-                "results.tsv:md5,d6c13b7e3e6dc50361ddc6e19b44cf59",
+                "log.txt:md5,7032239774b0bf7c24bab647dd97f9bc",
+                "results.tsv:md5,d9c125648c5c30a62667966f0b6a1c85",
                 "test_sample_centrifuge.bioboxes:md5,9b138d6723d9b6eb4aea7a349420e7b1",
                 "test_sample_kraken2.bioboxes:md5,e2a585c4cf13b7988dab5368e404faa2",
-                "test_sample_metaphlan.bioboxes:md5,04cbed529e64daf77e9f4888f4443d46"
+                "test_sample_metaphlan.bioboxes:md5,04cbed529e64daf77e9f4888f4443d46",
+                "gold_standard_raw_validation.txt:md5,5fc50e7df90e28f853dd4f6cbb70aaa6"
             ]
         ],
-        "timestamp": "2026-10-28T13:36:12.873810543",
+        "timestamp": "2026-10-28T14:22:55.058490704",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.4"

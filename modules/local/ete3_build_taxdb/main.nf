@@ -37,10 +37,13 @@ process ETE3_BUILD_TAXDB {
         exit 1
     fi
 
+    # Record which taxonomy was used (archive name and md5) next to the software versions
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         python: \$(python --version | sed 's/Python //g')
         ete3: \$(python -c "import ete3; print(ete3.__version__)")
+        taxdump: ${taxdump.name}
+        taxdump_md5: \$(md5sum ${taxdump} | cut -d' ' -f1)
     END_VERSIONS
     """
 
