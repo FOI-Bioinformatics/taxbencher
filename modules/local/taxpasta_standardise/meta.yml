@@ -1,42 +1,66 @@
-name: taxpasta_standardise
-description: Standardise taxonomic profiler output to taxpasta TSV format
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: "taxpasta_standardise"
+description: Standardise raw taxonomic profiler output to the taxpasta TSV format
 keywords:
   - metagenomics
   - taxonomy
   - standardisation
   - profiling
 tools:
-  - taxpasta:
+  - "taxpasta":
       description: TAXonomic Profile Aggregation and STAndardisation
       homepage: https://taxpasta.readthedocs.io/
       documentation: https://taxpasta.readthedocs.io/
       tool_dev_url: https://github.com/taxprofiler/taxpasta
-      doi: "10.5281/zenodo.7728364"
+      doi: "10.21105/joss.05627"
       licence: ["Apache-2.0"]
+      identifier: biotools:taxpasta
+
 input:
-  - meta:
-      type: map
-      description: |
-        Groovy Map containing sample information
-        e.g. [ id:'test', classifier:'kraken2', taxonomy_db:'NCBI' ]
-  - profiler_output:
-      type: file
-      description: Taxonomic profiler output file in native format
-      pattern: "*.{kreport,out,profile,mpa,kraken,centrifuge,kaiju,bracken,ganon,motus,megan,rma6}"
+  - - meta:
+        type: map
+        description: |
+          Groovy Map containing sample information
+          e.g. `[ id:'test', classifier:'kraken2' ]`; `classifier` selects the taxpasta profiler
+    - profiler_output:
+        type: file
+        description: Taxonomic profiler output file in its native format
+        pattern: "*.{kreport,out,profile,report,bracken,tre,txt}"
+        ontologies: []
 output:
-  - meta:
-      type: map
-      description: |
-        Groovy Map containing sample information
-        e.g. [ id:'test', classifier:'kraken2', taxonomy_db:'NCBI' ]
-  - standardised:
-      type: file
-      description: Standardised taxpasta TSV file with taxonomy_id and count columns
-      pattern: "*.tsv"
-  - versions:
-      type: file
-      description: File containing software versions
-      pattern: "versions.yml"
+  standardised:
+    - - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. `[ id:'test', classifier:'kraken2' ]`; `classifier` selects the taxpasta profiler
+      - "*.tsv":
+          type: file
+          description: Standardised taxpasta TSV file with taxonomy_id and count columns
+          pattern: "*.tsv"
+          ontologies:
+            - edam: http://edamontology.org/format_3475 # TSV
+  versions_taxpasta:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - taxpasta:
+          type: string
+          description: The name of the tool
+      - taxpasta --version | sed "s/taxpasta, version //":
+          type: eval
+          description: The expression to obtain the version of the tool
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - taxpasta:
+          type: string
+          description: The name of the tool
+      - taxpasta --version | sed "s/taxpasta, version //":
+          type: eval
+          description: The expression to obtain the version of the tool
 authors:
   - "@andreassjodin"
 maintainers:

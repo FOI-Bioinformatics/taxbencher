@@ -25,7 +25,7 @@ nextflow_process {
                 // taxa.sqlite and taxa.sqlite.traverse.pkl
                 { assert process.out.db.get(0).any { it.toString().endsWith('taxa.sqlite') } },
                 { assert path(process.out.db.get(0).find { it.toString().endsWith('taxa.sqlite') }).size() > 0 },
-                { assert snapshot(process.out.versions).match() }
+                { assert snapshot(process.out.findAll { key, _value -> key.startsWith('versions') }).match() }
             )
         }
 

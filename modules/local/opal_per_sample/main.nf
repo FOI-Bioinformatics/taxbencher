@@ -6,7 +6,7 @@ process OPAL_PER_SAMPLE {
     // Spider plots may fail with small test data. Use realistic datasets for production.
     // See: https://github.com/CAMI-challenge/OPAL/issues
     conda "${moduleDir}/environment.yml"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+    container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/cami-opal:1.0.13--pyhdfd78af_0' :
         'quay.io/biocontainers/cami-opal:1.0.13--pyhdfd78af_0' }"
 
@@ -15,7 +15,8 @@ process OPAL_PER_SAMPLE {
 
     output:
     tuple val(meta), path("${task.ext.prefix ?: meta.id}", type: 'dir'), emit: results
-    path "versions.yml"                                                 , emit: versions
+    // MPLCONFIGDIR keeps matplotlib from printing a warning when HOME is read-only; the grep extracts the bare version
+    tuple val("${task.process}"), val('opal'), eval('MPLCONFIGDIR=$PWD/.mplconfig opal.py --version 2>&1 | grep -oE "opal.py [0-9][0-9.]*" | head -n 1 | sed "s/opal.py //"'), topic: versions, emit: versions_opal
 
     when:
     task.ext.when == null || task.ext.when
@@ -42,7 +43,7 @@ process OPAL_PER_SAMPLE {
 
     """
     # Give matplotlib a writable cache directory: with a read-only HOME it prints a warning
-    # on every call (including 'opal.py --version'), which would corrupt versions.yml.
+    # on every call (including 'opal.py --version'), which would corrupt the reported version string.
     export MPLCONFIGDIR=\$PWD/.mplconfig
     mkdir -p "\$MPLCONFIGDIR"
     # OPAL iterates over Python sets of taxon IDs when it sums abundances (UniFrac, L1 norm, ...).
@@ -133,11 +134,6 @@ process OPAL_PER_SAMPLE {
 
     echo "[OPAL_PER_SAMPLE] Successfully evaluated ${meta.id}" >&2
     echo "[OPAL_PER_SAMPLE] Output directory: ${prefix}" >&2
-
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        opal: \$(opal.py --version 2>&1 | grep -oE 'opal.py [0-9][0-9.]*' | head -n 1 | sed 's/opal.py //')
-    END_VERSIONS
     """
 
     stub:
@@ -147,10 +143,5 @@ process OPAL_PER_SAMPLE {
     touch ${prefix}/results.html
     printf 'tool\\trank\\tmetric\\tsample\\tvalue\\n' > ${prefix}/results.tsv
     touch ${prefix}/confusion.tsv
-
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        opal: 1.0.13
-    END_VERSIONS
     """
 }

@@ -87,7 +87,7 @@ process MYPROCESS {
 
     output:
     tuple val(meta), path("*.output"), emit: results
-    path "versions.yml"              , emit: versions
+    tuple val("${task.process}"), val('tool'), eval('tool --version'), topic: versions, emit: versions_tool
 
     when:
     task.ext.when == null || task.ext.when
@@ -95,19 +95,11 @@ process MYPROCESS {
     script:
     """
     ...
-
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        tool: \$(tool --version)
-    END_VERSIONS
     """
 
     stub:
     """
     touch stub.output
-    cat <<-END_VERSIONS > versions.yml
-    ...
-    END_VERSIONS
     """
 }
 ```
@@ -147,34 +139,21 @@ tuple val(meta), path("*.out"), emit: results
 
 #### 3. Version Tracking
 
-**All processes must emit versions**:
+**All processes must report versions** through the `versions` topic, one `(process, tool, version)` tuple per tool.
+The version command is an `eval` output, so it runs in the task's container or conda environment:
 
 ```groovy
 output:
-path "versions.yml", emit: versions
-
-script:
-"""
-# Process logic
-
-cat <<-END_VERSIONS > versions.yml
-"${task.process}":
-    tool: \$(tool --version | sed 's/^version //g')
-    python: \$(python --version | sed 's/Python //g')
-END_VERSIONS
-"""
+tuple val("${task.process}"), val('tool'), eval("tool --version | sed 's/^version //'"), topic: versions, emit: versions_tool
+tuple val("${task.process}"), val('python'), eval('python --version | sed "s/Python //"'), topic: versions, emit: versions_python
 ```
 
-**Workflow version collection**:
+**Workflow version collection** (`workflows/taxbencher.nf`): nothing has to be mixed per module; the workflow reads
+`channel.topic("versions")`, groups the tuples per process and writes `pipeline_info/taxbencher_software_mqc_versions.yml`.
+MULTIQC is the one exception: it consumes the collated versions, so it emits its tuple without publishing to the topic.
 
-```groovy
-ch_versions = Channel.empty()
-ch_versions = ch_versions.mix(PROCESS1.out.versions.first())
-ch_versions = ch_versions.mix(PROCESS2.out.versions.first())
-
-softwareVersionsToYAML(ch_versions)
-    .collectFile(name: 'pipeline_software_mqc_versions.yml')
-```
+Version strings must be deterministic across profiles: pin Python and library versions in `environment.yml` to the
+versions inside the module container, and keep tool banners out of the string (OPAL sets `MPLCONFIGDIR` for that).
 
 #### 4. Process Labels
 
@@ -199,7 +178,7 @@ withLabel: process_custom {
 
 #### 5. Stub Implementation
 
-**All processes must support stub mode**:
+**All processes must support stub mode** (the `eval` version outputs are evaluated in stub runs as well):
 
 ```groovy
 stub:
@@ -207,12 +186,6 @@ def prefix = task.ext.prefix ?: "${meta.id}"
 """
 # Create empty output files
 touch ${prefix}.output
-
-# Still emit versions
-cat <<-END_VERSIONS > versions.yml
-"${task.process}":
-    tool: 1.0.0
-END_VERSIONS
 """
 ```
 
@@ -360,7 +333,7 @@ tuple val(meta), path(taxpasta_tsv)
 
 output:
 tuple val(meta), path("*.bioboxes"), emit: bioboxes
-path "versions.yml"                , emit: versions
+tuple val("${task.process}"), val('python'), eval('python --version | sed "s/Python //"'), topic: versions, emit: versions_python
 
 // Bad: Ambiguous outputs
 output:
@@ -793,14 +766,14 @@ process MODULE_NAME {
     label 'process_low'
 
     conda "${moduleDir}/environment.yml"
-    container "biocontainers/tool:version"
+    container "quay.io/biocontainers/tool:version"
 
     input:
     tuple val(meta), path(input_file)
 
     output:
     tuple val(meta), path("*.output"), emit: results
-    path "versions.yml"              , emit: versions
+    tuple val("${task.process}"), val('tool'), eval('tool --version'), topic: versions, emit: versions_tool
 
     when:
     task.ext.when == null || task.ext.when
@@ -821,19 +794,12 @@ process MODULE_NAME {
 
     # Output validation
     [ -s ${prefix}.output ] || { echo "ERROR: No output" >&2; exit 1; }
-
-    # Versions
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        tool: \$(tool --version)
-    END_VERSIONS
     """
 
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
     touch ${prefix}.output
-    echo '"${task.process}": tool: 1.0.0' > versions.yml
     """
 }
 ```
@@ -851,7 +817,8 @@ process MULTI_TOOL {
     output:
     tuple val(meta), path("*.primary.out"), emit: primary
     tuple val(meta), path("*.secondary.out"), emit: secondary, optional: true
-    path "versions.yml", emit: versions
+    tuple val("${task.process}"), val('tool1'), eval('tool1 --version'), topic: versions, emit: versions_tool1
+    tuple val("${task.process}"), val('tool2'), eval('tool2 --version'), topic: versions, emit: versions_tool2
 
     script:
     def args = task.ext.args ?: ''
@@ -872,12 +839,6 @@ process MULTI_TOOL {
             --output ${prefix}.secondary.out \\
             ${args2}
     fi
-
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        tool1: \$(tool1 --version)
-        tool2: \$(tool2 --version || echo "not run")
-    END_VERSIONS
     """
 }
 ```
@@ -896,7 +857,7 @@ process CONDITIONAL_OUTPUT {
     tuple val(meta), path("*.main.out"), emit: main
     tuple val(meta), path("*.stats.txt"), emit: stats, optional: true
     tuple val(meta), path("*.plot.pdf"), emit: plot, optional: true
-    path "versions.yml", emit: versions
+    tuple val("${task.process}"), val('tool'), eval('tool --version'), topic: versions, emit: versions_tool
 
     script:
     def args = task.ext.args ?: ''
@@ -917,11 +878,6 @@ process CONDITIONAL_OUTPUT {
     if [ "${generate_plot}" = "true" ]; then
         tool --plot ${prefix}.main.out ${prefix}.plot.pdf
     fi
-
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        tool: \$(tool --version)
-    END_VERSIONS
     """
 }
 ```
@@ -941,7 +897,8 @@ process PYTHON_SCRIPT {
 
     output:
     tuple val(meta), path("*.output"), emit: results
-    path "versions.yml", emit: versions
+    tuple val("${task.process}"), val('python'), eval('python --version | sed "s/Python //"'), topic: versions, emit: versions_python
+    tuple val("${task.process}"), val('script'), eval('script.py --version | sed "s/script.py //"'), topic: versions, emit: versions_script
 
     script:
     def args = task.ext.args ?: ''
@@ -953,12 +910,6 @@ process PYTHON_SCRIPT {
         --output ${prefix}.output \\
         --sample-id ${meta.sample_id} \\
         ${args}
-
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        python: \$(python --version | sed 's/Python //g')
-        script: \$(script.py --version 2>&1 | sed 's/script.py //g')
-    END_VERSIONS
     """
 }
 ```
@@ -1175,27 +1126,36 @@ tools:
       doi: "10.1234/doi"
       licence: ["MIT"]
 input:
-  - meta:
-      type: map
-      description: |
-        Groovy Map containing sample information
-        e.g. [id: 'sample1', sample_id: 'sample1']
-  - input_file:
-      type: file
-      description: Input file description
-      pattern: "*.{tsv,txt}"
+  - - meta:
+        type: map
+        description: |
+          Groovy Map containing sample information
+          e.g. `[ id:'sample1_kraken2', sample_id:'sample1' ]`
+    - input_file:
+        type: file
+        description: Input file description
+        pattern: "*.{tsv,txt}"
+        ontologies: []
 output:
-  - meta:
-      type: map
-      description: Groovy Map containing sample information
-  - results:
-      type: file
-      description: Output file description
-      pattern: "*.output"
-  - versions:
-      type: file
-      description: File containing software versions
-      pattern: "versions.yml"
+  results:
+    - - meta:
+          type: map
+          description: Groovy Map containing sample information
+      - "*.output":
+          type: file
+          description: Output file description
+          pattern: "*.output"
+          ontologies: []
+  versions_tool:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - tool:
+          type: string
+          description: The name of the tool
+      - tool --version:
+          type: eval
+          description: The expression to obtain the version of the tool
 authors:
   - "@github_username"
 maintainers:
@@ -1244,9 +1204,8 @@ def pred_files = predictions instanceof List ? predictions : [predictions]
 **Rationale comments**:
 
 ```groovy
-// NOTE: .first() optimization - versions.yml content is identical across all invocations
-// Taking first emission prevents collecting redundant files (memory optimization)
-ch_versions = ch_versions.mix(TAXPASTA_TO_BIOBOXES.out.versions.first())
+// Differential abundance needs the per-sample profiles staged into the task directory,
+// so the OPAL results are joined with that sample's bioboxes files (keyed on sample id).
 ```
 
 ## Performance Optimization

@@ -92,6 +92,23 @@ See [docs/reports/audit-2026-10.md](docs/reports/audit-2026-10.md) for the full 
 - The `included_configs` nf-core lint test is ignored: the pipeline-specific `nf-core/configs` file does not
   exist for this non-nf-core pipeline and including it makes Nextflow fail on the missing remote file.
 
+### Changed (nf-core module conventions)
+
+- nf-core components updated with `nf-core modules/subworkflows update`: `multiqc` (1.35) and the
+  `utils_nextflow_pipeline`, `utils_nfcore_pipeline` and `utils_nfschema_plugin` subworkflows; the pipeline now
+  requires **nf-schema 3.0.0** (`paramsSummaryMap(parameters_schema: ...)` without the positional workflow argument).
+- All local modules follow the current nf-core module conventions (`nf-core modules lint --local`: 0 failures):
+  software versions are reported through the `versions` topic as `(process, tool, version)` tuples with `eval`
+  outputs instead of `versions.yml` files (the taxdump name and md5 are still recorded by `ETE3_BUILD_TAXDB`);
+  `meta.yml` files use the current meta schema (per-channel input/output lists, `topics`, `containers` with the
+  Wave build IDs); `environment.yml` files drop the `name` key; Singularity images are plain `https://` URLs instead
+  of `oras://`; `taxpasta` uses the `quay.io/biocontainers` prefix. Module tests snapshot `process.out.versions_*`.
+- `conf/containers_*.config` regenerated with `nf-core pipelines containers create-configs`; they now also cover
+  the local modules built with Seqera Wave.
+- Workflow diagram (`docs/images/metro_map.svg`, shown in the README) registered as `manifest.diagram`.
+- The remaining `main_nf_meta_key` lint warnings are intentional: the local modules read pipeline-specific meta
+  keys (`classifier`, `sample_id`, `labels`, OPAL options).
+
 ### Changed
 
 - **nf-core template synced to tools 4.2.1** (from 3.5.1): Nextflow >= 25.10.4 and nf-schema 2.7.3 required;

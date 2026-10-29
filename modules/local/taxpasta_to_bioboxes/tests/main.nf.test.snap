@@ -13,7 +13,32 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,036acd8a7ea21a4c132a6e6206c34c54"
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "python",
+                        "3.11.18"
+                    ]
+                ],
+                "2": [
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "pandas",
+                        "3.1.0"
+                    ]
+                ],
+                "3": [
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "ete3",
+                        "3.1.3"
+                    ]
+                ],
+                "4": [
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "taxpasta_to_bioboxes",
+                        "2.0.0"
+                    ]
                 ],
                 "bioboxes": [
                     [
@@ -25,12 +50,37 @@
                         "test_lineage.bioboxes:md5,e2a585c4cf13b7988dab5368e404faa2"
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,036acd8a7ea21a4c132a6e6206c34c54"
+                "versions_ete3": [
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "ete3",
+                        "3.1.3"
+                    ]
+                ],
+                "versions_pandas": [
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "pandas",
+                        "3.1.0"
+                    ]
+                ],
+                "versions_python": [
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "python",
+                        "3.11.18"
+                    ]
+                ],
+                "versions_taxpasta_to_bioboxes": [
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "taxpasta_to_bioboxes",
+                        "2.0.0"
+                    ]
                 ]
             }
         ],
-        "timestamp": "2026-10-28T15:15:05.389720086",
+        "timestamp": "2026-10-29T05:01:16.687404266",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.4"
@@ -50,7 +100,32 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,036acd8a7ea21a4c132a6e6206c34c54"
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "python",
+                        "3.11.18"
+                    ]
+                ],
+                "2": [
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "pandas",
+                        "3.1.0"
+                    ]
+                ],
+                "3": [
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "ete3",
+                        "3.1.3"
+                    ]
+                ],
+                "4": [
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "taxpasta_to_bioboxes",
+                        "2.0.0"
+                    ]
                 ],
                 "bioboxes": [
                     [
@@ -62,12 +137,37 @@
                         "test_metaphlan.bioboxes:md5,04cbed529e64daf77e9f4888f4443d46"
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,036acd8a7ea21a4c132a6e6206c34c54"
+                "versions_ete3": [
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "ete3",
+                        "3.1.3"
+                    ]
+                ],
+                "versions_pandas": [
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "pandas",
+                        "3.1.0"
+                    ]
+                ],
+                "versions_python": [
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "python",
+                        "3.11.18"
+                    ]
+                ],
+                "versions_taxpasta_to_bioboxes": [
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "taxpasta_to_bioboxes",
+                        "2.0.0"
+                    ]
                 ]
             }
         ],
-        "timestamp": "2026-10-28T15:14:53.415992971",
+        "timestamp": "2026-10-29T05:01:04.001601576",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.4"
@@ -86,7 +186,32 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,838c23f5765999feac2a1c61f602cd99"
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "python",
+                        "3.11.18"
+                    ]
+                ],
+                "2": [
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "pandas",
+                        "3.1.0"
+                    ]
+                ],
+                "3": [
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "ete3",
+                        "3.1.3"
+                    ]
+                ],
+                "4": [
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "taxpasta_to_bioboxes",
+                        "2.0.0"
+                    ]
                 ],
                 "bioboxes": [
                     [
@@ -97,12 +222,37 @@
                         "test_sample.bioboxes:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,838c23f5765999feac2a1c61f602cd99"
+                "versions_ete3": [
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "ete3",
+                        "3.1.3"
+                    ]
+                ],
+                "versions_pandas": [
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "pandas",
+                        "3.1.0"
+                    ]
+                ],
+                "versions_python": [
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "python",
+                        "3.11.18"
+                    ]
+                ],
+                "versions_taxpasta_to_bioboxes": [
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "taxpasta_to_bioboxes",
+                        "2.0.0"
+                    ]
                 ]
             }
         ],
-        "timestamp": "2026-10-28T15:15:29.820142951",
+        "timestamp": "2026-10-29T05:01:46.169341139",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.4"
@@ -122,7 +272,32 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,036acd8a7ea21a4c132a6e6206c34c54"
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "python",
+                        "3.11.18"
+                    ]
+                ],
+                "2": [
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "pandas",
+                        "3.1.0"
+                    ]
+                ],
+                "3": [
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "ete3",
+                        "3.1.3"
+                    ]
+                ],
+                "4": [
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "taxpasta_to_bioboxes",
+                        "2.0.0"
+                    ]
                 ],
                 "bioboxes": [
                     [
@@ -134,12 +309,37 @@
                         "test_sample.bioboxes:md5,e06d74c31443b34e05ee1f0f76400866"
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,036acd8a7ea21a4c132a6e6206c34c54"
+                "versions_ete3": [
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "ete3",
+                        "3.1.3"
+                    ]
+                ],
+                "versions_pandas": [
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "pandas",
+                        "3.1.0"
+                    ]
+                ],
+                "versions_python": [
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "python",
+                        "3.11.18"
+                    ]
+                ],
+                "versions_taxpasta_to_bioboxes": [
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "taxpasta_to_bioboxes",
+                        "2.0.0"
+                    ]
                 ]
             }
         ],
-        "timestamp": "2026-10-28T15:14:38.153968781",
+        "timestamp": "2026-10-29T05:00:47.10037761",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.4"
@@ -160,7 +360,32 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,036acd8a7ea21a4c132a6e6206c34c54"
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "python",
+                        "3.11.18"
+                    ]
+                ],
+                "2": [
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "pandas",
+                        "3.1.0"
+                    ]
+                ],
+                "3": [
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "ete3",
+                        "3.1.3"
+                    ]
+                ],
+                "4": [
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "taxpasta_to_bioboxes",
+                        "2.0.0"
+                    ]
                 ],
                 "bioboxes": [
                     [
@@ -173,12 +398,37 @@
                         "test_sample_custom.bioboxes:md5,8c5fd4d80a336134c4eb4e7ed0c3cb11"
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,036acd8a7ea21a4c132a6e6206c34c54"
+                "versions_ete3": [
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "ete3",
+                        "3.1.3"
+                    ]
+                ],
+                "versions_pandas": [
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "pandas",
+                        "3.1.0"
+                    ]
+                ],
+                "versions_python": [
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "python",
+                        "3.11.18"
+                    ]
+                ],
+                "versions_taxpasta_to_bioboxes": [
+                    [
+                        "TAXPASTA_TO_BIOBOXES",
+                        "taxpasta_to_bioboxes",
+                        "2.0.0"
+                    ]
                 ]
             }
         ],
-        "timestamp": "2026-10-28T15:15:20.3631114",
+        "timestamp": "2026-10-29T05:01:33.584653951",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.4"

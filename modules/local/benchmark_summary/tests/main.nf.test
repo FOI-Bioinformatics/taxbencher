@@ -29,7 +29,7 @@ nextflow_process {
             def ranking = path(process.out.ranking.get(0)).readLines()
             assertAll(
                 { assert process.success },
-                { assert snapshot(process.out.summary, process.out.ranking, process.out.multiqc, process.out.versions).match() },
+                { assert snapshot(process.out.summary, process.out.ranking, process.out.multiqc, process.out.findAll { key, _value -> key.startsWith('versions') }).match() },
                 { assert summary[0] == 'classifier\trank\tmetric\tn_samples\tmean\tmedian\tsd\tmin\tmax' },
                 // every classifier/rank/metric row aggregates both samples; gold standard excluded
                 { assert summary.drop(1).every { it.split('\t')[3] == '2' } },

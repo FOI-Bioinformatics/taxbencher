@@ -1,6 +1,7 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/environment-schema.json
 # Pinned to the Python version inside quay.io/biocontainers/python:3.11
 # so that -profile conda and -profile docker report identical software versions.
-name: validate_gold_standard
 channels:
   - conda-forge
   - bioconda

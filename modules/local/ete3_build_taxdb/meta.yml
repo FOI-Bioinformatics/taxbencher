@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
 name: "ete3_build_taxdb"
 description: Build the ete3 NCBI taxonomy sqlite database from a pinned NCBI taxdump archive
 keywords:
@@ -6,11 +7,12 @@ keywords:
   - ete3
   - reproducibility
 tools:
-  - ete3:
+  - "ete3":
       description: Python toolkit for phylogenetic trees including an NCBI taxonomy interface
       homepage: http://etetoolkit.org/
       documentation: http://etetoolkit.org/docs/latest/tutorial/tutorial_ncbitaxonomy.html
       licence: ["GPL-3.0"]
+      identifier: biotools:ete
 
 input:
   - taxdump:
@@ -19,18 +21,87 @@ input:
         NCBI taxonomy dump archive (taxdump.tar.gz containing nodes.dmp, names.dmp and merged.dmp),
         for example from https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/ or a reduced archive for testing.
       pattern: "*.tar.gz"
-
+      ontologies:
+        - edam: http://edamontology.org/format_3989 # GZIP
 output:
-  - db:
-      type: file
-      description: ete3 sqlite taxonomy database (taxa.sqlite) and its traverse index (taxa.sqlite.traverse.pkl)
-      pattern: "taxa.sqlite*"
-  - versions:
-      type: file
-      description: File containing software versions
-      pattern: "versions.yml"
-
+  db:
+    - "taxa.sqlite*":
+        type: file
+        description: ete3 sqlite taxonomy database (taxa.sqlite) and its traverse index (taxa.sqlite.traverse.pkl)
+        pattern: "taxa.sqlite*"
+        ontologies:
+          - edam: http://edamontology.org/format_3621 # SQLite
+  versions_python:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - python:
+          type: string
+          description: The name of the tool
+      - python --version | sed "s/Python //":
+          type: eval
+          description: The expression to obtain the version of the tool
+  versions_ete3:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - ete3:
+          type: string
+          description: The name of the tool
+      - python -c "import ete3; print(ete3.__version__)":
+          type: eval
+          description: The expression to obtain the version of the tool
+  versions_taxdump:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - taxdump (${taxdump.name}) md5:
+          type: string
+          description: The name of the tool
+      - md5sum ${taxdump} | cut -d' ' -f1:
+          type: eval
+          description: The expression to obtain the version of the tool
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - python:
+          type: string
+          description: The name of the tool
+      - python --version | sed "s/Python //":
+          type: eval
+          description: The expression to obtain the version of the tool
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - ete3:
+          type: string
+          description: The name of the tool
+      - python -c "import ete3; print(ete3.__version__)":
+          type: eval
+          description: The expression to obtain the version of the tool
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - taxdump (${taxdump.name}) md5:
+          type: string
+          description: The name of the tool
+      - md5sum ${taxdump} | cut -d' ' -f1:
+          type: eval
+          description: The expression to obtain the version of the tool
 authors:
   - "@andreassjodin"
 maintainers:
   - "@andreassjodin"
+containers:
+  # Frozen Seqera Wave community images built from environment.yml (linux/amd64 only)
+  docker:
+    linux/amd64:
+      name: community.wave.seqera.io/library/python_pandas_ete3:0aabbd50f04018cb
+      build_id: bd-0aabbd50f04018cb_1
+  singularity:
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/python_pandas_ete3:5b8b0209dd78f973
+      build_id: bd-5b8b0209dd78f973_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/ed/ed50e74c200cc2f449192d3b3b2e444b8ab6a41a0c8f5e1af40c28583c774527/data

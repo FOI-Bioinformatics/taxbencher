@@ -4,8 +4,8 @@ process BENCHMARK_SUMMARY {
 
     // Same frozen Seqera Wave community image as COMPARATIVE_ANALYSIS (pandas available)
     conda "${moduleDir}/environment.yml"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'oras://community.wave.seqera.io/library/python_pandas_scikit-learn_plotly_pruned:24c8063ae8d7b157' :
+    container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
+        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/e0/e04b00d88399791cdd132f05867b1ade1dc3966a71153eb0f40b60c0185d7e7d/data' :
         'community.wave.seqera.io/library/python_pandas_scikit-learn_plotly_pruned:afa623fee18ad8e0' }"
 
     input:
@@ -15,7 +15,9 @@ process BENCHMARK_SUMMARY {
     path "*_summary.tsv"  , emit: summary
     path "*_ranking.tsv"  , emit: ranking
     path "*_mqc.tsv"      , emit: multiqc
-    path "versions.yml"   , emit: versions
+    tuple val("${task.process}"), val('python'), eval('python --version | sed "s/Python //"'), topic: versions, emit: versions_python
+    tuple val("${task.process}"), val('pandas'), eval('python -c "import pandas; print(pandas.__version__)"'), topic: versions, emit: versions_pandas
+    tuple val("${task.process}"), val('summarise_benchmark'), eval('summarise_benchmark.py --version | sed "s/summarise_benchmark.py //"'), topic: versions, emit: versions_summarise_benchmark
 
     when:
     task.ext.when == null || task.ext.when
@@ -29,13 +31,6 @@ process BENCHMARK_SUMMARY {
         --metrics ${metric_files.join(' ')} \\
         --output-prefix ${prefix} \\
         ${args}
-
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        python: \$(python --version | sed 's/Python //g')
-        pandas: \$(python -c "import pandas; print(pandas.__version__)")
-        summarise_benchmark: \$(summarise_benchmark.py --version | sed 's/summarise_benchmark.py //g')
-    END_VERSIONS
     """
 
     stub:
@@ -46,12 +41,5 @@ process BENCHMARK_SUMMARY {
     touch ${prefix}_table_mqc.tsv
     touch ${prefix}_f1_by_rank_mqc.tsv
     touch ${prefix}_l1_by_rank_mqc.tsv
-
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        python: 3.11.0
-        pandas: 2.0.0
-        summarise_benchmark: 1.0.0
-    END_VERSIONS
     """
 }

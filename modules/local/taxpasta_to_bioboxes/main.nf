@@ -5,8 +5,8 @@ process TAXPASTA_TO_BIOBOXES {
     conda "${moduleDir}/environment.yml"
     // Frozen Seqera Wave community image built from environment.yml (python 3.11, pandas, ete3).
     // NOTE: ete3 3.1.3 does not work on python >= 3.13 (removed 'cgi' module).
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'oras://community.wave.seqera.io/library/python_pandas_ete3:5b8b0209dd78f973' :
+    container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
+        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/ed/ed50e74c200cc2f449192d3b3b2e444b8ab6a41a0c8f5e1af40c28583c774527/data' :
         'community.wave.seqera.io/library/python_pandas_ete3:0aabbd50f04018cb' }"
 
     input:
@@ -15,7 +15,10 @@ process TAXPASTA_TO_BIOBOXES {
 
     output:
     tuple val(meta), path("*.bioboxes"), emit: bioboxes
-    path "versions.yml"                , emit: versions
+    tuple val("${task.process}"), val('python'), eval('python --version | sed "s/Python //"'), topic: versions, emit: versions_python
+    tuple val("${task.process}"), val('pandas'), eval('python -c "import pandas; print(pandas.__version__)"'), topic: versions, emit: versions_pandas
+    tuple val("${task.process}"), val('ete3'), eval('python -c "import ete3; print(ete3.__version__)"'), topic: versions, emit: versions_ete3
+    tuple val("${task.process}"), val('taxpasta_to_bioboxes'), eval('taxpasta_to_bioboxes.py --version | sed "s/taxpasta_to_bioboxes.py //"'), topic: versions, emit: versions_taxpasta_to_bioboxes
 
     when:
     task.ext.when == null || task.ext.when
@@ -33,7 +36,7 @@ process TAXPASTA_TO_BIOBOXES {
     def clade_profilers = ['metaphlan']
     def abundance_mode = meta.abundance_mode ?: (clade_profilers.contains((meta.classifier ?: '').toString().toLowerCase()) ? 'clade' : 'direct')
     def taxdb_files = taxdb instanceof List ? taxdb : (taxdb ? [taxdb] : [])
-    def sqlite = taxdb_files.find { it.name.endsWith('.sqlite') }
+    def sqlite = taxdb_files.find { db_file -> db_file.name.endsWith('.sqlite') }
     def taxdb_arg = sqlite ? "--ete3-db ${sqlite}" : ''
 
     """
@@ -77,25 +80,11 @@ process TAXPASTA_TO_BIOBOXES {
     fi
     N_ROWS=\$(grep -vc '^@' ${prefix}.bioboxes || true)
     echo "[TAXPASTA_TO_BIOBOXES] Successfully converted ${meta.id} to bioboxes format (\$N_ROWS data rows)" >&2
-
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        python: \$(python --version | sed 's/Python //g')
-        pandas: \$(python -c "import pandas; print(pandas.__version__)" 2>/dev/null || echo "unknown")
-        ete3: \$(python -c "import ete3; print(ete3.__version__)" 2>/dev/null || echo "not installed")
-        taxpasta_to_bioboxes: \$(taxpasta_to_bioboxes.py --version 2>/dev/null | sed 's/taxpasta_to_bioboxes.py //g' || echo "unknown")
-    END_VERSIONS
     """
 
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
     touch ${prefix}.bioboxes
-
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        python: \$(python --version | sed 's/Python //g')
-        taxpasta_to_bioboxes: 2.0.0
-    END_VERSIONS
     """
 }

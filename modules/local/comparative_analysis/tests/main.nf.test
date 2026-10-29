@@ -49,7 +49,7 @@ nextflow_process {
                     process.out.diff_taxa,
                     process.out.metrics_wide,
                     process.out.multiqc,
-                    process.out.versions
+                    process.out.findAll { key, _value -> key.startsWith('versions') }
                 ).match() },
                 { assert process.out.comparison_report.size() == 1 },
                 { assert file(process.out.comparison_report.get(0).get(1)).name.endsWith('_comparison.html') },
@@ -187,7 +187,7 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
-                { assert process.out.versions.size() == 1 },
+                { assert process.out.versions_python.size() == 1 },
                 { assert path(process.out.pca_plot.get(0).get(1)).text.contains('could not be computed') }
             )
         }
@@ -220,7 +220,7 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
-                { assert process.out.versions.size() == 1 },
+                { assert process.out.versions_python.size() == 1 },
                 { assert path(process.out.diff_taxa.get(0).get(1)).readLines().size() > 1 }
             )
         }

@@ -1,5 +1,6 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
 name: "opal_per_sample"
-description: Run CAMI OPAL evaluation per biological sample (sample_id grouping)
+description: Run the CAMI OPAL evaluation of all classifier profiles of one biological sample against its gold standard
 keywords:
   - metagenomics
   - taxonomic profiling
@@ -7,42 +8,66 @@ keywords:
   - evaluation
   - CAMI
 tools:
-  - opal:
-      description: OPAL is a reference-independent accuracy metrics for taxonomic profiling developed for the CAMI challenge
+  - "opal":
+      description: OPAL computes reference-independent accuracy metrics for taxonomic profiling, developed for the CAMI challenge
       homepage: https://github.com/CAMI-challenge/OPAL
       documentation: https://github.com/CAMI-challenge/OPAL/blob/master/README.md
+      doi: "10.1186/s13059-019-1646-y"
       licence: ["Apache-2.0"]
+      identifier: biotools:opal
 
 input:
-  - meta:
-      type: map
-      description: |
-        Groovy Map containing sample information
-        e.g. `[ id:'sample1', sample_id:'sample1', labels:'sample1_kraken2,sample1_metaphlan', num_classifiers:2 ]`
-  - gold_standard:
-      type: file
-      description: Gold standard bioboxes file containing ground truth taxonomic composition
-      pattern: "*.bioboxes"
-  - predictions:
-      type: file
-      description: List of bioboxes prediction files from classifiers for this biological sample
-      pattern: "*.bioboxes"
-
+  - - meta:
+        type: map
+        description: |
+          Groovy Map with the sample id and the evaluation options
+          e.g. `[ id:'sample1', labels:'sample1_kraken2,sample1_metaphlan', filter:'1', normalize:true, rank:'species' ]`
+          `labels` is a comma separated list in the same order as the prediction files; `filter`, `normalize`
+          and `rank` are optional and map to the OPAL options -f, -n and -r.
+    - gold_standard:
+        type: file
+        description: Gold standard CAMI profile of the sample (one @SampleID block matching meta.id)
+        pattern: "*.bioboxes"
+        ontologies: []
+    - predictions:
+        type: file
+        description: CAMI profiles of the classifiers evaluated for this sample
+        pattern: "*.bioboxes"
+        ontologies: []
 output:
-  - meta:
-      type: map
-      description: |
-        Groovy Map containing sample information
-        e.g. `[ id:'sample1', sample_id:'sample1', labels:'sample1_kraken2,sample1_metaphlan', num_classifiers:2 ]`
-  - results:
-      type: directory
-      description: Directory containing OPAL results including HTML reports and metrics TSV files
-      pattern: "*/"
-  - versions:
-      type: file
-      description: File containing software versions
-      pattern: "versions.yml"
-
+  results:
+    - - meta:
+          type: map
+          description: |
+            Groovy Map with the sample id and the evaluation options
+            e.g. `[ id:'sample1', labels:'sample1_kraken2,sample1_metaphlan', filter:'1', normalize:true, rank:'species' ]`
+            `labels` is a comma separated list in the same order as the prediction files; `filter`, `normalize`
+            and `rank` are optional and map to the OPAL options -f, -n and -r.
+      - "${task.ext.prefix ?: meta.id}":
+          type: directory
+          description: OPAL results directory (results.tsv, results.html, by_rank/, by_tool/, confusion.tsv, opal.log)
+          pattern: "*/"
+  versions_opal:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - opal:
+          type: string
+          description: The name of the tool
+      - MPLCONFIGDIR=$PWD/.mplconfig opal.py --version 2>&1 | grep -oE "opal.py [0-9][0-9.]*" | head -n 1 | sed "s/opal.py //":
+          type: eval
+          description: The expression to obtain the version of the tool
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - opal:
+          type: string
+          description: The name of the tool
+      - MPLCONFIGDIR=$PWD/.mplconfig opal.py --version 2>&1 | grep -oE "opal.py [0-9][0-9.]*" | head -n 1 | sed "s/opal.py //":
+          type: eval
+          description: The expression to obtain the version of the tool
 authors:
   - "@andreassjodin"
 maintainers:

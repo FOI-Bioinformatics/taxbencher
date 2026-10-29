@@ -1,13 +1,14 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/environment-schema.json
 # Pinned to the versions inside the module container
 # (community.wave.seqera.io/library/python_pandas_ete3:0aabbd50f04018cb)
 # so that -profile conda and -profile docker report identical software versions.
-name: ete3_build_taxdb
 channels:
   - conda-forge
   - bioconda
 dependencies:
-  - conda-forge::python=3.11.18
-  - conda-forge::pandas=3.1.0
-  - conda-forge::numpy=2.4.6
   - conda-forge::ete3=3.1.3
+  - conda-forge::numpy=2.4.6
+  - conda-forge::pandas=3.1.0
+  - conda-forge::python=3.11.18
   - conda-forge::six=1.17.0

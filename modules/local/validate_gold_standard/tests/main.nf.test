@@ -22,7 +22,7 @@ nextflow_process {
         then {
             assertAll(
                 { assert process.success },
-                { assert snapshot(process.out.gold_standard, process.out.versions).match() },
+                { assert snapshot(process.out.gold_standard, process.out.findAll { key, _value -> key.startsWith('versions') }).match() },
                 { assert path(process.out.report.get(0)).text.contains('VALID') },
                 { assert path(process.out.report.get(0)).text.contains('sample test1') }
             )

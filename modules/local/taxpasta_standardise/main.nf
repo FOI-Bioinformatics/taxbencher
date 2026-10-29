@@ -3,16 +3,16 @@ process TAXPASTA_STANDARDISE {
     label 'process_low'
 
     conda "${moduleDir}/environment.yml"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+    container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/taxpasta:0.7.0--pyhdfd78af_0':
-        'biocontainers/taxpasta:0.7.0--pyhdfd78af_0' }"
+        'quay.io/biocontainers/taxpasta:0.7.0--pyhdfd78af_0' }"
 
     input:
     tuple val(meta), path(profiler_output)
 
     output:
     tuple val(meta), path("*.tsv"), emit: standardised
-    path "versions.yml"           , emit: versions
+    tuple val("${task.process}"), val('taxpasta'), eval('taxpasta --version | sed "s/taxpasta, version //"'), topic: versions, emit: versions_taxpasta
 
     when:
     task.ext.when == null || task.ext.when
@@ -64,21 +64,11 @@ process TAXPASTA_STANDARDISE {
 
     echo "[TAXPASTA_STANDARDISE] Successfully standardised ${meta.id}" >&2
     echo "[TAXPASTA_STANDARDISE] Output: ${prefix}.tsv (\$(wc -l < ${prefix}.tsv) lines)" >&2
-
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        taxpasta: \$(taxpasta --version 2>/dev/null | sed 's/taxpasta, version //')
-    END_VERSIONS
     """
 
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
     touch ${prefix}.tsv
-
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        taxpasta: \$(taxpasta --version 2>/dev/null | sed 's/taxpasta, version //')
-    END_VERSIONS
     """
 }

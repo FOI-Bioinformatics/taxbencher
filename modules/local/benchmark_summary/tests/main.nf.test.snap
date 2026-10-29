@@ -16,7 +16,25 @@
                     ]
                 ],
                 "3": [
-                    "versions.yml:md5,2380c8193924ab0686d99cca9fb2c87f"
+                    [
+                        "BENCHMARK_SUMMARY",
+                        "python",
+                        "3.11.18"
+                    ]
+                ],
+                "4": [
+                    [
+                        "BENCHMARK_SUMMARY",
+                        "pandas",
+                        "3.1.0"
+                    ]
+                ],
+                "5": [
+                    [
+                        "BENCHMARK_SUMMARY",
+                        "summarise_benchmark",
+                        "1.0.0"
+                    ]
                 ],
                 "multiqc": [
                     [
@@ -31,12 +49,30 @@
                 "summary": [
                     "benchmark_summary.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
                 ],
-                "versions": [
-                    "versions.yml:md5,2380c8193924ab0686d99cca9fb2c87f"
+                "versions_pandas": [
+                    [
+                        "BENCHMARK_SUMMARY",
+                        "pandas",
+                        "3.1.0"
+                    ]
+                ],
+                "versions_python": [
+                    [
+                        "BENCHMARK_SUMMARY",
+                        "python",
+                        "3.11.18"
+                    ]
+                ],
+                "versions_summarise_benchmark": [
+                    [
+                        "BENCHMARK_SUMMARY",
+                        "summarise_benchmark",
+                        "1.0.0"
+                    ]
                 ]
             }
         ],
-        "timestamp": "2026-10-28T15:07:17.501297041",
+        "timestamp": "2026-10-29T04:50:43.821849176",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.4"
@@ -57,11 +93,31 @@
                     "benchmark_table_mqc.tsv:md5,1dbe43da7a1e1fdbdb99aa99aad7a811"
                 ]
             ],
-            [
-                "versions.yml:md5,31037695c043c50b1cb2bf56d251eb51"
-            ]
+            {
+                "versions_pandas": [
+                    [
+                        "BENCHMARK_SUMMARY",
+                        "pandas",
+                        "3.1.0"
+                    ]
+                ],
+                "versions_python": [
+                    [
+                        "BENCHMARK_SUMMARY",
+                        "python",
+                        "3.11.18"
+                    ]
+                ],
+                "versions_summarise_benchmark": [
+                    [
+                        "BENCHMARK_SUMMARY",
+                        "summarise_benchmark",
+                        "1.0.0"
+                    ]
+                ]
+            }
         ],
-        "timestamp": "2026-10-28T15:06:58.528112012",
+        "timestamp": "2026-10-29T04:50:21.339939648",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.4"

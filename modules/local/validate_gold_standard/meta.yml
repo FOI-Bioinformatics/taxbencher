@@ -1,43 +1,85 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
 name: "validate_gold_standard"
-description: Validate the gold standard CAMI profiling (Bioboxes) file before OPAL evaluation
+description: Validate the gold standard CAMI profiling (Bioboxes) file before the OPAL evaluation
 keywords:
   - validation
   - CAMI
   - Bioboxes
   - gold standard
 tools:
-  - validate_bioboxes:
+  - "validate_bioboxes":
       description: |
-        Pipeline script (bin/validate_bioboxes.py) checking required headers, column layout,
-        OPAL-supported ranks, TAXPATH structure, per-rank abundance sums and the presence of a
-        @SampleID block for every sample of the samplesheet. Fails on errors (--strict).
+        Pipeline script (bin/validate_bioboxes.py) checking required headers, column layout, OPAL-supported
+        ranks, TAXPATH structure, per-rank abundance sums and the presence of a @SampleID block for every
+        sample of the samplesheet. Fails on errors (--strict).
       homepage: https://github.com/FOI-Bioinformatics/taxbencher
       documentation: https://github.com/FOI-Bioinformatics/taxbencher/blob/main/docs/troubleshooting-gold-standard.md
       licence: ["MIT"]
+      identifier: ""
 
 input:
   - gold_standard:
       type: file
       description: Gold standard in CAMI profiling Bioboxes format (one or more @SampleID blocks)
       pattern: "*.bioboxes"
+      ontologies: []
   - sample_ids:
       type: list
-      description: Sample IDs from the samplesheet that must have a matching @SampleID block
-
+      description: Sample IDs from the samplesheet that must each have a matching @SampleID block
 output:
-  - gold_standard:
-      type: file
-      description: The validated gold standard file (unchanged), to make downstream processes depend on validation
-      pattern: "*.bioboxes"
-  - report:
-      type: file
-      description: Validator output with per-sample, per-rank statistics and warnings
-      pattern: "*_validation.txt"
-  - versions:
-      type: file
-      description: File containing software versions
-      pattern: "versions.yml"
-
+  gold_standard:
+    - gold_standard:
+        type: file
+        description: The validated gold standard file (unchanged), emitted so that downstream processes depend on the validation
+        pattern: "*.bioboxes"
+        ontologies: []
+  report:
+    - "*_validation.txt":
+        type: file
+        description: Validator output with per-sample, per-rank statistics and warnings
+        pattern: "*_validation.txt"
+        ontologies:
+          - edam: http://edamontology.org/format_2330 # Textual format
+  versions_python:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - python:
+          type: string
+          description: The name of the tool
+      - python --version | sed "s/Python //":
+          type: eval
+          description: The expression to obtain the version of the tool
+  versions_validate_bioboxes:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - validate_bioboxes:
+          type: string
+          description: The name of the tool
+      - validate_bioboxes.py --version | sed "s/validate_bioboxes.py //":
+          type: eval
+          description: The expression to obtain the version of the tool
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - python:
+          type: string
+          description: The name of the tool
+      - python --version | sed "s/Python //":
+          type: eval
+          description: The expression to obtain the version of the tool
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - validate_bioboxes:
+          type: string
+          description: The name of the tool
+      - validate_bioboxes.py --version | sed "s/validate_bioboxes.py //":
+          type: eval
+          description: The expression to obtain the version of the tool
 authors:
   - "@andreassjodin"
 maintainers:

@@ -79,7 +79,6 @@ workflow TAXBENCHER {
     //
     def ch_sample_ids = ch_input.map { meta, _file -> meta.sample_id }.unique().collect()
     VALIDATE_GOLD_STANDARD(ch_gold_standard, ch_sample_ids)
-    ch_versions = ch_versions.mix(VALIDATE_GOLD_STANDARD.out.versions)
     def ch_gold_standard_validated = VALIDATE_GOLD_STANDARD.out.gold_standard
 
     //
@@ -107,7 +106,6 @@ workflow TAXBENCHER {
     // MODULE: Standardise raw profiler outputs (only for files not already in taxpasta format)
     //
     TAXPASTA_STANDARDISE(ch_branched.needs_standardisation)
-    ch_versions = ch_versions.mix(TAXPASTA_STANDARDISE.out.versions.first())
 
     def ch_taxpasta = ch_branched.standardised
         .mix(TAXPASTA_STANDARDISE.out.standardised)
@@ -117,7 +115,6 @@ workflow TAXBENCHER {
     // Without --taxdump, ete3 uses/downloads its default database inside each task.
     //
     ETE3_BUILD_TAXDB(ch_taxdump)
-    ch_versions = ch_versions.mix(ETE3_BUILD_TAXDB.out.versions)
     def ch_taxdb = ETE3_BUILD_TAXDB.out.db.toList().map { files -> files ? files.flatten() : [] }
 
     //
@@ -127,7 +124,6 @@ workflow TAXBENCHER {
         ch_taxpasta,
         ch_taxdb
     )
-    ch_versions = ch_versions.mix(TAXPASTA_TO_BIOBOXES.out.versions.first())
 
     //
     // Group bioboxes by sample_id for per-sample OPAL evaluation.
@@ -157,7 +153,6 @@ workflow TAXBENCHER {
             .combine(ch_gold_standard_validated)
             .map { meta, bioboxes_files, gold_std -> tuple(meta, gold_std, bioboxes_files) }
     )
-    ch_versions = ch_versions.mix(OPAL_PER_SAMPLE.out.versions.first())
 
     //
     // MODULE: Comparative analysis of classifiers per sample
@@ -172,7 +167,6 @@ workflow TAXBENCHER {
         ch_comparative_input,
         ch_gold_standard_validated
     )
-    ch_versions = ch_versions.mix(COMPARATIVE_ANALYSIS.out.versions.first())
     ch_multiqc_files = ch_multiqc_files.mix(COMPARATIVE_ANALYSIS.out.multiqc.map { _meta, mqc -> mqc })
 
     //
@@ -181,12 +175,12 @@ workflow TAXBENCHER {
     BENCHMARK_SUMMARY (
         COMPARATIVE_ANALYSIS.out.metrics_wide.map { _meta, tsv -> tsv }.collect()
     )
-    ch_versions = ch_versions.mix(BENCHMARK_SUMMARY.out.versions)
     ch_multiqc_files = ch_multiqc_files.mix(BENCHMARK_SUMMARY.out.multiqc.flatten())
 
     //
     // Collate and save software versions
-    // Local modules emit versions.yml files; nf-core modules publish to the 'versions' topic.
+    // All modules publish (process, tool, version) tuples to the 'versions' topic; MULTIQC emits its own
+    // versions tuple because it consumes the collated topic and must not feed it.
     //
     def topic_versions = channel.topic("versions")
         .distinct()
@@ -218,7 +212,7 @@ workflow TAXBENCHER {
     // MODULE: MultiQC
     //
     ch_multiqc_files = ch_multiqc_files.mix(ch_collated_versions)
-    def ch_summary_params = paramsSummaryMap(workflow, parameters_schema: "nextflow_schema.json")
+    def ch_summary_params = paramsSummaryMap(parameters_schema: "nextflow_schema.json")
     def ch_workflow_summary = channel.value(paramsSummaryMultiqc(ch_summary_params))
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     def ch_multiqc_custom_methods_description = multiqc_methods_description
