@@ -1,0 +1,9 @@
+@SampleID:test_sample
+@Version:0.9.1
+@Ranks:superkingdom|phylum|class|order|family|genus|species|strain
+@TaxonomyID:NCBI
+@@TAXID	RANK	PERCENTAGE
+562	species	45.0
+2173	species	25.0
+1280	species	20.0
+272631	strain	10.0

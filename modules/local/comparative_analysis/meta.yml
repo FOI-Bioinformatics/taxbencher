@@ -13,13 +13,10 @@ tools:
         Python programming language with scientific computing stack for
         statistical analysis and visualization of classifier performance metrics.
 
-        Container Requirements:
-        - Uses Seqera Wave container with full scipy stack
-        - Container URL: wave.seqera.io/wt/722b2c677e9b/wave/build:comparative_analysis--8970105c926ac527
-        - Wave access required (free for non-commercial use)
-        - Fallback: Use conda profile with environment.yml for local dependency installation
-        - Dependencies: python>=3.11, pandas>=2.0, scikit-learn>=1.3, plotly>=5.17,
-          scipy>=1.11, statsmodels>=0.14, numpy>=1.24, python-kaleido>=0.2
+        Container: frozen Seqera Wave community image built from environment.yml
+        (community.wave.seqera.io/library/python_pandas_scikit-learn_plotly_pruned:afa623fee18ad8e0;
+        python 3.11, pandas, scikit-learn, plotly, scipy, statsmodels, numpy, python-kaleido).
+        Conda profile uses environment.yml directly.
       homepage: https://www.python.org/
       documentation: https://docs.python.org/3/
       licence: ["PSF"]
@@ -32,8 +29,12 @@ input:
         e.g. `[ id:'sample1', sample_id:'sample1', labels:'sample1_kraken2,sample1_metaphlan', num_classifiers:2 ]`
   - opal_dir:
       type: directory
-      description: OPAL results directory containing metrics and evaluation data
+      description: OPAL results directory containing results.tsv (long format) and evaluation data
       pattern: "*/"
+  - bioboxes:
+      type: file
+      description: CAMI profiles of the evaluated classifiers, in the same order as meta.labels (optional, [] to skip per-taxon comparison)
+      pattern: "*.bioboxes"
   - gold_standard:
       type: file
       description: Gold standard bioboxes file for differential analysis
@@ -50,8 +51,16 @@ output:
       pattern: "*_pca.html"
   - diff_taxa:
       type: file
-      description: TSV file with taxa significantly different from gold standard
+      description: TSV with per-taxon observed vs expected abundance, absolute/log2 difference and TP/FP/FN status per classifier and rank
       pattern: "*_diff_taxa.tsv"
+  - metrics_wide:
+      type: file
+      description: OPAL metrics pivoted to one row per tool and rank
+      pattern: "*_metrics_wide.tsv"
+  - multiqc:
+      type: file
+      description: MultiQC custom content table with key OPAL metrics per classifier
+      pattern: "*_mqc.tsv"
   - comparison_report:
       type: file
       description: HTML report with comprehensive classifier comparison

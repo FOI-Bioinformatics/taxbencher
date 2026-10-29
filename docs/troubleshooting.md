@@ -14,6 +14,7 @@ This guide covers common issues and their solutions when running taxbencher.
 ### MultiQC "Illegal Instruction" Error
 
 **Symptom:**
+
 ```
 ERROR ~ Error executing process > 'MULTIQC'
 Caused by:
@@ -25,6 +26,7 @@ Command error:
 **Cause:** Docker containers on Apple Silicon Macs are AMD64/x86_64 images that require emulation. Some containers (especially those built by Wave on-the-fly) don't work well with Rosetta 2 emulation.
 
 **Solution 1: Use Conda Profile (Recommended)**
+
 ```bash
 nextflow run FOI-Bioinformatics/taxbencher \
   -profile conda \
@@ -50,12 +52,14 @@ The core benchmarking processes (TAXPASTA_STANDARDISE, TAXPASTA_TO_BIOBOXES, OPA
 **Solution 3: Enable Platform Emulation**
 
 Update Docker Desktop settings:
+
 1. Open Docker Desktop
 2. Go to Settings → Features in development
 3. Enable "Use Rosetta for x86_64/amd64 emulation on Apple Silicon"
 4. Restart Docker
 
 Then try adding the `arm` profile:
+
 ```bash
 nextflow run FOI-Bioinformatics/taxbencher \
   -profile docker,wave,arm \
@@ -71,6 +75,7 @@ Note: This may still fail with Wave-built containers but is worth trying.
 ### "No module named 'pandas'" Error
 
 **Symptom:**
+
 ```
 ERROR ~ Error executing process > 'TAXPASTA_TO_BIOBOXES'
 Command error:
@@ -80,6 +85,7 @@ Command error:
 **Cause:** Running with `-profile docker` without `-profile wave`. The base `biocontainers/python:3.11` image lacks pandas and ete3.
 
 **Solution:** Always use Wave with Docker:
+
 ```bash
 # Correct
 nextflow run FOI-Bioinformatics/taxbencher -profile docker,wave
@@ -91,6 +97,7 @@ nextflow run FOI-Bioinformatics/taxbencher -profile conda
 ### "Manifest not found" Error
 
 **Symptom:**
+
 ```
 docker: Error response from daemon: manifest for community.wave.seqera.io/library/pandas_python_pip:xxxxx not found
 ```
@@ -98,6 +105,7 @@ docker: Error response from daemon: manifest for community.wave.seqera.io/librar
 **Cause:** Trying to use Docker without Wave enabled. The hardcoded container doesn't exist.
 
 **Solution:** Enable Wave:
+
 ```bash
 nextflow run FOI-Bioinformatics/taxbencher -profile docker,wave
 ```
@@ -107,6 +115,7 @@ nextflow run FOI-Bioinformatics/taxbencher -profile docker,wave
 ### "Column not found: TAXPATH" Error
 
 **Symptom:**
+
 ```
 ERROR: Column count mismatch in data row
 Expected 5 columns (TAXID, RANK, TAXPATH, TAXPATHSN, PERCENTAGE)
@@ -133,6 +142,7 @@ See [Gold Standard Troubleshooting](troubleshooting-gold-standard.md) for detail
 ### "Unsupported rank" Errors
 
 **Symptom:**
+
 ```
 ERROR: Found unsupported OPAL ranks in gold standard:
   - 'no rank' appears 45 times
@@ -152,6 +162,7 @@ python3 bin/fix_gold_standard.py \
 ```
 
 The script automatically:
+
 - Filters unsupported ranks (no rank, root, domain, kingdom, subspecies, etc.)
 - Maps compatible ranks (domain→superkingdom, subspecies→strain)
 - Renormalizes percentages after filtering
@@ -159,6 +170,7 @@ The script automatically:
 ### Raw Profiler Format Errors
 
 **Symptom:**
+
 ```
 ERROR: Unexpected report format. It has 8 columns but only 6 are expected
 ```
@@ -182,6 +194,7 @@ See [docs/raw-inputs.md](raw-inputs.md) for detailed format specifications for a
 ### "KeyError: 'no rank'" in OPAL
 
 **Symptom:**
+
 ```
 File "cami_opal/plots.py", line 502, in plot_purity_completeness_per_tool_and_rank
   index = rank_to_index[rank]
@@ -204,6 +217,7 @@ For prediction files, this should be handled automatically by `taxpasta_to_biobo
 ### OPAL HTML Generation Fails
 
 **Symptom:**
+
 ```
 OPAL completes but no HTML plots are generated, or partial plots only
 ```
@@ -211,6 +225,7 @@ OPAL completes but no HTML plots are generated, or partial plots only
 **Known Issue:** OPAL 1.0.13 has bugs when generating HTML plots for single-sample datasets. This is an upstream OPAL issue, not a taxbencher issue.
 
 **Workaround:**
+
 - Use multiple samples/classifiers in your benchmark (recommended)
 - OPAL will successfully generate:
   - All metrics in TSV format ✅
@@ -228,7 +243,9 @@ OPAL completes but no HTML plots are generated, or partial plots only
 **Cause:** x86_64 emulation overhead.
 
 **Solutions:**
+
 1. **Use Conda** (native ARM64, no emulation):
+
    ```bash
    nextflow run FOI-Bioinformatics/taxbencher -profile conda
    ```
@@ -245,6 +262,7 @@ OPAL completes but no HTML plots are generated, or partial plots only
 ### Out of Memory Errors
 
 **Symptom:**
+
 ```
 ERROR ~ Error executing process > 'OPAL'
 Exit status: 137 (out of memory)
@@ -253,6 +271,7 @@ Exit status: 137 (out of memory)
 **Solutions:**
 
 1. **Increase process memory** in `conf/base.config`:
+
    ```groovy
    withLabel: process_high {
        cpus   = 8
@@ -273,12 +292,14 @@ Exit status: 137 (out of memory)
 If you encounter issues not covered here:
 
 1. **Check logs:**
+
    ```bash
    cat .nextflow.log
    cat work/<task_hash>/.command.log
    ```
 
 2. **Run with debug:**
+
    ```bash
    nextflow run FOI-Bioinformatics/taxbencher -profile conda --input samplesheet.csv --gold_standard gold.bioboxes --outdir results -with-trace -with-report -with-timeline
    ```
@@ -291,32 +312,36 @@ If you encounter issues not covered here:
 
 ### Recommended Profiles by Platform
 
-| Platform | Use This | Avoid This |
-|----------|----------|------------|
-| Linux x86_64 | `docker,wave` or `singularity,wave` | - |
-| Linux ARM64 | `conda` | `docker` (AMD64 only) |
-| macOS Intel | `docker,wave` or `conda` | - |
-| macOS Apple Silicon | `conda` | `docker,wave` (MultiQC issues) |
-| HPC Cluster | `singularity` or `conda` | `docker` (often not available) |
+| Platform            | Use This                            | Avoid This                     |
+| ------------------- | ----------------------------------- | ------------------------------ |
+| Linux x86_64        | `docker,wave` or `singularity,wave` | -                              |
+| Linux ARM64         | `conda`                             | `docker` (AMD64 only)          |
+| macOS Intel         | `docker,wave` or `conda`            | -                              |
+| macOS Apple Silicon | `conda`                             | `docker,wave` (MultiQC issues) |
+| HPC Cluster         | `singularity` or `conda`            | `docker` (often not available) |
 
 ### Common Command Patterns
 
 **Basic run (conda):**
+
 ```bash
 nextflow run FOI-Bioinformatics/taxbencher -profile conda --input samplesheet.csv --gold_standard gold.bioboxes --outdir results
 ```
 
 **With raw profiler inputs:**
+
 ```bash
 nextflow run FOI-Bioinformatics/taxbencher -profile conda --input samplesheet_raw.csv --gold_standard gold.bioboxes --save_standardised_profiles --outdir results
 ```
 
 **Resume failed run:**
+
 ```bash
 nextflow run FOI-Bioinformatics/taxbencher -profile conda --input samplesheet.csv --gold_standard gold.bioboxes --outdir results -resume
 ```
 
 **With debugging:**
+
 ```bash
 nextflow run FOI-Bioinformatics/taxbencher -profile conda --input samplesheet.csv --gold_standard gold.bioboxes --outdir results -with-trace -with-report -with-timeline
 ```

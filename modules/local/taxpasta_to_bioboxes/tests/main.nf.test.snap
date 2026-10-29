@@ -1,42 +1,77 @@
 {
-    "taxpasta to bioboxes - custom parameters": {
+    "taxpasta to bioboxes - lineage columns without taxonomy database": {
         "content": [
             {
                 "0": [
                     [
                         {
-                            "id": "test_sample_custom",
-                            "sample_id": "custom_sample",
-                            "ranks": "domain|phylum|class|order|family|genus|species",
-                            "taxonomy_db": "NCBI"
+                            "id": "test_lineage",
+                            "sample_id": "test_sample",
+                            "classifier": "kraken2"
                         },
-                        "test_sample_custom.bioboxes:md5,128a54665f7b1ba9e7f96710272b0515"
+                        "test_lineage.bioboxes:md5,e2a585c4cf13b7988dab5368e404faa2"
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,2cc9d7b54af53ef89643c82a56545d5a"
+                    "versions.yml:md5,036acd8a7ea21a4c132a6e6206c34c54"
                 ],
                 "bioboxes": [
                     [
                         {
-                            "id": "test_sample_custom",
-                            "sample_id": "custom_sample",
-                            "ranks": "domain|phylum|class|order|family|genus|species",
-                            "taxonomy_db": "NCBI"
+                            "id": "test_lineage",
+                            "sample_id": "test_sample",
+                            "classifier": "kraken2"
                         },
-                        "test_sample_custom.bioboxes:md5,128a54665f7b1ba9e7f96710272b0515"
+                        "test_lineage.bioboxes:md5,e2a585c4cf13b7988dab5368e404faa2"
                     ]
                 ],
                 "versions": [
-                    "versions.yml:md5,2cc9d7b54af53ef89643c82a56545d5a"
+                    "versions.yml:md5,036acd8a7ea21a4c132a6e6206c34c54"
                 ]
             }
         ],
+        "timestamp": "2026-10-28T15:15:05.389720086",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.1"
-        },
-        "timestamp": "2025-11-29T19:55:47.029283"
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.4"
+        }
+    },
+    "taxpasta to bioboxes - clade abundances (metaphlan)": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test_metaphlan",
+                            "sample_id": "test_sample",
+                            "classifier": "metaphlan"
+                        },
+                        "test_metaphlan.bioboxes:md5,04cbed529e64daf77e9f4888f4443d46"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,036acd8a7ea21a4c132a6e6206c34c54"
+                ],
+                "bioboxes": [
+                    [
+                        {
+                            "id": "test_metaphlan",
+                            "sample_id": "test_sample",
+                            "classifier": "metaphlan"
+                        },
+                        "test_metaphlan.bioboxes:md5,04cbed529e64daf77e9f4888f4443d46"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,036acd8a7ea21a4c132a6e6206c34c54"
+                ]
+            }
+        ],
+        "timestamp": "2026-10-28T15:14:53.415992971",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.4"
+        }
     },
     "taxpasta to bioboxes - stub": {
         "content": [
@@ -51,7 +86,7 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,1a10edd82e1a0423300adb062a4f58f6"
+                    "versions.yml:md5,838c23f5765999feac2a1c61f602cd99"
                 ],
                 "bioboxes": [
                     [
@@ -63,49 +98,90 @@
                     ]
                 ],
                 "versions": [
-                    "versions.yml:md5,1a10edd82e1a0423300adb062a4f58f6"
+                    "versions.yml:md5,838c23f5765999feac2a1c61f602cd99"
                 ]
             }
         ],
+        "timestamp": "2026-10-28T15:15:29.820142951",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.1"
-        },
-        "timestamp": "2025-11-29T19:55:50.689804"
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.4"
+        }
     },
-    "taxpasta to bioboxes - basic": {
+    "taxpasta to bioboxes - direct counts (kraken2-like)": {
         "content": [
             {
                 "0": [
                     [
                         {
                             "id": "test_sample",
-                            "sample_id": "test_1"
+                            "sample_id": "test_1",
+                            "classifier": "kraken2"
                         },
-                        "test_sample.bioboxes:md5,d624e770e47add96090d3f7b0899a128"
+                        "test_sample.bioboxes:md5,e06d74c31443b34e05ee1f0f76400866"
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,2cc9d7b54af53ef89643c82a56545d5a"
+                    "versions.yml:md5,036acd8a7ea21a4c132a6e6206c34c54"
                 ],
                 "bioboxes": [
                     [
                         {
                             "id": "test_sample",
-                            "sample_id": "test_1"
+                            "sample_id": "test_1",
+                            "classifier": "kraken2"
                         },
-                        "test_sample.bioboxes:md5,d624e770e47add96090d3f7b0899a128"
+                        "test_sample.bioboxes:md5,e06d74c31443b34e05ee1f0f76400866"
                     ]
                 ],
                 "versions": [
-                    "versions.yml:md5,2cc9d7b54af53ef89643c82a56545d5a"
+                    "versions.yml:md5,036acd8a7ea21a4c132a6e6206c34c54"
                 ]
             }
         ],
+        "timestamp": "2026-10-28T15:14:38.153968781",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.1"
-        },
-        "timestamp": "2025-11-29T19:55:40.682224"
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.4"
+        }
+    },
+    "taxpasta to bioboxes - custom ranks": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test_sample_custom",
+                            "sample_id": "custom_sample",
+                            "ranks": "superkingdom|phylum|class|order|family|genus|species",
+                            "taxonomy_db": "NCBI"
+                        },
+                        "test_sample_custom.bioboxes:md5,8c5fd4d80a336134c4eb4e7ed0c3cb11"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,036acd8a7ea21a4c132a6e6206c34c54"
+                ],
+                "bioboxes": [
+                    [
+                        {
+                            "id": "test_sample_custom",
+                            "sample_id": "custom_sample",
+                            "ranks": "superkingdom|phylum|class|order|family|genus|species",
+                            "taxonomy_db": "NCBI"
+                        },
+                        "test_sample_custom.bioboxes:md5,8c5fd4d80a336134c4eb4e7ed0c3cb11"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,036acd8a7ea21a4c132a6e6206c34c54"
+                ]
+            }
+        ],
+        "timestamp": "2026-10-28T15:15:20.3631114",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.4"
+        }
     }
 }

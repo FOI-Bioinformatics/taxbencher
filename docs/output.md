@@ -18,12 +18,31 @@ The pipeline processes data using the following steps:
 
 ```
 results/
-├── taxpasta_to_bioboxes/     # Converted bioboxes files
+├── validation/                # Gold standard validation report
+├── taxpasta_standardise/      # Standardised raw profiler outputs (with --save_standardised_profiles)
+├── taxpasta_to_bioboxes/      # Converted bioboxes files
 ├── opal/                      # Per-sample OPAL evaluation results
 ├── comparative_analysis/      # Per-sample comparative analysis reports
+├── benchmark_summary/         # Cross-sample summary and classifier ranking
 ├── multiqc/                   # Aggregated reports
 └── pipeline_info/             # Pipeline execution info
 ```
+
+### Gold standard validation
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `validation/`
+  - `<gold_standard>_validation.txt` - Report of `validate_bioboxes.py --strict`: headers, per-sample and per-rank abundance sums, warnings
+
+</details>
+
+**Description:**
+
+The gold standard is validated before any evaluation: required headers, column layout, OPAL-supported ranks,
+TAXPATH structure, per-rank abundance sums (each rank must sum to <= 100 %) and one `@SampleID` block per
+`sample_id` of the samplesheet. A malformed gold standard stops the pipeline with the validator output.
 
 ## Detailed Outputs
 
@@ -39,25 +58,32 @@ results/
 
 **Description:**
 
-Taxpasta TSV files are converted to CAMI profiling Bioboxes format, which is required for OPAL evaluation. Each profile contains:
+Taxpasta TSV files are converted to CAMI profiling Bioboxes format, which is required for OPAL evaluation.
+Abundances are _clade cumulative per rank_: the abundance of a genus includes all of its species, and the
+entries of one rank sum to at most 100 % (exactly 100 % when every classified read could be placed at that
+rank). Read counts assigned directly to a taxon (Kraken2, Centrifuge, Kaiju, ...) are summed over
+descendants; MetaPhlAn clade abundances are used as they are. Unclassified reads (taxonomy ID 0) are excluded
+from the denominator unless `--include_unclassified` is set. Each profile contains:
 
 - Sample metadata headers (@SampleID, @Version, @Ranks, @TaxonomyID)
 - Taxonomic assignments with:
   - **TAXID**: NCBI/GTDB taxonomy ID
   - **RANK**: Taxonomic rank (species, genus, etc.)
-  - **TAXPATH**: Pipe-separated lineage
-  - **TAXPATHSN**: Pipe-separated taxon names
-  - **PERCENTAGE**: Relative abundance
+  - **TAXPATH**: Pipe-separated taxonomy IDs, one per rank of `@Ranks` up to the entry's rank (empty for missing ranks)
+  - **TAXPATHSN**: Matching scientific names
+  - **PERCENTAGE**: Relative abundance at that rank
 
 **Example**:
 
 ```
-@SampleID:sample1_kraken2
+@SampleID:sample1
 @Version:0.9.1
-@Ranks:superkingdom|phylum|class|order|family|genus|species
+@Ranks:superkingdom|phylum|class|order|family|genus|species|strain
 @TaxonomyID:NCBI
 @@TAXID	RANK	TAXPATH	TAXPATHSN	PERCENTAGE
-562	species	131567|2|1224|1236|135622|543|561|562	Biota|Bacteria|Pseudomonadota|...	45.5
+2	superkingdom	2	Bacteria	100.000000
+1224	phylum	2|1224	Bacteria|Pseudomonadota	97.904856
+562	species	2|1224|1236|91347|543|561|562	Bacteria|Pseudomonadota|Gammaproteobacteria|Enterobacterales|Enterobacteriaceae|Escherichia|Escherichia coli	45.500000
 ```
 
 ### OPAL
@@ -67,7 +93,8 @@ Taxpasta TSV files are converted to CAMI profiling Bioboxes format, which is req
 
 - `opal/<sample_id>/`
   - `results.html` - Interactive HTML report with plots and metrics
-  - `results.tsv` - Tab-separated metrics table
+  - `results.tsv` - Tab-separated metrics table (long format: tool, rank, metric, sample, value)
+  - `opal.log` - OPAL log of this run
   - `confusion.tsv` - Confusion matrix data
   - `plot_*.{png,pdf}` - Individual metric plots (Shannon diversity, etc.)
   - `by_rank/` - Per-rank metrics breakdowns
@@ -117,54 +144,78 @@ The interactive HTML report includes:
 ### Comparative Analysis
 
 <details markdown="1">
-<parameter name="file_path">Output files</summary>
+<summary>Output files</summary>
 
-- `comparative_analysis/<sample_id>/`
-  - `<sample_id>_pca.html` - PCA visualization of classifier performance metrics
-  - `<sample_id>_diff_taxa.tsv` - Taxa significantly different from gold standard
-  - `<sample_id>_comparison.html` - Comprehensive classifier comparison report
+- `comparative_analysis/`
+  - `<sample_id>_metrics_wide.tsv` - OPAL metrics pivoted to one row per classifier and rank
+  - `<sample_id>_pca.html` - Interactive PCA of classifiers (and the gold standard) on all OPAL metric/rank features
+  - `<sample_id>_diff_taxa.tsv` - Per-taxon comparison of every classifier with the gold standard
+  - `<sample_id>_comparison.html` - HTML report with per-rank metric plots, metric table and TP/FP/FN counts
+  - `<sample_id>_opal_summary_mqc.tsv` - MultiQC custom-content table (key metrics per classifier)
 
 </details>
 
 **Description:**
 
-Comparative analysis is performed for each biological sample, comparing all classifiers evaluated for that sample:
+Comparative analysis is performed once per biological sample, using that sample's OPAL results and the
+converted classifier profiles.
 
-#### PCA Analysis (`*_pca.html`)
+#### Metrics table (`*_metrics_wide.tsv`)
 
-- Principal Component Analysis of classifier performance metrics
-- Visualizes similarity/differences between classifiers
-- Based on precision, recall, F1 scores across taxonomic ranks
-- **Current status**: Placeholder (requires pandas/sklearn/plotly for full implementation)
+OPAL writes metrics in a long format (`tool, rank, metric, sample, value`). This table pivots them to one row
+per `tool` and `rank` with one column per metric (Completeness, Purity, F1 score, L1 norm error, Bray-Curtis
+distance, Shannon diversity, True/False positives, False negatives, Taxon counts, ...). Rank independent
+metrics (weighted and unweighted UniFrac) are repeated on every rank row of a tool.
 
-#### Differential Taxa (`*_diff_taxa.tsv`)
+#### PCA (`*_pca.html`)
 
-Tab-separated table identifying taxa that show significant differences from the gold standard:
+Principal component analysis of the classifiers, using the standardised OPAL metric values of every rank as
+features. The gold standard is included as a reference point (perfect scores), so distance to it summarises
+overall accuracy. PCA needs at least two classifiers and two non-constant features; otherwise an explanatory
+placeholder page is written.
 
-| Column | Description |
-|--------|-------------|
-| taxid | NCBI/GTDB taxonomy ID |
-| rank | Taxonomic rank |
-| taxname | Taxon name |
-| observed_pct | Observed percentage in prediction |
-| expected_pct | Expected percentage from gold standard |
-| p_value | Statistical significance (chi-square or similar) |
-| classifier | Classifier name |
+#### Per-taxon comparison (`*_diff_taxa.tsv`)
 
-**Current status**: Placeholder structure (requires scipy/statsmodels for statistical testing)
+| Column       | Description                                                                       |
+| ------------ | --------------------------------------------------------------------------------- |
+| classifier   | Classifier label                                                                  |
+| rank         | Taxonomic rank                                                                    |
+| taxid        | Taxonomy ID                                                                       |
+| taxname      | Taxon name (from TAXPATHSN)                                                       |
+| observed_pct | Abundance reported by the classifier                                              |
+| expected_pct | Abundance in the gold standard                                                    |
+| abs_diff_pct | observed - expected (percentage points)                                           |
+| log2_ratio   | log2(observed / expected); `+inf` for false positives, `-inf` for false negatives |
+| status       | `TP` (in both), `FP` (classifier only) or `FN` (gold standard only)               |
 
-#### Comparison Report (`*_comparison.html`)
+No p-values are reported: with a single profile per classifier there is no replication to test against, so
+the comparison is descriptive. Use `--diff-min-abs` (module `ext.args`) to restrict the table to larger
+differences.
 
-Comprehensive HTML report including:
+#### Comparison report (`*_comparison.html`)
 
-- Classifier agreement heatmap (Jaccard similarity)
-- Per-rank performance bar charts
-- Top misclassified taxa tables
-- Summary statistics
+Interactive bar charts of Completeness, Purity, F1, L1 norm error, weighted UniFrac and Bray-Curtis per rank
+and classifier, the full metrics table and a TP/FP/FN summary per classifier and rank.
 
-**Current status**: Placeholder with defined structure for future implementation
+### Benchmark summary (across samples)
 
-> **Note**: The comparative_analysis module is currently implemented as a placeholder demonstrating the output structure. Full statistical analysis and visualizations require additional dependencies (pandas, scikit-learn, plotly, scipy, statsmodels) which will be added in future versions.
+<details markdown="1">
+<summary>Output files</summary>
+
+- `benchmark_summary/`
+  - `benchmark_summary.tsv` - Per classifier, rank and metric: `n_samples`, `mean`, `median`, `sd`, `min`, `max` over all samples
+  - `benchmark_ranking.tsv` - Direction-aware rank of every classifier per metric at the summary rank (1 = best) and an overall mean rank
+  - `benchmark_table_mqc.tsv`, `benchmark_f1_by_rank_mqc.tsv`, `benchmark_l1_by_rank_mqc.tsv` - MultiQC custom content
+
+</details>
+
+**Description:**
+
+Aggregates the per-sample metric tables of all samples. With one sample the summary equals that sample's
+values. The ranking uses Completeness, Purity, F1 score, L1 norm error, Bray-Curtis distance, weighted UniFrac
+error and Jaccard index at the species rank by default (`--summary-rank` via the module `ext.args`); lower
+values rank first for the distance metrics. The MultiQC report shows the summary table and line graphs of mean
+F1 score and L1 norm error across ranks.
 
 ### MultiQC
 
@@ -182,10 +233,13 @@ Comprehensive HTML report including:
 
 [MultiQC](http://multiqc.info) aggregates results from all pipeline steps into a single report:
 
-- Pipeline execution summary
+- Pipeline execution summary and methods description with tool citations
 - Software versions used
-- OPAL metrics summary (if MultiQC plugin available)
-- Per-sample and per-tool comparisons
+- **OPAL summary** table: Completeness, Purity, F1, L1 norm error, Bray-Curtis, UniFrac errors, Shannon
+  diversity and TP/FP/FN counts at the species rank (configurable with `--summary-rank` in the
+  `COMPARATIVE_ANALYSIS` `ext.args`) for every sample and classifier
+- **Benchmark summary across samples**: mean metrics per classifier, and line graphs of F1 score and L1 norm
+  error by rank
 
 ### Pipeline Information
 

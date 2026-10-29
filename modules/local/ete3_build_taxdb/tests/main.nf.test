@@ -1,0 +1,70 @@
+nextflow_process {
+
+    name "Test Process ETE3_BUILD_TAXDB"
+    script "../main.nf"
+    process "ETE3_BUILD_TAXDB"
+
+    tag "modules"
+    tag "modules_local"
+    tag "ete3_build_taxdb"
+
+    test("ete3 build taxdb - reduced taxdump") {
+
+        when {
+            process {
+                """
+                input[0] = file('${projectDir}/assets/test_data/taxonomy/taxdump.tar.gz', checkIfExists: true)
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert process.out.db.size() == 1 },
+                // taxa.sqlite and taxa.sqlite.traverse.pkl
+                { assert process.out.db.get(0).any { it.toString().endsWith('taxa.sqlite') } },
+                { assert path(process.out.db.get(0).find { it.toString().endsWith('taxa.sqlite') }).size() > 0 },
+                { assert snapshot(process.out.versions).match() }
+            )
+        }
+
+    }
+
+    test("ete3 build taxdb - stub") {
+
+        options "-stub"
+
+        when {
+            process {
+                """
+                input[0] = file('${projectDir}/assets/test_data/taxonomy/taxdump.tar.gz', checkIfExists: true)
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("ete3 build taxdb - missing archive should fail") {
+
+        when {
+            process {
+                """
+                input[0] = file('${moduleDir}/tests/does_not_exist.tar.gz')
+                """
+            }
+        }
+
+        then {
+            assert process.failed
+        }
+
+    }
+}

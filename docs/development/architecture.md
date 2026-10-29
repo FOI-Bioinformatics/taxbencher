@@ -3,6 +3,7 @@
 This document describes the technical architecture of the taxbencher pipeline, including data flow, module interactions, and design decisions.
 
 ## Table of Contents
+
 - [Pipeline Flow](#pipeline-flow)
 - [Sample-Level Architecture](#sample-level-architecture)
 - [Directory Structure](#directory-structure)
@@ -15,21 +16,27 @@ This document describes the technical architecture of the taxbencher pipeline, i
 ### Overview
 
 ```
-Input: Raw profiler outputs OR taxpasta TSV files + gold standard bioboxes
+Input: Raw profiler outputs OR taxpasta TSV files + gold standard bioboxes (+ optional --taxdump)
     ↓
-[TAXPASTA_STANDARDISE] - Standardize raw profiler outputs (optional, automatic)
+[VALIDATE_GOLD_STANDARD] - CAMI format and per-rank checks, one @SampleID block per sample
     ↓
-[TAXPASTA_TO_BIOBOXES] - Convert to CAMI format
+[TAXPASTA_STANDARDISE] - Standardise raw profiler outputs (automatic, header/extension based)
     ↓
-[Group by sample_id] - Group classifiers by biological sample
+[ETE3_BUILD_TAXDB] - Build the ete3 taxonomy database once from --taxdump
+    ↓
+[TAXPASTA_TO_BIOBOXES] - Convert to CAMI format (per-rank clade abundances, direct/clade count modes)
+    ↓
+[Group by sample_id] - Group classifiers by biological sample (labels sorted)
     ↓
 [OPAL_PER_SAMPLE] - Per-sample evaluation (one OPAL run per biological sample)
     ↓
-[COMPARATIVE_ANALYSIS] - Per-sample classifier comparison (PCA, differential taxa)
+[COMPARATIVE_ANALYSIS] - Per-sample comparison (metrics pivot, PCA, per-taxon TP/FP/FN, MultiQC table)
+    ↓
+[BENCHMARK_SUMMARY] - Cross-sample mean/median/sd and classifier ranking, MultiQC content
     ↓
 [MULTIQC] - Aggregate reports
     ↓
-Output: Per-sample reports + comparative analysis + aggregated metrics
+Output: validation report + per-sample reports + cross-sample summary + MultiQC
 ```
 
 ### Detailed Flow
@@ -37,6 +44,7 @@ Output: Per-sample reports + comparative analysis + aggregated metrics
 #### Stage 1: Input and Format Detection
 
 **Input Channel Creation** (`main.nf`):
+
 ```groovy
 Channel
     .fromList(samplesheet)
@@ -47,6 +55,7 @@ Channel
 ```
 
 **Format Detection** (`workflows/taxbencher.nf:39-46`):
+
 ```groovy
 ch_input
     .branch { meta, file ->
@@ -59,6 +68,7 @@ ch_input
 ```
 
 This automatic branching enables the pipeline to accept both:
+
 - **Pre-standardized**: `.tsv`, `.txt` files (taxpasta output)
 - **Raw profiler output**: `.kreport`, `.profile`, `.out`, etc.
 
@@ -71,6 +81,7 @@ This automatic branching enables the pipeline to accept both:
 **When**: Automatically triggered for non-.tsv/.txt files
 
 Supported profilers:
+
 - Kraken2, Bracken (`.kreport`)
 - MetaPhlAn (`.profile`, `.mpa`)
 - Centrifuge (`.report`)
@@ -84,18 +95,22 @@ Supported profilers:
 **Input**: Taxpasta TSV (standardized format)
 **Output**: CAMI Bioboxes profiling format
 **Process**:
+
 1. Read taxpasta TSV (taxonomy_id, count columns)
 2. Use ete3 to lookup full taxonomy lineages
 3. Calculate percentages from counts
 4. Generate CAMI Bioboxes format with headers and lineage paths
 
 **Example transformation**:
+
 ```
 # Taxpasta TSV
 taxonomy_id,count
 562,1000
 ```
+
 ↓
+
 ```
 # CAMI Bioboxes
 @SampleID:sample1_kraken2
@@ -129,6 +144,7 @@ ch_bioboxes_per_sample = TAXPASTA_TO_BIOBOXES.out.bioboxes
 ```
 
 **What happens**:
+
 1. Extract `sample_id` as grouping key
 2. `groupTuple()` collects all bioboxes with same `sample_id`
 3. Create new meta with aggregated information
@@ -136,6 +152,7 @@ ch_bioboxes_per_sample = TAXPASTA_TO_BIOBOXES.out.bioboxes
 5. Embed files in tuple (critical for Nextflow cardinality)
 
 **Example**:
+
 ```
 Input bioboxes:
 [{sample_id:'s1', label:'s1_kraken2'}, bioboxes1]
@@ -159,12 +176,14 @@ After map (final):
 **Output**: Directory with OPAL results (HTML reports, metrics TSV, confusion matrices)
 
 **Process**:
+
 1. Validate inputs (gold standard exists, predictions >0)
 2. Create output directory
 3. Run OPAL with all predictions for this sample
 4. Generate comprehensive metrics and visualizations
 
 **Metrics produced**:
+
 - Precision, Recall, F1 score (per rank)
 - UniFrac distance
 - L1 norm
@@ -181,6 +200,7 @@ After map (final):
 **Output**: PCA plots, differential taxa, comparison reports
 
 **Planned features**:
+
 - PCA visualization of classifier performance
 - Statistical testing for differential abundance
 - Interactive HTML reports
@@ -190,6 +210,7 @@ After map (final):
 #### Stage 7: Aggregation
 
 **MULTIQC** aggregates all reports:
+
 - Collects OPAL metrics across samples
 - Generates unified HTML report
 - Provides overview of all evaluations
@@ -227,6 +248,7 @@ sample2,sample2_metaphlan,metaphlan,/path/to/sample2_metaphlan.tsv,NCBI
 ```
 
 **Result**:
+
 - **Sample1**: 1 OPAL run comparing 3 classifiers
   - Output: `results/opal/sample1/` with comparative metrics
   - Comparative analysis: `results/comparative_analysis/sample1/`
@@ -237,6 +259,7 @@ sample2,sample2_metaphlan,metaphlan,/path/to/sample2_metaphlan.tsv,NCBI
 ### Why Per-Sample Evaluation?
 
 **Benefits**:
+
 1. **Fair Comparison**: Same input → different classifiers → direct comparison
 2. **Sample-Specific Insights**: Identify which classifiers work best for specific sample types
 3. **Bias Detection**: Reveal classifier-specific biases per sample
@@ -331,21 +354,26 @@ taxbencher/
 ### Key Directories
 
 **`workflows/`**: Main workflow logic
+
 - `taxbencher.nf`: Orchestrates all modules and data flow
 
 **`modules/local/`**: Custom Nextflow modules
+
 - Each module is self-contained with tests and metadata
 
 **`bin/`**: Python scripts called by modules
+
 - Must be executable (`chmod +x`)
 - Available on PATH during process execution
 
 **`conf/`**: Configuration files
+
 - `base.config`: Resource labels (process_low, process_medium, etc.)
 - `modules.config`: Per-module configuration (publishDir, args, etc.)
 - `test.config`: Test profile settings
 
 **`assets/`**: Static files
+
 - Test data committed to repository
 - Schema for validation
 - Example files for users
@@ -375,6 +403,7 @@ tuple val(meta), path("*.output"), emit: results
 ```
 
 **Benefits**:
+
 - Tracks sample information through pipeline
 - Enables dynamic file naming
 - Allows grouping and filtering
@@ -392,6 +421,7 @@ ch_input.branch { meta, file ->
 ```
 
 **Supported extensions**:
+
 - **Standardised**: `.tsv`, `.txt`
 - **Kraken2/Bracken**: `.kreport`, `.kreport2`, `.bracken`
 - **MetaPhlAn**: `.profile`, `.mpa`, `.mpa3`
@@ -417,6 +447,7 @@ tuple val(meta), path(gold_standard), path(predictions)  // Bundled together
 ```
 
 **How it works**:
+
 ```groovy
 // Group by sample_id
 .groupTuple()  // [sample_id, [labels...], [files...]]
@@ -490,24 +521,28 @@ Samplesheet → CH_INPUT
 **Key principle**: Maintain 1:1 correspondence between meta and files.
 
 **Branching** (1 → many):
+
 ```groovy
 ch_input.branch { ... }
 // Creates multiple output channels from one input
 ```
 
 **Mixing** (many → 1):
+
 ```groovy
 ch_standardised.mix(TAXPASTA_STANDARDISE.out.standardised)
 // Combines channels into one
 ```
 
 **Grouping** (many → fewer):
+
 ```groovy
 .groupTuple()
 // Collects items with same key
 ```
 
 **Combining** (cross product):
+
 ```groovy
 .combine(ch_gold_standard)
 // Creates all combinations
@@ -520,12 +555,14 @@ ch_standardised.mix(TAXPASTA_STANDARDISE.out.standardised)
 **Decision**: Group classifiers by biological sample for evaluation.
 
 **Rationale**:
+
 1. **Scientific validity**: Same input enables fair comparison
 2. **Practical relevance**: Users want to know "which classifier for MY sample"
 3. **Statistical power**: Enables meaningful comparative analysis
 4. **Resource efficiency**: One OPAL run per sample (not per classifier)
 
 **Trade-offs**:
+
 - **Pro**: Fair comparison, meaningful statistics, efficient
 - **Con**: Requires consistent sample_id naming, complex channel logic
 
@@ -534,11 +571,13 @@ ch_standardised.mix(TAXPASTA_STANDARDISE.out.standardised)
 **Decision**: Embed prediction files in tuple with metadata.
 
 **Rationale**:
+
 1. **Nextflow limitation**: Separate channels cause cardinality issues
 2. **Correctness**: Ensures each invocation gets correct files
 3. **Simplicity**: Cleaner than complex filtering logic
 
 **Alternative considered**: Filter predictions by sample_id in process
+
 - **Rejected**: Fragile, error-prone, requires passing all files
 
 ### Why Automatic Format Detection?
@@ -546,12 +585,14 @@ ch_standardised.mix(TAXPASTA_STANDARDISE.out.standardised)
 **Decision**: Branch based on file extension automatically.
 
 **Rationale**:
+
 1. **User experience**: No configuration needed
 2. **Flexibility**: Supports mixed samplesheets
 3. **Efficiency**: Only standardizes when needed
 4. **Maintainability**: Logic centralized in workflow
 
 **Alternative considered**: User-specified format parameter
+
 - **Rejected**: More configuration burden, error-prone
 
 ### Why Wave Containers?
@@ -559,12 +600,14 @@ ch_standardised.mix(TAXPASTA_STANDARDISE.out.standardised)
 **Decision**: Use Seqera Wave for Python scientific stack.
 
 **Rationale**:
+
 1. **Dependency complexity**: pandas + ete3 not in single biocontainer
 2. **Reproducibility**: Wave builds deterministic containers
 3. **Flexibility**: Easy to update dependencies
 4. **Fallback**: Conda available when Wave unavailable
 
 **Trade-offs**:
+
 - **Pro**: Reproducible, flexible, no custom Dockerfiles
 - **Con**: Requires internet, slower first run, Wave dependency
 
@@ -573,11 +616,13 @@ ch_standardised.mix(TAXPASTA_STANDARDISE.out.standardised)
 **Decision**: Use stub tests for OPAL_PER_SAMPLE and COMPARATIVE_ANALYSIS.
 
 **Rationale**:
+
 1. **OPAL limitations**: Version 1.0.13 fails with minimal test data
 2. **Test infrastructure**: Validates structure without running full OPAL
 3. **CI/CD**: Fast tests for structure validation
 
 **Trade-offs**:
+
 - **Pro**: Fast, reliable, no OPAL bugs
 - **Con**: Doesn't test actual functionality
 - **Mitigation**: Use test_realistic profile for functional validation

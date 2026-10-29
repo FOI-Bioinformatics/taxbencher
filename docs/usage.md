@@ -27,13 +27,13 @@ You will need to create a samplesheet with information about the taxonomic profi
 
 The samplesheet has the following required columns:
 
-| Column          | Description                                                                                                                                                        |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `sample_id`     | Biological sample identifier. Profiles with the same sample_id are evaluated together in per-sample OPAL analysis.                                               |
-| `label`         | Unique identifier for this taxonomic profile. Used for distinguishing profiles in reports.                                                                        |
-| `classifier`    | Name of the taxonomic classifier (e.g., kraken2, metaphlan, centrifuge). Used for labeling in reports and for automatic format detection.                       |
-| `taxpasta_file` | Full path to taxonomic profile file. Can be either taxpasta standardized TSV format OR raw profiler output (e.g., .kreport, .report, .profile). See formats below. |
-| `taxonomy_db`   | Taxonomy database used (e.g., NCBI, GTDB). Optional, defaults to NCBI.                                                                                            |
+| Column          | Description                                                                                                                                                                                                                                                                              |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `sample_id`     | Biological sample identifier. Profiles with the same sample_id are evaluated together in per-sample OPAL analysis.                                                                                                                                                                       |
+| `label`         | Unique identifier for this taxonomic profile. Used for distinguishing profiles in reports.                                                                                                                                                                                               |
+| `classifier`    | Name of the taxonomic classifier (e.g., kraken2, metaphlan, centrifuge). Used for labeling in reports and for automatic format detection.                                                                                                                                                |
+| `taxpasta_file` | Path to the taxonomic profile file: taxpasta standardized TSV OR raw profiler output (e.g., .kreport, .report, .profile). Absolute paths and remote URIs are used as given; relative paths are resolved against the samplesheet directory, then the launch directory. See formats below. |
+| `taxonomy_db`   | Taxonomy database used (e.g., NCBI, GTDB). Optional, defaults to NCBI.                                                                                                                                                                                                                   |
 
 ### Example samplesheet
 
@@ -47,6 +47,7 @@ sample2,sample2_metaphlan,metaphlan,/path/to/taxprofiler_results/sample2_metaphl
 ```
 
 In this example:
+
 - `sample1` has 3 classifiers → 1 OPAL evaluation comparing kraken2 vs metaphlan vs centrifuge
 - `sample2` has 2 classifiers → 1 OPAL evaluation comparing kraken2 vs metaphlan
 - Each sample_id gets its own comparative analysis report
@@ -60,6 +61,7 @@ The pipeline supports two types of input files:
 #### 1. Taxpasta standardized TSV format (recommended)
 
 Taxpasta files should be TSV format with at minimum these columns:
+
 - `taxonomy_id`: NCBI taxonomy ID
 - `count`: Read count for this taxon
 
@@ -69,21 +71,22 @@ For more information on generating taxpasta files, see the [taxpasta documentati
 
 The pipeline can also accept raw profiler outputs and will automatically standardize them using taxpasta. Supported profilers:
 
-| Profiler     | File Extension(s)                    | Format Description                                      |
-| ------------ | ------------------------------------ | ------------------------------------------------------- |
-| Bracken      | `.kreport`, `.bracken`               | Bracken abundance re-estimation format                  |
-| Centrifuge   | `.report`                            | Centrifuge report format (6 tab-separated columns)      |
-| DIAMOND      | `.diamond`                           | DIAMOND taxonomic assignment output                     |
-| ganon        | `.ganon`, `.out`                     | ganon profiling output                                  |
-| Kaiju        | `.kaiju`, `.out`                     | Kaiju taxonomic classification summary                  |
-| KMCP         | `.kmcp`, `.out`                      | KMCP profiling results                                  |
-| Kraken2      | `.kreport`, `.kreport2`              | Kraken2 report format (6 tab-separated columns)         |
-| KrakenUniq   | `.krakenuniq`                        | KrakenUniq-specific report format                       |
-| MEGAN6/MALT  | `.megan`, `.rma6`                    | MEGAN6 taxonomic summary files                          |
-| MetaPhlAn    | `.profile`, `.mpa`, `.mpa3`          | MetaPhlAn profile format (4 tab-separated columns)      |
-| mOTUs        | `.motus`, `.out`                     | mOTUs profiling output                                  |
+| Profiler    | File Extension(s)           | Format Description                                 |
+| ----------- | --------------------------- | -------------------------------------------------- |
+| Bracken     | `.kreport`, `.bracken`      | Bracken abundance re-estimation format             |
+| Centrifuge  | `.report`                   | Centrifuge report format (6 tab-separated columns) |
+| DIAMOND     | `.diamond`                  | DIAMOND taxonomic assignment output                |
+| ganon       | `.ganon`, `.out`            | ganon profiling output                             |
+| Kaiju       | `.kaiju`, `.out`            | Kaiju taxonomic classification summary             |
+| KMCP        | `.kmcp`, `.out`             | KMCP profiling results                             |
+| Kraken2     | `.kreport`, `.kreport2`     | Kraken2 report format (6 tab-separated columns)    |
+| KrakenUniq  | `.krakenuniq`               | KrakenUniq-specific report format                  |
+| MEGAN6/MALT | `.megan`, `.rma6`           | MEGAN6 taxonomic summary files                     |
+| MetaPhlAn   | `.profile`, `.mpa`, `.mpa3` | MetaPhlAn profile format (4 tab-separated columns) |
+| mOTUs       | `.motus`, `.out`            | mOTUs profiling output                             |
 
 When using raw profiler outputs:
+
 - The `classifier` column in the samplesheet must match the profiler name (e.g., "kraken2", "metaphlan", "centrifuge")
 - Files will be automatically standardized using taxpasta before evaluation
 - Use `--save_standardised_profiles` to save the standardized TSV files
@@ -124,6 +127,7 @@ This will launch the pipeline with the `docker` configuration profile. See below
 
 > [!TIP]
 > **Best Practice**: Validate your input files before running the pipeline:
+>
 > ```bash
 > # Validate taxpasta files
 > python3 bin/validate_taxpasta.py /path/to/sample_kraken2.tsv
@@ -136,19 +140,64 @@ This will launch the pipeline with the `docker` configuration profile. See below
 
 ### Gold standard format
 
-The gold standard file must be in CAMI profiling Bioboxes format. Example:
+The gold standard file must be in CAMI profiling Bioboxes format. Its `@SampleID` must equal the
+`sample_id` used in the samplesheet (one `@SampleID` block per biological sample; several blocks may be
+concatenated in one file). The pipeline checks this before starting because OPAL silently skips profiles
+without a matching sample ID. Example:
 
 ```
 @SampleID:benchmark_sample
 @Version:0.9.1
-@Ranks:superkingdom|phylum|class|order|family|genus|species
+@Ranks:superkingdom|phylum|class|order|family|genus|species|strain
 @TaxonomyID:NCBI
 @@TAXID	RANK	TAXPATH	TAXPATHSN	PERCENTAGE
-562	species	131567|2|1224|1236|135622|543|561|562	Biota|Bacteria|...	0.45
-1280	species	131567|2|1239|90964|1385|90964|1279|1280	Biota|Bacteria|...	0.35
+2	superkingdom	2	Bacteria	100.0
+1224	phylum	2|1224	Bacteria|Pseudomonadota	55.0
+1239	phylum	2|1239	Bacteria|Bacillota	45.0
+562	species	2|1224|1236|91347|543|561|562	Bacteria|Pseudomonadota|Gammaproteobacteria|Enterobacterales|Enterobacteriaceae|Escherichia|Escherichia coli	55.0
+1280	species	2|1239|91061|1385|90964|1279|1280	Bacteria|Bacillota|Bacilli|Bacillales|Staphylococcaceae|Staphylococcus|Staphylococcus aureus	45.0
 ```
 
+Abundances are given **per rank**: all species sum to 100 %, all phyla sum to 100 %, and so on. `TAXPATH`
+contains one taxonomy ID per rank of `@Ranks` up to the entry's own rank. If your truth is only available at
+the species or strain level, derive the higher ranks with
+`bin/fix_gold_standard.py --fill-higher-ranks` (see [gold standard troubleshooting](troubleshooting-gold-standard.md)).
+
 For more information on the CAMI Bioboxes format, see the [CAMI documentation](https://github.com/bioboxes/rfc/tree/master/data-format).
+
+### Taxonomy database (`--taxdump`)
+
+Converting profiles to CAMI format needs the NCBI taxonomy to build lineages. Provide a pinned
+`taxdump.tar.gz` (from <https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/>, dated archives under
+`taxdump_archive/`) with `--taxdump`; it is turned into an ete3 database once and reused by every
+conversion, so runs are reproducible and need no network access inside tasks:
+
+```bash
+nextflow run FOI-Bioinformatics/taxbencher \
+  --input samplesheet.csv \
+  --gold_standard gold_standard.bioboxes \
+  --taxdump taxdump_2025-01-01.tar.gz \
+  --outdir results -profile docker
+```
+
+Without `--taxdump`, ete3 downloads the current NCBI taxonomy into `$HOME/.etetoolkit` inside each
+conversion task. Profiles that already carry taxpasta lineage columns (`taxpasta standardise --taxonomy <dir>
+--add-id-lineage --add-rank-lineage --add-lineage`) need no taxonomy database at all; this is also the only
+supported route for `taxonomy_db: GTDB`.
+
+### Abundance semantics
+
+Per-rank abundances are computed from taxpasta counts according to the profiler: read counts assigned
+directly to a taxon (Kraken2, Centrifuge, Kaiju, ...) are summed over descendants, MetaPhlAn clade abundances
+are used as they are (see [raw inputs](raw-inputs.md#abundance-semantics)). By default percentages are
+relative to classified reads; `--include_unclassified` makes them relative to all reads so that unclassified
+reads appear as missing abundance.
+
+### OPAL options
+
+- `--opal_normalize`: normalise gold standard and predictions to 100 % per rank before computing metrics (OPAL `-n`)
+- `--opal_filter <percent>`: ignore the least abundant predictions summing up to this percentage within a rank (OPAL `-f`; unfiltered metrics are reported as well)
+- `--opal_ranks highest,lowest`: rank range used by OPAL for its performance rankings (default `superkingdom,species`)
 
 ### Example with params file
 
@@ -161,9 +210,9 @@ nextflow run FOI-Bioinformatics/taxbencher -profile docker -params-file params.y
 with:
 
 ```yaml title="params.yaml"
-input: './samplesheet.csv'
-gold_standard: './gold_standard.bioboxes'
-outdir: './results/'
+input: "./samplesheet.csv"
+gold_standard: "./gold_standard.bioboxes"
+outdir: "./results/"
 ```
 
 You can also generate such `YAML`/`JSON` files via [nf-core/launch](https://nf-co.re/launch).
@@ -238,7 +287,11 @@ If `-profile` is not specified, the pipeline will run locally and expect all sof
 - `apptainer`
   - A generic configuration profile to be used with [Apptainer](https://apptainer.org/)
 - `wave`
-  - A generic configuration profile to enable [Wave](https://seqera.io/wave/) containers. Use together with one of the above (requires Nextflow ` 24.03.0-edge` or later).
+  - A generic configuration profile to enable [Wave](https://seqera.io/wave/) containers. Use together with one of the above (requires Nextflow `24.03.0-edge` or later).
+- `arm64`
+  - Run on ARM64 hosts; containers are built for the architecture through Wave.
+- `emulate_amd64`
+  - Run AMD64 containers on ARM64 hosts via Docker emulation (slower).
 - `conda`
   - A generic configuration profile to be used with [Conda](https://conda.io/docs/). Please only use Conda as a last resort i.e. when it's not possible to run the pipeline with Docker, Singularity, Podman, Shifter, Charliecloud, or Apptainer.
 

@@ -55,6 +55,22 @@ This document provides comprehensive documentation of taxbencher's testing frame
 
 See [Test Coverage Report](../reports/test-coverage.md) for detailed analysis.
 
+## Python Unit Tests
+
+The scientific core of the pipeline lives in `bin/` (`taxpasta_to_bioboxes.py`, `fix_gold_standard.py`,
+`validate_bioboxes.py`, `summarise_benchmark.py`). These scripts are unit tested with pytest, independently of
+Nextflow, against the reduced pinned taxonomy in `assets/test_data/taxonomy/`:
+
+```bash
+pip install pandas ete3 pytest        # or: conda activate an env with these packages
+pytest -v tests/python
+```
+
+The tests cover per-rank CAMI semantics (clade accumulation, clade vs direct counts, kingdom handling,
+strain mapping, unclassified handling), validator errors vs warnings, gold standard repair
+(`--fill-higher-ranks`, per-rank renormalisation, sub-strain aggregation) and the cross-sample summary and
+ranking. They run in CI via `.github/workflows/python-tests.yml`.
+
 ## nf-test Framework
 
 ### What is nf-test?
@@ -457,6 +473,20 @@ Snapshots capture the exact output of a test run for future comparison. They pro
 
 ### Creating Snapshots
 
+Snapshots are recorded with the Docker profile (`nf-test test --profile +docker --update-snapshot`). CI runs
+the same snapshots with the conda, docker and singularity profiles, so every local module's `environment.yml`
+pins Python and library versions to exactly what its container ships (see the comment at the top of each
+file). When you rebuild a container, update the pins in `environment.yml` in the same commit, otherwise the
+`versions.yml` md5 in the snapshots differs between profiles.
+
+Two sources of non-determinism are neutralised in the modules themselves and must stay in place:
+
+- `OPAL_PER_SAMPLE` runs OPAL with `PYTHONHASHSEED=0`; OPAL sums abundances while iterating over Python sets
+  of taxon IDs, and randomised string hashing changes the last digits of UniFrac and other metrics between runs.
+- `OPAL_PER_SAMPLE` points `MPLCONFIGDIR` at the task directory; with a read-only `$HOME` matplotlib prints a
+  warning on every call, which would otherwise end up in `versions.yml`.
+
+
 **First run** (creates snapshot):
 ```bash
 nf-test test modules/local/mymodule/tests/ --update-snapshot
@@ -823,7 +853,9 @@ comm -23 \
 
 ### 1. OPAL 1.0.13 Upstream Bugs
 
-**Issue**: OPAL fails to generate spider plots with minimal test data
+**Issue (historical)**: OPAL failed to generate spider plots with the old minimal test data.
+**Status (2026-10)**: not reproducible with valid CAMI profiles; the failing inputs were header-only or
+non-cumulative profiles produced by the previous converter. All three test profiles now pass OPAL.
 
 **Error**:
 ```
@@ -876,7 +908,7 @@ at cami_opal/plots.py:382 in spider_plot
 
 3. **Pre-pull Wave containers**:
    ```bash
-   docker pull community.wave.seqera.io/library/pip_ete3_pandas:hash
+   docker pull community.wave.seqera.io/library/python_pandas_ete3:0aabbd50f04018cb
    ```
 
 ### 3. Conda Environment Build Time

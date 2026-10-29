@@ -3,6 +3,111 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.3.0dev - 2026-10-28
+
+Correctness audit of the evaluation path, end-to-end testing with conda, and reproducible offline taxonomy handling.
+See [docs/reports/audit-2026-10.md](docs/reports/audit-2026-10.md) for the full audit (findings, gap analysis, SWOT).
+
+### Fixed (correctness)
+
+- **CAMI profile conversion produced invalid profiles** (`bin/taxpasta_to_bioboxes.py`): abundances were
+  normalised across _all_ ranks together (superkingdom Bacteria ended up at ~15 %) and counts were never
+  accumulated over descendants, so every OPAL metric was computed on nonsense. Profiles are now proper CAMI
+  profiles: clade-cumulative abundances per rank (each rank sums to <= 100 %), `TAXPATH`/`TAXPATHSN`
+  restricted to the `@Ranks` list, `kingdom` no longer mapped onto `superkingdom` (double counting),
+  NCBI `no rank` nodes below species reported as `strain`.
+- **MetaPhlAn profiles were double counted**: taxpasta keeps MetaPhlAn's cumulative clade abundances for
+  every lineage level; the converter now has an `--abundance-mode clade` (selected automatically for
+  `classifier: metaphlan`) and fails when the chosen mode is inconsistent with the data (per-rank sum > 100 %).
+- **Silent empty outputs**: when ete3 was unavailable or a taxid lookup failed, a header-only `.bioboxes`
+  file was written and the run "succeeded". The converter now fails unless `--allow-empty` is given, and the
+  OPAL module rejects header-only predictions.
+- **OPAL silently skipped profiles whose `@SampleID` did not match the gold standard**; the pipeline now
+  checks every `sample_id` against the gold standard before running and the OPAL module fails if OPAL
+  skipped a profile or produced no metrics for a label.
+- **Comparative analysis never worked**: it expected a wide metrics table (OPAL writes a long
+  `tool/rank/metric/sample/value` table) and looked for profiles in a directory that does not exist inside a
+  task, so PCA and differential tables were always placeholders, with fabricated p-values (0.05/0.1). The
+  module now receives the sample's profiles, pivots OPAL metrics, computes a PCA over all metric/rank
+  features, reports per-taxon observed vs expected abundance with TP/FP/FN status (no fake statistics) and
+  emits a MultiQC custom-content table, so the MultiQC report finally contains benchmark results.
+- **Samplesheet handling**: relative paths were resolved against the pipeline directory only (breaking any
+  real samplesheet), remote URIs were mangled, missing files failed late inside a task, duplicate labels
+  overwrote each other, and `assets/schema_input.json` was never applied. Samplesheets are now validated with
+  nf-schema (`uniqueEntries: label`, `taxonomy_db` enum), paths resolve relative to the samplesheet, launch
+  and project directories or as URIs, and missing files fail immediately with the tried locations.
+- **Format detection**: `.tsv`/`.txt` inputs are recognised as taxpasta output by their header, so raw DIAMOND
+  or MEGAN6 text files are standardised instead of being passed through and failing downstream.
+- **Validation scripts** (`validate_bioboxes.py`, `fix_gold_standard.py`): both assumed abundances sum to
+  100 % across ranks and `fix_gold_standard.py` actively broke gold standards by renormalising across ranks.
+  Both now use per-rank semantics, support multi-sample files, empty `TAXPATH` fields and non-`@@` inputs;
+  `fix_gold_standard.py` gained `--fill-higher-ranks` (derive higher ranks from species/strain truth),
+  `--taxdump`, and aggregates sub-strain taxa into their strain ancestor.
+- **OPAL label/file order** is now deterministic (sorted by label) and validated to have equal length. The
+  post-run label check reads `results.tsv` with awk; a `cut | grep -q` pipeline can be killed by SIGPIPE under
+  `pipefail` and report missing metrics although OPAL succeeded (seen only with the Docker profile).
+- **Containers**: the ete3 image (`pip_ete3_pandas:3d986008f4614a7f`) runs Python 3.14, on which ete3 3.1.3
+  fails to import (`cgi` module removed), and the comparative-analysis image was a temporary Wave build URL
+  that no longer exists, so `-profile docker/singularity` could not run either module. Both modules now use
+  frozen Seqera Wave community images built from their `environment.yml` (Python 3.11), with `oras://`
+  Singularity variants; `-profile test,docker` now runs end-to-end and nf-test snapshots are recorded with Docker.
+
+### Added
+
+- `VALIDATE_GOLD_STANDARD` module: the gold standard is validated (`validate_bioboxes.py --strict`, including a
+  `@SampleID` block for every sample) before OPAL runs; report in `validation/`.
+- `BENCHMARK_SUMMARY` module (`bin/summarise_benchmark.py`): cross-sample mean/median/sd per classifier, rank
+  and metric, direction-aware classifier ranking, and MultiQC table plus F1/L1-by-rank line graphs in
+  `benchmark_summary/`. The per-sample wide metric table now carries a `sample` column.
+- Python unit tests for the core scripts (`tests/python`, `pytest`) with a GitHub Actions workflow.
+- The taxdump archive name and md5 are recorded in the software versions (`ETE3_BUILD_TAXDB`).
+- `--taxdump`: pinned NCBI `taxdump.tar.gz` built once into an ete3 database (`ETE3_BUILD_TAXDB`) and shared by
+  all conversions; no network access or `$HOME` writes inside tasks, reproducible lineages.
+- `--include_unclassified`, `--opal_normalize`, `--opal_filter`, `--opal_ranks` parameters.
+- Converter support for taxpasta lineage columns (`--add-id-lineage --add-rank-lineage --add-lineage`),
+  removing the ete3 dependency when taxpasta already provides lineages (also the path for GTDB profiles).
+- Reduced, pinned NCBI taxonomy (`assets/test_data/taxonomy/`) and truth tables (`assets/test_data/truth/`)
+  plus `bin/regenerate_test_fixtures.sh`; all test gold standards are now valid CAMI profiles derived from them.
+- `gold_standard_raw.bioboxes` matching the raw-profiler test inputs; `test_raw` previously evaluated
+  E. coli/S. aureus profiles against a Francisella gold standard.
+- New outputs: `comparative_analysis/*_metrics_wide.tsv`, `*_opal_summary_mqc.tsv`, `opal/<sample>/opal.log`.
+- Module tests for `ETE3_BUILD_TAXDB`; new negative tests (unknown taxids, unsupported taxonomy DB, clade
+  consistency); pipeline nf-tests now snapshot OPAL and comparative outputs instead of only the converted
+  profiles.
+
+### Fixed (CI and reproducibility)
+
+- `OPAL_PER_SAMPLE` wrote a corrupt `versions.yml` whenever matplotlib printed its "not a writable directory"
+  warning (read-only `$HOME` in containers on CI), which aborted the pipeline while collating software
+  versions. The module now sets `MPLCONFIGDIR` inside the task directory and extracts the bare version number.
+- OPAL results were not bit-for-bit reproducible between runs (last digits of UniFrac and other summed
+  metrics changed with Python's randomised string hashing, so nf-test snapshots failed on CI). The module
+  now runs OPAL with `PYTHONHASHSEED=0`.
+- `TAXPASTA_STANDARDISE` failed under `-profile conda` for MetaPhlAn and KMCP profiles: taxpasta 0.7.0 does not
+  constrain pandas and its pandera schemas reject pandas >= 3 (`additional_species` typed as string). The conda
+  environment now pins pandas/numpy to the versions of the biocontainer.
+- All local module `environment.yml` files pin Python and library versions to those inside their containers,
+  so `-profile conda` and `-profile docker` produce identical software versions and nf-test snapshots.
+- The Python unit-test workflow no longer requests a pip cache (there is no requirements file to key it on).
+- The `included_configs` nf-core lint test is ignored: the pipeline-specific `nf-core/configs` file does not
+  exist for this non-nf-core pipeline and including it makes Nextflow fail on the missing remote file.
+
+### Changed
+
+- **nf-core template synced to tools 4.2.1** (from 3.5.1): Nextflow >= 25.10.4 and nf-schema 2.7.3 required;
+  software versions collected through the `versions` topic channel; new MultiQC module interface; container
+  configuration files (`conf/containers_*.config`) and conda lock files for nf-core modules; `--help`,
+  `--help_full` and `--show_hidden` handled by the nf-schema plugin; `arm64`/`emulate_amd64` profiles replace
+  `arm`; `gitpod` profile, `hook_url` (Slack/Teams notifications), `.github/CONTRIBUTING.md` (now
+  `docs/CONTRIBUTING.md`) and the unused FastQC module removed; pre-commit gains nf-lint and large-file checks.
+- `COMPARATIVE_ANALYSIS` input is now `tuple(meta, opal_dir, bioboxes)`; `TAXPASTA_TO_BIOBOXES` takes an
+  optional taxonomy database as second input.
+- `*_diff_taxa.tsv` columns: `classifier, rank, taxid, taxname, observed_pct, expected_pct, abs_diff_pct,
+log2_ratio, status` (the former `p_value` column was not a p-value).
+- Test profiles no longer hard-code `outdir` or the undeclared `max_*` parameters.
+- Tool citations are now rendered in the MultiQC methods section; OPAL citation corrected (Meyer et al. 2019,
+  Genome Biology) in `CITATIONS.md`.
+
 ## v1.2.0 - 2025-11-29
 
 Comprehensive code audit, improved test coverage with negative tests, and enhanced error handling validation.

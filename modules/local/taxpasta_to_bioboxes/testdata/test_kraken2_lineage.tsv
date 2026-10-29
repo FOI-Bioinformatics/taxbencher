@@ -1,0 +1,15 @@
+taxonomy_id	name	rank	lineage	id_lineage	rank_lineage	count
+0						500
+1	root	no rank				0
+2	Bacteria	superkingdom	cellular organisms;Bacteria	131567;2	no rank;superkingdom	0
+1224	Pseudomonadota	phylum	cellular organisms;Bacteria;Pseudomonadati;Pseudomonadota	131567;2;3379134;1224	no rank;superkingdom;kingdom;phylum	0
+1236	Gammaproteobacteria	class	cellular organisms;Bacteria;Pseudomonadati;Pseudomonadota;Gammaproteobacteria	131567;2;3379134;1224;1236	no rank;superkingdom;kingdom;phylum;class	0
+91347	Enterobacterales	order	cellular organisms;Bacteria;Pseudomonadati;Pseudomonadota;Gammaproteobacteria;Enterobacterales	131567;2;3379134;1224;1236;91347	no rank;superkingdom;kingdom;phylum;class;order	0
+543	Enterobacteriaceae	family	cellular organisms;Bacteria;Pseudomonadati;Pseudomonadota;Gammaproteobacteria;Enterobacterales;Enterobacteriaceae	131567;2;3379134;1224;1236;91347;543	no rank;superkingdom;kingdom;phylum;class;order;family	0
+561	Escherichia	genus	cellular organisms;Bacteria;Pseudomonadati;Pseudomonadota;Gammaproteobacteria;Enterobacterales;Enterobacteriaceae;Escherichia	131567;2;3379134;1224;1236;91347;543;561	no rank;superkingdom;kingdom;phylum;class;order;family;genus	300
+2157	Archaea	superkingdom	cellular organisms;Archaea	131567;2157	no rank;superkingdom	0
+28890	Methanobacteriota	phylum	cellular organisms;Archaea;Methanobacteriati;Methanobacteriota	131567;2157;3366610;28890	no rank;superkingdom;kingdom;phylum	0
+183925	Methanobacteria	class	cellular organisms;Archaea;Methanobacteriati;Methanobacteriota;Methanomada group;Methanobacteria	131567;2157;3366610;28890;2283794;183925	no rank;superkingdom;kingdom;phylum;clade;class	0
+2158	Methanobacteriales	order	cellular organisms;Archaea;Methanobacteriati;Methanobacteriota;Methanomada group;Methanobacteria;Methanobacteriales	131567;2157;3366610;28890;2283794;183925;2158	no rank;superkingdom;kingdom;phylum;clade;class;order	0
+2159	Methanobacteriaceae	family	cellular organisms;Archaea;Methanobacteriati;Methanobacteriota;Methanomada group;Methanobacteria;Methanobacteriales;Methanobacteriaceae	131567;2157;3366610;28890;2283794;183925;2158;2159	no rank;superkingdom;kingdom;phylum;clade;class;order;family	0
+2172	Methanobrevibacter	genus	cellular organisms;Archaea;Methanobacteriati;Methanobacteriota;Methanomada group;Methanobacteria;Methanobacteriales;Methanobacteriaceae;Methanobrevibacter	131567;2157;3366610;28890;2283794;183925;2158;2159;2172	no rank;superkingdom;kingdom;phylum;clade;class;order;family;genus	200

@@ -1,8 +1,26 @@
 @SampleID:test_sample
 @Version:0.9.1
-@Ranks:superkingdom|phylum|class|order|family|genus|species
+@Ranks:superkingdom|phylum|class|order|family|genus|species|strain
 @TaxonomyID:NCBI
 @@TAXID	RANK	TAXPATH	TAXPATHSN	PERCENTAGE
-562	species	131567|2|1224|1236|135622|543|561|562	Biota|Bacteria|Pseudomonadota|Gammaproteobacteria|Enterobacterales|Enterobacteriaceae|Escherichia|Escherichia coli	50.0
-1280	species	131567|2|1239|90964|1385|81852|1279|1280	Biota|Bacteria|Bacillota|Bacilli|Bacillales|Staphylococcaceae|Staphylococcus|Staphylococcus aureus	30.0
-1613	species	131567|2|1239|91061|186826|33958|1578|1613	Biota|Bacteria|Bacillota|Bacilli|Lactobacillales|Lactobacillaceae|Lactobacillus|Lacticaseibacillus rhamnosus	20.0
+2	superkingdom	2	Bacteria	98.000000
+2157	superkingdom	2157	Archaea	2.000000
+1224	phylum	2|1224	Bacteria|Pseudomonadota	98.000000
+28890	phylum	2157|28890	Archaea|Methanobacteriota	2.000000
+1236	class	2|1224|1236	Bacteria|Pseudomonadota|Gammaproteobacteria	98.000000
+183925	class	2157|28890|183925	Archaea|Methanobacteriota|Methanobacteria	2.000000
+72273	order	2|1224|1236|72273	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales	98.000000
+2158	order	2157|28890|183925|2158	Archaea|Methanobacteriota|Methanobacteria|Methanobacteriales	2.000000
+34064	family	2|1224|1236|72273|34064	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae	98.000000
+2159	family	2157|28890|183925|2158|2159	Archaea|Methanobacteriota|Methanobacteria|Methanobacteriales|Methanobacteriaceae	2.000000
+262	genus	2|1224|1236|72273|34064|262	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella	95.000000
+1869285	genus	2|1224|1236|72273|34064|1869285	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Allofrancisella	3.000000
+2172	genus	2157|28890|183925|2158|2159|2172	Archaea|Methanobacteriota|Methanobacteria|Methanobacteriales|Methanobacteriaceae|Methanobrevibacter	2.000000
+263	species	2|1224|1236|72273|34064|262|263	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella tularensis	75.000000
+622488	species	2|1224|1236|72273|34064|262|622488	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella hispaniensis	12.000000
+28110	species	2|1224|1236|72273|34064|262|28110	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella philomiragia	8.000000
+1085647	species	2|1224|1236|72273|34064|1869285|1085647	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Allofrancisella|Allofrancisella inopinata	3.000000
+2173	species	2157|28890|183925|2158|2159|2172|2173	Archaea|Methanobacteriota|Methanobacteria|Methanobacteriales|Methanobacteriaceae|Methanobrevibacter|Methanobrevibacter smithii	2.000000
+264	strain	2|1224|1236|72273|34064|262|263|264	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella tularensis|Francisella tularensis subsp. novicida	30.000000
+119857	strain	2|1224|1236|72273|34064|262|263|119857	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella tularensis|Francisella tularensis subsp. holarctica	25.000000
+119856	strain	2|1224|1236|72273|34064|262|263|119856	Bacteria|Pseudomonadota|Gammaproteobacteria|Thiotrichales|Francisellaceae|Francisella|Francisella tularensis|Francisella tularensis subsp. tularensis	20.000000

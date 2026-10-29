@@ -1,0 +1,86 @@
+nextflow_process {
+
+    name "Test Process BENCHMARK_SUMMARY"
+    script "../main.nf"
+    process "BENCHMARK_SUMMARY"
+
+    tag "modules"
+    tag "modules_local"
+    tag "benchmark_summary"
+
+    test("benchmark summary - two samples") {
+
+        tag "conda"
+        tag "wave"
+
+        when {
+            process {
+                """
+                input[0] = [
+                    file('${moduleDir}/testdata/test1_metrics_wide.tsv', checkIfExists: true),
+                    file('${moduleDir}/testdata/test2_metrics_wide.tsv', checkIfExists: true)
+                ]
+                """
+            }
+        }
+
+        then {
+            def summary = path(process.out.summary.get(0)).readLines()
+            def ranking = path(process.out.ranking.get(0)).readLines()
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out.summary, process.out.ranking, process.out.multiqc, process.out.versions).match() },
+                { assert summary[0] == 'classifier\trank\tmetric\tn_samples\tmean\tmedian\tsd\tmin\tmax' },
+                // every classifier/rank/metric row aggregates both samples; gold standard excluded
+                { assert summary.drop(1).every { it.split('\t')[3] == '2' } },
+                { assert !summary.any { it.startsWith('Gold standard') } },
+                { assert ranking.any { it.contains('Overall (mean rank)') } },
+                { assert process.out.multiqc.get(0).size() == 3 }
+            )
+        }
+
+    }
+
+    test("benchmark summary - single sample") {
+
+        tag "conda"
+        tag "wave"
+
+        when {
+            process {
+                """
+                input[0] = [ file('${moduleDir}/testdata/test1_metrics_wide.tsv', checkIfExists: true) ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert path(process.out.summary.get(0)).readLines().drop(1).every { it.split('\t')[3] == '1' } }
+            )
+        }
+
+    }
+
+    test("benchmark summary - stub") {
+
+        options "-stub"
+
+        when {
+            process {
+                """
+                input[0] = [ file('${moduleDir}/testdata/test1_metrics_wide.tsv', checkIfExists: true) ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+}

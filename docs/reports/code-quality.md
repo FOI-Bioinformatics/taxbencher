@@ -13,6 +13,7 @@ The taxbencher pipeline demonstrates **excellent code quality** with strong nf-c
 ## Lint Results
 
 ### Summary (as of 2025-11-29)
+
 - 203 tests passed
 - 3 template file mismatches (auto-fixable)
 - 30 warnings (mostly subworkflow version updates available)
@@ -20,6 +21,7 @@ The taxbencher pipeline demonstrates **excellent code quality** with strong nf-c
 - 20 tests ignored (intentional exclusions)
 
 ### Issues Fixed in This Audit
+
 1. **OPAL_PER_SAMPLE conda path** - Fixed broken reference to non-existent environment file
 2. **Utils subworkflow meta.yml** - Added required `output` property
 3. **Test snapshots** - Updated for current software versions
@@ -27,6 +29,7 @@ The taxbencher pipeline demonstrates **excellent code quality** with strong nf-c
 ### Remaining Warnings (Non-Critical)
 
 #### Low Priority
+
 1. **Template file mismatches** (auto-fixable)
    - `.github/workflows/linting.yml`
    - `.gitignore`
@@ -52,7 +55,9 @@ The taxbencher pipeline demonstrates **excellent code quality** with strong nf-c
 All modules follow nf-core best practices:
 
 #### ✅ TAXPASTA_STANDARDISE (84 lines)
+
 **Strengths:**
+
 - Proper meta map pattern
 - Version tracking implemented
 - Stub run support
@@ -62,7 +67,9 @@ All modules follow nf-core best practices:
 **Quality Score: A**
 
 #### ✅ TAXPASTA_TO_BIOBOXES (57 lines)
+
 **Strengths:**
+
 - Concise and focused
 - Wave container support for dependency management
 - Proper meta propagation
@@ -71,7 +78,9 @@ All modules follow nf-core best practices:
 **Quality Score: A**
 
 #### ✅ OPAL_PER_SAMPLE (67 lines)
+
 **Strengths:**
+
 - **Innovative tuple-embedded pattern** - Solves Nextflow cardinality matching issue
 - Well-documented rationale for design decision
 - Handles per-sample multi-classifier evaluation
@@ -80,31 +89,38 @@ All modules follow nf-core best practices:
 **Quality Score: A+**
 
 **Notable Innovation:**
+
 ```groovy
 input:
 tuple val(meta), path(gold_standard), path(predictions)
 ```
+
 This embedding pattern is a clever solution to the channel cardinality problem and should be documented as a pattern for others.
 
 #### ✅ COMPARATIVE_ANALYSIS (58 lines)
+
 **Strengths:**
+
 - Infrastructure ready for future enhancements
 - Wave container support
 - Proper output channels
 
 **Improvement Opportunity:**
+
 - Implement the planned statistical analyses (PCA, differential taxa)
 - Currently uses stub implementation
 
 **Quality Score: B+ (infrastructure complete, awaiting implementation)**
 
 #### ✅ OPAL (deprecated, kept for reference)
+
 - Properly deprecated in favor of OPAL_PER_SAMPLE
 - Good documentation of why it was replaced
 
 ### nf-core Modules (1 total)
 
 #### MULTIQC
+
 - Standard nf-core module
 - Minor version update available
 - Properly configured in `conf/modules.config`
@@ -121,21 +137,25 @@ This embedding pattern is a clever solution to the channel cardinality problem a
    - Channel operations explained
 
 2. **Innovative Branching Pattern**
+
    ```groovy
    ch_input.branch { meta, file ->
        standardised: file.name.endsWith('.tsv') || file.name.endsWith('.txt')
        needs_standardisation: true
    }
    ```
+
    - Automatic format detection
    - User-friendly (accepts multiple input formats)
    - Efficient (only standardizes when needed)
 
 3. **Per-Sample Grouping Pattern**
+
    ```groovy
    .map { meta, bioboxes -> [meta.sample_id, meta.label, bioboxes] }
    .groupTuple()  // Groups by sample_id
    ```
+
    - Enables fair classifier comparisons
    - Clean, idiomatic Nextflow
    - Well-commented
@@ -164,47 +184,59 @@ This embedding pattern is a clever solution to the channel cardinality problem a
 ## Configuration Quality
 
 ### nextflow.config
+
 **Strengths:**
+
 - Proper DSL2 declaration
 - Good profile structure (docker, conda, singularity)
 - Comprehensive parameter defaults
 - Resource limits defined
 
 **Action Items:**
+
 - Remove TODO placeholder
 - Verify all parameters are documented in schema
 
 ### conf/modules.config
+
 **Strengths:**
+
 - All modules properly configured
 - Consistent publishDir patterns
 - Clean separation of concerns
 
 **Recommendation:**
+
 - Consider adding error strategies at module level for critical processes
 
 ### conf/base.config
+
 **Quality:** Standard nf-core base config, well-structured
 
 ### conf/test.config
+
 **Quality:** Comprehensive test profiles including test_raw and test_realistic
 
 ## Testing Coverage
 
 ### nf-test Implementation
+
 **Overall:** Good coverage with room for improvement
 
 **Strengths:**
+
 - All modules have test files
 - Stub tests implemented
 - Snapshot testing used appropriately
 
 **Gaps:**
+
 1. Some functional tests fail due to OPAL 1.0.13 bugs with minimal data
 2. COMPARATIVE_ANALYSIS needs functional tests (currently stub-only)
 3. Full pipeline test with `test` profile expected to fail (documented)
 
 **Recommendations:**
+
 1. Use `test_realistic` profile for CI/CD functional testing
 2. Keep stub tests for structure validation
 3. Document known test limitations in TEST_COVERAGE_REPORT.md
@@ -212,9 +244,11 @@ This embedding pattern is a clever solution to the channel cardinality problem a
 ## Documentation Quality Assessment
 
 ### README.md
+
 **Quality Score: A**
 
 **Strengths:**
+
 - Comprehensive usage instructions
 - Clear parameter documentation
 - Good examples
@@ -223,9 +257,11 @@ This embedding pattern is a clever solution to the channel cardinality problem a
 **Action:** Update Zenodo DOI after first release
 
 ### CLAUDE.md
+
 **Quality Score: A+**
 
 **Exceptional Quality:**
+
 - Comprehensive technical documentation
 - Excellent architecture explanations
 - Clear examples
@@ -236,7 +272,9 @@ This embedding pattern is a clever solution to the channel cardinality problem a
 **This is exemplary documentation that serves as a model for other projects**
 
 ### docs/
+
 **Quality:** Standard nf-core docs structure
+
 - output.md: Well-structured
 - usage.md: Comprehensive
 - README.md: Good overview
@@ -259,6 +297,7 @@ This embedding pattern is a clever solution to the channel cardinality problem a
 ### 🔧 Recommended Enhancements
 
 #### 1. Add Error Strategies
+
 ```groovy
 // In conf/base.config or modules.config
 process {
@@ -273,7 +312,9 @@ process {
 ```
 
 #### 2. Implement COMPARATIVE_ANALYSIS Features
+
 Currently planned but not yet implemented:
+
 - PCA analysis of classifier performance
 - Statistical testing for differential abundance
 - Interactive Plotly visualizations
@@ -283,6 +324,7 @@ Currently planned but not yet implemented:
 **Priority:** Medium (infrastructure is ready)
 
 #### 3. Update Dependencies
+
 ```bash
 # Update nf-core modules
 nf-core modules update multiqc
@@ -292,6 +334,7 @@ nf-core subworkflows update --all
 ```
 
 #### 4. Add CI/CD Test Improvements
+
 ```yaml
 # Suggestion for .github/workflows/nf-test.yml
 # Use test_realistic profile instead of test for functional validation
@@ -306,6 +349,7 @@ nf-core subworkflows update --all
 **Problem:** Nextflow cardinality matching sends ALL files to each process invocation
 
 **Solution:** Embed files in tuple with metadata
+
 ```groovy
 input:
 tuple val(meta), path(gold_standard), path(predictions)
@@ -320,6 +364,7 @@ tuple val(meta), path(gold_standard), path(predictions)
 ### 2. Automatic Format Detection and Branching
 
 **Innovation:** File extension-based routing
+
 ```groovy
 .branch { meta, file ->
     standardised: file.name.endsWith('.tsv') || file.name.endsWith('.txt')
@@ -328,6 +373,7 @@ tuple val(meta), path(gold_standard), path(predictions)
 ```
 
 **Benefits:**
+
 - User doesn't need to specify format
 - Mixed formats in samplesheet supported
 - Only standardizes when needed (efficiency)
@@ -337,6 +383,7 @@ tuple val(meta), path(gold_standard), path(predictions)
 ## Security and Reproducibility
 
 ### ✅ Strengths
+
 1. **No System.exit calls** - Proper error handling
 2. **No security vulnerabilities detected**
 3. **Containerized processes** - Full reproducibility
@@ -344,20 +391,24 @@ tuple val(meta), path(gold_standard), path(predictions)
 5. **Wave support** - Dynamic container building for custom stacks
 
 ### ⚠️ Considerations
+
 1. Wave URLs are dynamic - consider documenting fallback to conda
 2. External data sources (test datasets) should be checksummed
 
 ## Performance Considerations
 
 ### Resource Allocation
+
 **Current:** Uses nf-core standard labels (process_low, process_medium)
 
 **Optimization Opportunities:**
+
 1. OPAL_PER_SAMPLE could benefit from more memory with large datasets
 2. Consider adding process_high label for multi-classifier evaluations
 3. Add disk space directives for large result files
 
 ### Recommended Module Config Updates
+
 ```groovy
 withName: 'OPAL_PER_SAMPLE' {
     label = 'process_medium'
@@ -374,6 +425,7 @@ withName: 'COMPARATIVE_ANALYSIS' {
 ## Action Items Summary
 
 ### Completed in This Audit (2025-11-29)
+
 1. [x] Fixed OPAL_PER_SAMPLE conda path
 2. [x] Fixed utils subworkflow meta.yml
 3. [x] Updated test snapshots
@@ -381,6 +433,7 @@ withName: 'COMPARATIVE_ANALYSIS' {
 5. [x] Verified all module tests pass (35/35)
 
 ### Remaining (Low Priority)
+
 1. [ ] Fix template file mismatches: `nf-core pipelines lint --fix files_unchanged`
 2. [ ] Update Zenodo DOI in README after first release
 3. [ ] Update subworkflows to latest versions

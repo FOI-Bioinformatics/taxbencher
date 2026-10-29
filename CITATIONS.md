@@ -10,9 +10,13 @@
 
 ## Pipeline tools
 
-- [OPAL](https://pubmed.ncbi.nlm.nih.gov/29718272/)
+- [OPAL](https://pubmed.ncbi.nlm.nih.gov/30871592/)
 
-  > Meyer F, Hofmann P, Belmann P, Garrido-Oter R, Fritz A, Sczyrba A, McHardy AC. AMBER: Assessment of Metagenome BinnERs. GigaScience. 2018;7(6):giy069. doi: 10.1093/gigascience/giy069. PubMed PMID: 29718272; PubMed Central PMCID: PMC6007274.
+  > Meyer F, Bremges A, Belmann P, Janssen S, McHardy AC, Koslicki D. Assessing taxonomic metagenome profilers with OPAL. Genome Biology. 2019;20(1):51. doi: 10.1186/s13059-019-1646-y. PubMed PMID: 30871592.
+
+- [ete3](https://pubmed.ncbi.nlm.nih.gov/26921390/)
+
+  > Huerta-Cepas J, Serra F, Bork P. ETE 3: Reconstruction, Analysis, and Visualization of Phylogenomic Data. Mol Biol Evol. 2016;33(6):1635-1638. doi: 10.1093/molbev/msw046. PubMed PMID: 26921390.
 
 - [taxpasta](https://doi.org/10.21105/joss.05627)
 

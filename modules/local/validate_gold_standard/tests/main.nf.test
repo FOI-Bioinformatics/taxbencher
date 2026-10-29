@@ -1,0 +1,90 @@
+nextflow_process {
+
+    name "Test Process VALIDATE_GOLD_STANDARD"
+    script "../main.nf"
+    process "VALIDATE_GOLD_STANDARD"
+
+    tag "modules"
+    tag "modules_local"
+    tag "validate_gold_standard"
+
+    test("validate gold standard - valid file and matching sample id") {
+
+        when {
+            process {
+                """
+                input[0] = file('${projectDir}/assets/test_data/gold_standard_realistic.bioboxes', checkIfExists: true)
+                input[1] = ['test1']
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out.gold_standard, process.out.versions).match() },
+                { assert path(process.out.report.get(0)).text.contains('VALID') },
+                { assert path(process.out.report.get(0)).text.contains('sample test1') }
+            )
+        }
+
+    }
+
+    test("validate gold standard - stub") {
+
+        options "-stub"
+
+        when {
+            process {
+                """
+                input[0] = file('${projectDir}/assets/test_data/gold_standard.bioboxes', checkIfExists: true)
+                input[1] = ['test_sample']
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    // Negative tests
+
+    test("validate gold standard - sample id missing from gold standard should fail") {
+
+        when {
+            process {
+                """
+                input[0] = file('${projectDir}/assets/test_data/gold_standard_realistic.bioboxes', checkIfExists: true)
+                input[1] = ['test1', 'not_in_gold_standard']
+                """
+            }
+        }
+
+        then {
+            assert process.failed
+        }
+
+    }
+
+    test("validate gold standard - malformed file should fail") {
+
+        when {
+            process {
+                """
+                input[0] = file('${moduleDir}/testdata/invalid_rank_sums.bioboxes', checkIfExists: true)
+                input[1] = ['bad']
+                """
+            }
+        }
+
+        then {
+            assert process.failed
+        }
+
+    }
+}

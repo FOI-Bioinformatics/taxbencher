@@ -1,14 +1,13 @@
+# Pinned to the versions inside the module container
+# (community.wave.seqera.io/library/python_pandas_scikit-learn_plotly_pruned:afa623fee18ad8e0)
+# so that -profile conda and -profile docker report identical software versions.
 name: comparative_analysis
 channels:
   - conda-forge
   - bioconda
-  - defaults
 dependencies:
-  - python=3.11
-  - pandas>=2.0
-  - scikit-learn>=1.3
-  - plotly>=5.0
-  - scipy>=1.11
-  - statsmodels>=0.14
-  - numpy>=1.24
-  - python-kaleido>=1.0  # For plotly static image export (conda-forge package)
+  - conda-forge::python=3.11.18
+  - conda-forge::pandas=3.1.0
+  - conda-forge::numpy=2.4.6
+  - conda-forge::scikit-learn=1.9.1
+  - conda-forge::plotly=7.1.0

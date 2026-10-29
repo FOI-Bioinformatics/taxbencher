@@ -30,11 +30,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-10-28T15:11:10.334849249",
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.7"
-        },
-        "timestamp": "2025-10-09T06:42:04.339714"
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.4"
+        }
     },
     "taxpasta standardise - megan6": {
         "content": [
@@ -67,11 +67,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-10-28T15:13:05.834247907",
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.7"
-        },
-        "timestamp": "2025-10-26T07:01:43.449186"
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.4"
+        }
     },
     "taxpasta standardise - diamond": {
         "content": [
@@ -104,11 +104,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-10-28T15:13:20.620209917",
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.7"
-        },
-        "timestamp": "2025-10-26T07:51:24.110356"
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.4"
+        }
     },
     "taxpasta standardise - kmcp": {
         "content": [
@@ -141,11 +141,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-10-28T15:13:35.377785454",
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.7"
-        },
-        "timestamp": "2025-10-26T07:02:00.373649"
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.4"
+        }
     },
     "taxpasta standardise - motus": {
         "content": [
@@ -178,11 +178,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-10-28T15:12:21.706710491",
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.7"
-        },
-        "timestamp": "2025-10-26T06:49:19.776587"
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.4"
+        }
     },
     "taxpasta standardise - stub": {
         "content": [
@@ -215,11 +215,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-10-28T15:13:48.170971451",
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.7"
-        },
-        "timestamp": "2025-10-09T06:42:23.812135"
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.4"
+        }
     },
     "taxpasta standardise - centrifuge": {
         "content": [
@@ -252,11 +252,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-10-28T15:11:24.570653544",
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.7"
-        },
-        "timestamp": "2025-10-10T07:37:31.035195"
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.4"
+        }
     },
     "taxpasta standardise - bracken": {
         "content": [
@@ -289,11 +289,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-10-28T15:11:53.808891272",
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.7"
-        },
-        "timestamp": "2025-10-26T06:34:40.198541"
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.4"
+        }
     },
     "taxpasta standardise - kaiju": {
         "content": [
@@ -326,11 +326,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-10-28T15:12:07.73656345",
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.7"
-        },
-        "timestamp": "2025-10-26T06:34:51.514697"
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.4"
+        }
     },
     "taxpasta standardise - metaphlan": {
         "content": [
@@ -363,11 +363,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-10-28T15:11:38.262468961",
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.7"
-        },
-        "timestamp": "2025-10-10T07:36:48.603781"
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.4"
+        }
     },
     "taxpasta standardise - ganon": {
         "content": [
@@ -400,11 +400,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-10-28T15:12:36.182937471",
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.7"
-        },
-        "timestamp": "2025-10-26T07:50:52.876782"
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.4"
+        }
     },
     "taxpasta standardise - krakenuniq": {
         "content": [
@@ -437,10 +437,10 @@
                 ]
             }
         ],
+        "timestamp": "2026-10-28T15:12:50.78728727",
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.7"
-        },
-        "timestamp": "2025-10-26T07:51:02.659356"
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.4"
+        }
     }
 }

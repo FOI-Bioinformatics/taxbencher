@@ -3,6 +3,7 @@
 This document provides a deep dive into the Nextflow patterns and channel operations used in taxbencher. For high-level architecture, see [Architecture](architecture.md).
 
 ## Table of Contents
+
 - [Channel Operations Reference](#channel-operations-reference)
 - [Pattern 1: Automatic Format Detection](#pattern-1-automatic-format-detection)
 - [Pattern 2: Per-Sample Grouping](#pattern-2-per-sample-grouping)
@@ -18,6 +19,7 @@ This document provides a deep dive into the Nextflow patterns and channel operat
 ### Basic Operations
 
 #### `.branch { }`
+
 Splits a channel into multiple output channels based on conditions.
 
 ```groovy
@@ -40,12 +42,14 @@ ch_branched.other          // Everything else
 ```
 
 **Key points**:
+
 - Each branch needs a `return` statement
 - Branches are mutually exclusive (first match wins)
 - Use `true` for catch-all branch
 - Set result to variable to access named branches
 
 #### `.map { }`
+
 Transforms each item in a channel.
 
 ```groovy
@@ -71,12 +75,14 @@ ch_input
 ```
 
 **Key points**:
+
 - Returns transformed item
 - Can change structure completely
 - Use for reshaping tuples
 - Careful with meta map mutation
 
 #### `.groupTuple()`
+
 Groups items by the first element (key).
 
 ```groovy
@@ -89,12 +95,14 @@ ch_input
 ```
 
 **Key points**:
+
 - Groups by first tuple element
 - Collects remaining elements into lists
 - Emits when all items collected (end of channel)
 - Use `.groupTuple(by: 1)` to group by different position
 
 #### `.combine()`
+
 Creates Cartesian product of two channels.
 
 ```groovy
@@ -108,11 +116,13 @@ ch_predictions
 ```
 
 **Key points**:
+
 - Every item from ch1 paired with every item from ch2
 - Use for adding reference files to all samples
 - Can combine value channels (single item) efficiently
 
 #### `.mix()`
+
 Merges multiple channels into one.
 
 ```groovy
@@ -122,12 +132,14 @@ ch_standardised = ch_already_standardised
 ```
 
 **Key points**:
+
 - Order not guaranteed
 - All channels must have same structure
 - Use for merging parallel branches
 - Does not wait for all channels to complete
 
 #### `.first()`
+
 Takes only the first emission from channel.
 
 ```groovy
@@ -136,12 +148,14 @@ ch_versions = ch_versions.mix(MODULE.out.versions.first())
 ```
 
 **Key points**:
+
 - Optimization for identical parallel outputs
 - Prevents collecting redundant files
 - Only takes first emission, ignores rest
 - Use when all items are identical
 
 #### `.subscribe { }`
+
 Executes code for each item without consuming channel.
 
 ```groovy
@@ -153,12 +167,14 @@ ch_input
 ```
 
 **Key points**:
+
 - Side effect only (logging, validation)
 - Does not transform channel
 - Does not consume channel (items still flow)
 - Use for debugging and logging
 
 #### `.collect()`
+
 Gathers all items into a single list.
 
 ```groovy
@@ -169,6 +185,7 @@ ch_multiqc_files.collect()
 ```
 
 **Key points**:
+
 - Waits for entire channel to complete
 - Emits single item (list)
 - Use for processes requiring all inputs
@@ -177,6 +194,7 @@ ch_multiqc_files.collect()
 ### Advanced Operations
 
 #### `.transpose()`
+
 Flattens nested lists while preserving tuple structure.
 
 ```groovy
@@ -191,6 +209,7 @@ ch_input
 ```
 
 #### `.flatten()`
+
 Completely flattens nested structures.
 
 ```groovy
@@ -202,6 +221,7 @@ ch_input
 ```
 
 #### `.toList()`
+
 Similar to `.collect()` but ensures single emission.
 
 ```groovy
@@ -210,6 +230,7 @@ MULTIQC.out.report.toList()
 ```
 
 #### `.ifEmpty()`
+
 Provides default value if channel is empty.
 
 ```groovy
@@ -273,6 +294,7 @@ ch_taxpasta = ch_branched.standardised
 ### Step-by-Step Breakdown
 
 **Step 1: Branch by extension**
+
 ```groovy
 ch_input.branch { meta, file ->
     standardised: file.name.endsWith('.tsv') || file.name.endsWith('.txt')
@@ -281,6 +303,7 @@ ch_input.branch { meta, file ->
 ```
 
 **Input**:
+
 ```
 [{sample_id:'s1', label:'s1_kraken2', classifier:'kraken2'}, s1.tsv]
 [{sample_id:'s1', label:'s1_metaphlan', classifier:'metaphlan'}, s1.profile]
@@ -288,6 +311,7 @@ ch_input.branch { meta, file ->
 ```
 
 **Output (two branches)**:
+
 ```
 ch_branched.standardised:
   [{sample_id:'s1', label:'s1_kraken2'}, s1.tsv]
@@ -298,12 +322,14 @@ ch_branched.needs_standardisation:
 ```
 
 **Step 2: Log decisions**
+
 ```groovy
 ch_branched.standardised.subscribe { ... log.info ... }
 ch_branched.needs_standardisation.subscribe { ... log.info ... }
 ```
 
 Output to user:
+
 ```
 [TAXBENCHER] Sample s1 | Label s1_kraken2 | Classifier kraken2: Using pre-standardised profile s1.tsv
 [TAXBENCHER] Sample s1 | Label s1_metaphlan | Classifier metaphlan: Standardising raw profiler output s1.profile
@@ -311,6 +337,7 @@ Output to user:
 ```
 
 **Step 3: Standardize if needed**
+
 ```groovy
 TAXPASTA_STANDARDISE(ch_branched.needs_standardisation)
 ```
@@ -319,12 +346,14 @@ TAXPASTA_STANDARDISE(ch_branched.needs_standardisation)
 **Output**: Standardized TSV files (s1_standardised.tsv, s2_standardised.tsv)
 
 **Step 4: Merge branches**
+
 ```groovy
 ch_taxpasta = ch_branched.standardised
     .mix(TAXPASTA_STANDARDISE.out.standardised)
 ```
 
 **Result**: Unified channel with all files in taxpasta TSV format
+
 ```
 [{sample_id:'s1', label:'s1_kraken2'}, s1.tsv]                    # From standardised branch
 [{sample_id:'s1', label:'s1_metaphlan'}, s1_standardised.tsv]     # From TAXPASTA_STANDARDISE
@@ -344,6 +373,7 @@ ch_taxpasta = ch_branched.standardised
 To add support for new file types:
 
 1. Update branch condition:
+
 ```groovy
 standardised: file.name.endsWith('.tsv') ||
               file.name.endsWith('.txt') ||
@@ -395,6 +425,7 @@ ch_bioboxes_per_sample = TAXPASTA_TO_BIOBOXES.out.bioboxes
 ### Detailed Transformation Walkthrough
 
 **Input**: TAXPASTA_TO_BIOBOXES output
+
 ```groovy
 [{id:'s1_kraken2', sample_id:'s1', label:'s1_kraken2', classifier:'kraken2'}, s1_kraken2.bioboxes]
 [{id:'s1_metaphlan', sample_id:'s1', label:'s1_metaphlan', classifier:'metaphlan'}, s1_metaphlan.bioboxes]
@@ -403,6 +434,7 @@ ch_bioboxes_per_sample = TAXPASTA_TO_BIOBOXES.out.bioboxes
 ```
 
 **After `.map { meta, bioboxes -> [meta.sample_id, meta.label, bioboxes] }`**:
+
 ```groovy
 ['s1', 's1_kraken2', s1_kraken2.bioboxes]
 ['s1', 's1_metaphlan', s1_metaphlan.bioboxes]
@@ -413,6 +445,7 @@ ch_bioboxes_per_sample = TAXPASTA_TO_BIOBOXES.out.bioboxes
 **Key insight**: Restructured to have `sample_id` as first element (grouping key).
 
 **After `.groupTuple()`**:
+
 ```groovy
 ['s1', ['s1_kraken2', 's1_metaphlan', 's1_centrifuge'], [s1_kraken2.bioboxes, s1_metaphlan.bioboxes, s1_centrifuge.bioboxes]]
 ['s2', ['s2_kraken2'], [s2_kraken2.bioboxes]]
@@ -421,6 +454,7 @@ ch_bioboxes_per_sample = TAXPASTA_TO_BIOBOXES.out.bioboxes
 **Key insight**: `groupTuple()` groups by first element, collecting rest into lists.
 
 **After `.combine(ch_gold_standard)`** (where `ch_gold_standard = [gold.bioboxes]`):
+
 ```groovy
 ['s1', ['s1_kraken2', 's1_metaphlan', 's1_centrifuge'], [s1_kraken2.bioboxes, s1_metaphlan.bioboxes, s1_centrifuge.bioboxes], gold.bioboxes]
 ['s2', ['s2_kraken2'], [s2_kraken2.bioboxes], gold.bioboxes]
@@ -429,6 +463,7 @@ ch_bioboxes_per_sample = TAXPASTA_TO_BIOBOXES.out.bioboxes
 **Key insight**: Gold standard added to every group.
 
 **After final `.map { }`**:
+
 ```groovy
 [
   {id:'s1', sample_id:'s1', labels:'s1_kraken2,s1_metaphlan,s1_centrifuge', num_classifiers:3},
@@ -448,11 +483,13 @@ ch_bioboxes_per_sample = TAXPASTA_TO_BIOBOXES.out.bioboxes
 ### Why This Pattern Works
 
 **Problem without grouping**:
+
 - OPAL would run separately for each classifier
 - No comparative analysis possible
 - Inefficient (3 OPAL runs instead of 1)
 
 **Solution with grouping**:
+
 - One OPAL run per biological sample
 - All classifiers compared fairly (same input)
 - Enables statistical analysis
@@ -484,6 +521,7 @@ Solves Nextflow cardinality matching problem by embedding files in tuple with me
 ### The Problem
 
 **Naive approach** (problematic):
+
 ```groovy
 // OPAL module with separate inputs
 process OPAL {
@@ -502,6 +540,7 @@ OPAL(
 ```
 
 **What happens**:
+
 ```
 Invocation 1 (sample1): Receives [meta1, gold], [pred1, pred2, pred3, pred_from_sample2]
 Invocation 2 (sample2): Receives [meta2, gold], [pred1, pred2, pred3, pred_from_sample2]
@@ -512,6 +551,7 @@ Every OPAL run gets ALL predictions, not just its own!
 ### The Solution
 
 **Tuple-embedded approach**:
+
 ```groovy
 // OPAL_PER_SAMPLE module with embedded predictions
 process OPAL_PER_SAMPLE {
@@ -530,6 +570,7 @@ OPAL_PER_SAMPLE(ch_bioboxes_per_sample)
 ```
 
 **What happens**:
+
 ```
 Invocation 1 (sample1): Receives [meta1, gold, [pred1_s1, pred2_s1, pred3_s1]]
 Invocation 2 (sample2): Receives [meta2, gold, [pred1_s2]]
@@ -540,6 +581,7 @@ Each OPAL run gets ONLY its predictions!
 ### Why This Works
 
 **Nextflow cardinality matching rules**:
+
 1. **Tuple inputs**: Items matched 1:1 by position in tuple
 2. **Separate inputs**: All items from second channel sent to every invocation
 
@@ -548,6 +590,7 @@ Each OPAL run gets ONLY its predictions!
 ### Code Comparison
 
 **Before (doesn't work)**:
+
 ```groovy
 // Workflow
 ch_meta_and_gold = ch_bioboxes
@@ -562,6 +605,7 @@ OPAL(
 ```
 
 **After (works perfectly)**:
+
 ```groovy
 // Workflow
 ch_grouped = ch_bioboxes
@@ -624,6 +668,7 @@ ch_versions = ch_versions.mix(OPAL_PER_SAMPLE.out.versions.first())
 ### Why `.first()`?
 
 **Without `.first()` (wasteful)**:
+
 ```groovy
 // TAXPASTA_TO_BIOBOXES runs 10 times (10 samples)
 // Each emits identical versions.yml:
@@ -639,6 +684,7 @@ ch_versions = ch_versions.mix(TAXPASTA_TO_BIOBOXES.out.versions)
 ```
 
 **With `.first()` (efficient)**:
+
 ```groovy
 ch_versions = ch_versions.mix(TAXPASTA_TO_BIOBOXES.out.versions.first())
 // Takes only first emission
@@ -649,11 +695,13 @@ ch_versions = ch_versions.mix(TAXPASTA_TO_BIOBOXES.out.versions.first())
 ### When to Use
 
 **Use `.first()` when**:
+
 - Module runs multiple times in parallel
 - Version info is identical across invocations
 - Example: Same tool, same container, same code
 
 **Don't use `.first()` when**:
+
 - Different modules (versions differ)
 - Version might vary by input
 - Example: Conditional tool selection
@@ -709,6 +757,7 @@ ch_branched.needs_standardisation
 ### Key Characteristics
 
 **`.subscribe { }` properties**:
+
 1. **Non-consuming**: Items still flow through channel
 2. **Side effect only**: For logging, validation, debugging
 3. **No transformation**: Cannot change channel contents
@@ -717,6 +766,7 @@ ch_branched.needs_standardisation
 ### Use Cases
 
 **1. Progress logging**:
+
 ```groovy
 ch_input
     .subscribe { meta, file ->
@@ -725,6 +775,7 @@ ch_input
 ```
 
 **2. Validation**:
+
 ```groovy
 ch_input
     .subscribe { meta, file ->
@@ -735,6 +786,7 @@ ch_input
 ```
 
 **3. Debugging**:
+
 ```groovy
 ch_grouped
     .subscribe { sample_id, labels, files ->
@@ -854,6 +906,7 @@ nextflow run main.nf -log .nextflow.log -debug
 ### Pitfall 1: Channel Cardinality Mismatch
 
 **Problem**:
+
 ```groovy
 // This doesn't work as expected
 process FOO {
@@ -864,6 +917,7 @@ process FOO {
 ```
 
 **Solution**: Embed in tuple
+
 ```groovy
 process FOO {
     input:
@@ -874,6 +928,7 @@ process FOO {
 ### Pitfall 2: Forgetting to Return in `.branch { }`
 
 **Problem**:
+
 ```groovy
 ch_input.branch { meta, file ->
     tsv: file.name.endsWith('.tsv')
@@ -883,6 +938,7 @@ ch_input.branch { meta, file ->
 ```
 
 **Solution**: Always return
+
 ```groovy
 ch_input.branch { meta, file ->
     tsv: file.name.endsWith('.tsv')
@@ -895,6 +951,7 @@ ch_input.branch { meta, file ->
 ### Pitfall 3: Mutating Meta Map
 
 **Problem**:
+
 ```groovy
 ch_input.map { meta, file ->
     meta.new_field = 'value'  // Mutates original meta!
@@ -904,6 +961,7 @@ ch_input.map { meta, file ->
 ```
 
 **Solution**: Create new meta
+
 ```groovy
 ch_input.map { meta, file ->
     def new_meta = meta.clone()
@@ -913,6 +971,7 @@ ch_input.map { meta, file ->
 ```
 
 Or use map constructor:
+
 ```groovy
 ch_input.map { meta, file ->
     def new_meta = [
@@ -927,6 +986,7 @@ ch_input.map { meta, file ->
 ### Pitfall 4: Using `.collect()` Too Early
 
 **Problem**:
+
 ```groovy
 // Collects all files into memory immediately
 ch_all_files = ch_input.collect()
@@ -935,6 +995,7 @@ PROCESS(ch_all_files)
 ```
 
 **Solution**: Collect only when needed
+
 ```groovy
 // Let files flow through pipeline
 PROCESS(ch_input)
@@ -946,12 +1007,14 @@ MULTIQC(ch_results.collect())
 ### Pitfall 5: Incorrect `.groupTuple()` Key
 
 **Problem**:
+
 ```groovy
 // Wants to group by sample_id, but sample_id is in meta (position 0)
 ch_input.groupTuple()  // Groups by entire meta map (wrong!)
 ```
 
 **Solution**: Extract key first
+
 ```groovy
 ch_input
     .map { meta, file -> [meta.sample_id, meta.label, file] }
@@ -961,6 +1024,7 @@ ch_input
 ### Pitfall 6: Channel Reuse
 
 **Problem**:
+
 ```groovy
 ch_input = Channel.fromPath('*.tsv')
 PROCESS1(ch_input)
@@ -968,6 +1032,7 @@ PROCESS2(ch_input)  // Empty! Channel already consumed
 ```
 
 **Solution**: Split channel
+
 ```groovy
 ch_input = Channel.fromPath('*.tsv')
 ch_input.into { ch_for_proc1; ch_for_proc2 }
@@ -976,6 +1041,7 @@ PROCESS2(ch_for_proc2)
 ```
 
 Or use value channel:
+
 ```groovy
 ch_reference = Channel.value(file('reference.fa'))
 PROCESS1(ch_input, ch_reference)  // Works!

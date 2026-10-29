@@ -3,6 +3,7 @@
 This document provides detailed specifications for all modules in the taxbencher pipeline.
 
 ## Table of Contents
+
 - [Module Overview](#module-overview)
 - [TAXPASTA_STANDARDISE](#taxpasta_standardise)
 - [TAXPASTA_TO_BIOBOXES](#taxpasta_to_bioboxes)
@@ -15,17 +16,23 @@ This document provides detailed specifications for all modules in the taxbencher
 
 ### Local Modules
 
-| Module | Purpose | Status | Container Strategy |
-|--------|---------|--------|-------------------|
-| TAXPASTA_STANDARDISE | Convert raw profiler outputs to taxpasta TSV | ✅ Production | Biocontainer |
-| TAXPASTA_TO_BIOBOXES | Convert taxpasta TSV to CAMI Bioboxes | ✅ Production | Wave (pandas+ete3) |
-| OPAL_PER_SAMPLE | Per-sample OPAL evaluation | ✅ Production | Biocontainer |
-| COMPARATIVE_ANALYSIS | Classifier comparison per sample | ⚠️ Stub | Wave (scipy stack) |
+| Module                 | Purpose                                                     | Status        | Container Strategy                  |
+| ---------------------- | ----------------------------------------------------------- | ------------- | ----------------------------------- |
+| VALIDATE_GOLD_STANDARD | Validate gold standard CAMI profile before evaluation       | ✅ Production | Biocontainer (python)               |
+| TAXPASTA_STANDARDISE   | Convert raw profiler outputs to taxpasta TSV                | ✅ Production | Biocontainer (taxpasta)             |
+| ETE3_BUILD_TAXDB       | Build ete3 taxonomy database from a pinned taxdump          | ✅ Production | Frozen Wave community (pandas+ete3) |
+| TAXPASTA_TO_BIOBOXES   | Convert taxpasta TSV to CAMI Bioboxes (per-rank abundances) | ✅ Production | Frozen Wave community (pandas+ete3) |
+| OPAL_PER_SAMPLE        | Per-sample OPAL evaluation                                  | ✅ Production | Biocontainer (cami-opal)            |
+| COMPARATIVE_ANALYSIS   | Classifier comparison per sample (metrics, PCA, per-taxon)  | ✅ Production | Frozen Wave community (scipy stack) |
+| BENCHMARK_SUMMARY      | Cross-sample summary and ranking, MultiQC content           | ✅ Production | Frozen Wave community (scipy stack) |
+
+New modules added in v1.3.0 (`VALIDATE_GOLD_STANDARD`, `ETE3_BUILD_TAXDB`, `BENCHMARK_SUMMARY`) are documented in
+their `meta.yml` files and in [docs/output.md](../output.md); the sections below describe the original modules.
 
 ### nf-core Modules
 
-| Module | Purpose | Version |
-|--------|---------|---------|
+| Module  | Purpose           | Version             |
+| ------- | ----------------- | ------------------- |
 | MULTIQC | Aggregate reports | Latest from nf-core |
 
 ---
@@ -50,6 +57,7 @@ tuple val(meta), path(profiler_output)
 ```
 
 **Meta map structure**:
+
 ```groovy
 meta = [
     id: 'sample1_kraken2',      // Process identifier
@@ -69,12 +77,14 @@ path "versions.yml"           , emit: versions
 ```
 
 **Output file**: `{meta.id}.tsv` - Standardized taxpasta format with columns:
+
 - `taxonomy_id`: NCBI taxonomy ID
 - `count`: Read count assigned to this taxon
 
 ### Implementation Details
 
 **Supported Profilers**:
+
 - bracken
 - centrifuge
 - diamond
@@ -88,16 +98,19 @@ path "versions.yml"           , emit: versions
 - motus
 
 **Validation**:
+
 - Classifier parameter validated against supported list
 - Input file existence and size checked
 - Output file creation verified
 
 **Error Handling**:
+
 - Clear error messages for unsupported classifiers
 - Troubleshooting hints for common issues
 - taxpasta log captured for debugging
 
 **Script**:
+
 ```bash
 # Validate classifier
 SUPPORTED_PROFILERS="bracken centrifuge diamond ganon kaiju kmcp kraken2 krakenuniq megan6 metaphlan motus"
@@ -125,6 +138,7 @@ fi
 ### When It Runs
 
 Automatically triggered for files with these extensions:
+
 - `.kreport`, `.kreport2` (Kraken2, Bracken)
 - `.profile`, `.mpa`, `.mpa3` (MetaPhlAn)
 - `.report` (Centrifuge)
@@ -135,6 +149,7 @@ Automatically triggered for files with these extensions:
 - `.krakenuniq` (KrakenUniq)
 
 **Skip** for:
+
 - `.tsv`, `.txt` (already standardized)
 
 ### Example Usage
@@ -153,6 +168,7 @@ TAXPASTA_STANDARDISE(ch_branched.needs_standardisation)
 ### Configuration
 
 In `conf/modules.config`:
+
 ```groovy
 withName: 'TAXPASTA_STANDARDISE' {
     ext.args = ''  // Additional taxpasta arguments
@@ -170,6 +186,7 @@ withName: 'TAXPASTA_STANDARDISE' {
 **Location**: `modules/local/taxpasta_standardise/tests/main.nf.test`
 
 **Test cases**:
+
 - Kraken2 standardization
 - MetaPhlAn standardization
 - Stub run
@@ -189,7 +206,8 @@ Converts taxpasta TSV format to CAMI profiling Bioboxes format required by OPAL.
 **Status**: ✅ Production-ready
 
 **Container**: Seqera Wave (pandas + ete3)
-- Wave URL: `community.wave.seqera.io/library/pip_ete3_pandas:3d986008f4614a7f`
+
+- Container: `community.wave.seqera.io/library/python_pandas_ete3:0aabbd50f04018cb` (frozen Wave community image, Python 3.11)
 - Fallback: Conda environment
 
 ### Inputs
@@ -200,6 +218,7 @@ tuple val(meta), path(taxpasta_tsv)
 ```
 
 **Meta map structure**:
+
 ```groovy
 meta = [
     id: 'sample1_kraken2',           // Process identifier
@@ -210,6 +229,7 @@ meta = [
 ```
 
 **Input file**: Taxpasta TSV with columns:
+
 - `taxonomy_id`: NCBI taxonomy ID
 - `count`: Read count
 
@@ -222,6 +242,7 @@ path "versions.yml"                , emit: versions
 ```
 
 **Output file**: `{meta.id}.bioboxes` - CAMI Bioboxes format with:
+
 - Headers: `@SampleID`, `@Version`, `@Ranks`, `@TaxonomyID`
 - Columns: `TAXID`, `RANK`, `TAXPATH`, `TAXPATHSN`, `PERCENTAGE`
 
@@ -230,23 +251,27 @@ path "versions.yml"                , emit: versions
 **Python script**: `bin/taxpasta_to_bioboxes.py`
 
 **Key features**:
+
 1. **Taxonomy lookup**: Uses ete3 to get full lineage paths
 2. **Percentage calculation**: Converts counts to percentages
 3. **Lineage paths**: Generates TAXPATH (IDs) and TAXPATHSN (names)
 4. **CAMI format**: Proper Bioboxes headers and formatting
 
 **Validation**:
+
 - Taxonomy database validated (NCBI, GTDB)
 - Input file existence and size checked
 - Output file creation verified
 - Graceful fallback if ete3 unavailable (uses placeholder paths)
 
 **Error Handling**:
+
 - Explicit validation before conversion
 - Clear error messages for failures
 - Output verification after completion
 
 **Script**:
+
 ```bash
 # Validate taxonomy database
 VALID_DBS="NCBI GTDB"
@@ -283,6 +308,7 @@ fi
 ### Example Transformation
 
 **Input (taxpasta TSV)**:
+
 ```
 taxonomy_id,count
 562,1000
@@ -290,6 +316,7 @@ taxonomy_id,count
 ```
 
 **Output (CAMI Bioboxes)**:
+
 ```
 @SampleID:sample1_kraken2
 @Version:0.9.1
@@ -303,6 +330,7 @@ taxonomy_id,count
 ### Configuration
 
 In `conf/modules.config`:
+
 ```groovy
 withName: 'TAXPASTA_TO_BIOBOXES' {
     ext.args = ''
@@ -319,6 +347,7 @@ withName: 'TAXPASTA_TO_BIOBOXES' {
 **Location**: `modules/local/taxpasta_to_bioboxes/tests/main.nf.test`
 
 **Test cases**:
+
 - NCBI taxonomy database
 - GTDB taxonomy database (if supported)
 - Stub run
@@ -347,6 +376,7 @@ tuple val(meta), path(gold_standard), path(predictions)
 **Critical design**: Predictions embedded in tuple (not separate channel)
 
 **Meta map structure**:
+
 ```groovy
 meta = [
     id: 'sample1',                         // Sample identifier
@@ -357,6 +387,7 @@ meta = [
 ```
 
 **Inputs**:
+
 - `gold_standard`: CAMI Bioboxes gold standard file
 - `predictions`: List of prediction bioboxes files for this sample
 
@@ -369,6 +400,7 @@ path "versions.yml"                     , emit: versions
 ```
 
 **Output directory**: `{meta.id}/` containing:
+
 - `results.html` - Interactive HTML report
 - `results.tsv` - Metrics table
 - `confusion.tsv` - Confusion matrix
@@ -378,6 +410,7 @@ path "versions.yml"                     , emit: versions
 ### Implementation Details
 
 **OPAL Metrics**:
+
 - **Precision**: Fraction of predicted taxa that are correct
 - **Recall**: Fraction of true taxa that are predicted
 - **F1 Score**: Harmonic mean of precision and recall
@@ -388,23 +421,27 @@ path "versions.yml"                     , emit: versions
 - **Bray-Curtis**: Abundance-based dissimilarity
 
 **Validation**:
+
 - Prediction count validated (warn if <2)
 - Gold standard file existence checked
 - Output directory explicitly created
 - OPAL output verification after execution
 
 **Error Handling**:
+
 - Comprehensive error messages with context
 - Common issues documented in error output
 - OPAL log captured for debugging
 - Known OPAL 1.0.13 bugs documented
 
 **Known Limitations**:
-- OPAL 1.0.13 has spider plot bug with minimal datasets (<100 taxa)
-- Workaround: Use realistic datasets for production
-- Test profile may fail (expected and documented)
+
+- OPAL 1.0.13 plotting code can fail on degenerate inputs (e.g. header-only or single-rank profiles);
+  earlier "spider plot" failures were caused by invalid profiles from the old converter, not by dataset size
+- OPAL silently skips profiles whose @SampleID has no gold standard match; the module turns this into an error
 
 **Script**:
+
 ```bash
 # Validate prediction count
 NUM_PREDICTIONS=${num_predictions}
@@ -451,6 +488,7 @@ fi
 **Why**: Solves Nextflow cardinality matching problem.
 
 **Problem**: Separate prediction channel sends ALL files to EVERY invocation:
+
 ```groovy
 # This would be wrong:
 input:
@@ -459,6 +497,7 @@ path(predictions)  // ALL predictions to EVERY process
 ```
 
 **Solution**: Embed predictions in tuple:
+
 ```groovy
 # Correct:
 input:
@@ -470,6 +509,7 @@ This allows `groupTuple()` to create sample-specific tuples with only relevant f
 ### Configuration
 
 In `conf/modules.config`:
+
 ```groovy
 withName: 'OPAL_PER_SAMPLE' {
     ext.args = ''
@@ -488,6 +528,7 @@ withName: 'OPAL_PER_SAMPLE' {
 **Location**: `modules/local/opal_per_sample/tests/main.nf.test`
 
 **Test cases**:
+
 - Stub run (passes)
 - Functional tests with minimal data (may fail due to OPAL bugs - expected)
 - Use `test_realistic` profile for functional validation
@@ -507,6 +548,7 @@ Performs statistical and visual comparison of classifiers within a biological sa
 **Status**: ⚠️ Infrastructure complete, statistical features planned
 
 **Container**: Seqera Wave (scipy stack)
+
 - Dependencies: pandas, scikit-learn, plotly, scipy, statsmodels, numpy, kaleido
 
 ### Inputs
@@ -518,6 +560,7 @@ path gold_standard
 ```
 
 **Meta map structure**:
+
 ```groovy
 meta = [
     id: 'sample1',
@@ -528,6 +571,7 @@ meta = [
 ```
 
 **Inputs**:
+
 - `opal_dir`: OPAL results directory for this sample
 - `gold_standard`: Gold standard bioboxes for differential analysis
 
@@ -542,6 +586,7 @@ path "versions.yml"                       , emit: versions
 ```
 
 **Output files**:
+
 - `{sample_id}_pca.html` - PCA plot of classifiers
 - `{sample_id}_diff_taxa.tsv` - Taxa significantly different from gold standard
 - `{sample_id}_comparison.html` - Comprehensive comparison report
@@ -553,6 +598,7 @@ path "versions.yml"                       , emit: versions
 **Python script**: `bin/comparative_analysis.py` (infrastructure complete)
 
 **Planned Features**:
+
 1. **PCA Analysis**: Plot classifiers in PC space based on performance metrics
 2. **Statistical Testing**: Chi-square or similar tests for differential abundance
 3. **Interactive Visualizations**: Plotly-based HTML reports
@@ -560,6 +606,7 @@ path "versions.yml"                       , emit: versions
 5. **Top Misclassifications**: Identify commonly misclassified taxa
 
 **Dependencies Available**:
+
 - pandas: Data manipulation
 - scikit-learn: PCA and machine learning
 - plotly: Interactive visualizations
@@ -571,6 +618,7 @@ path "versions.yml"                       , emit: versions
 ### Stub Implementation
 
 **Current**:
+
 ```bash
 touch ${prefix}_pca.html
 touch ${prefix}_diff_taxa.tsv
@@ -582,23 +630,19 @@ touch ${prefix}_comparison.html
 ### Roadmap
 
 **High Priority**:
+
 1. PCA visualization from OPAL metrics
 2. Basic comparison tables
 3. HTML report generation
 
-**Medium Priority**:
-4. Statistical testing for differential abundance
-5. Jaccard similarity heatmaps
-6. Interactive plots
+**Medium Priority**: 4. Statistical testing for differential abundance 5. Jaccard similarity heatmaps 6. Interactive plots
 
-**Low Priority**:
-7. Advanced visualizations
-8. Custom metric calculations
-9. Export options
+**Low Priority**: 7. Advanced visualizations 8. Custom metric calculations 9. Export options
 
 ### Configuration
 
 In `conf/modules.config`:
+
 ```groovy
 withName: 'COMPARATIVE_ANALYSIS' {
     ext.args = ''
@@ -615,6 +659,7 @@ withName: 'COMPARATIVE_ANALYSIS' {
 **Location**: `modules/local/comparative_analysis/tests/main.nf.test`
 
 **Test cases**:
+
 - Stub run (passes)
 
 **Note**: Functional tests require implementation of analysis features.
@@ -636,6 +681,7 @@ Aggregates results from all modules into a single HTML report.
 ### Inputs
 
 Collects outputs from:
+
 - TAXPASTA_STANDARDISE (if saved)
 - TAXPASTA_TO_BIOBOXES
 - OPAL_PER_SAMPLE
@@ -657,6 +703,7 @@ path "versions.yml"        , emit: versions
 **Location**: `assets/multiqc_config.yml`
 
 **Custom sections**:
+
 - Software versions
 - Workflow summary
 - OPAL metrics (if parseable)
@@ -668,11 +715,13 @@ path "versions.yml"        , emit: versions
 ### Creating a New Module
 
 **1. Use nf-core tools**:
+
 ```bash
 nf-core modules create MODULE_NAME
 ```
 
 **2. Follow template structure**:
+
 ```groovy
 process MODULE_NAME {
     tag "$meta.id"
@@ -715,32 +764,38 @@ process MODULE_NAME {
 ### Best Practices
 
 **1. Meta Map Pattern**:
+
 - Always use `tuple val(meta), path(file)` for inputs
 - Propagate meta to outputs
 - Use `meta.id` for unique identifiers
 
 **2. Version Tracking**:
+
 - Always emit `versions.yml`
 - Include all relevant tool versions
 - Use robust version extraction
 
 **3. Error Handling**:
+
 - Validate inputs before processing
 - Provide clear error messages
 - Check output creation
 - Capture logs for debugging
 
 **4. Stub Runs**:
+
 - Always implement stub section
 - Create realistic output structure
 - Enable fast CI/CD testing
 
 **5. Configuration**:
+
 - Support `task.ext.args` for flexibility
 - Support `task.ext.prefix` for custom naming
 - Support `task.ext.when` for conditional execution
 
 **6. Testing**:
+
 - Write comprehensive nf-test tests
 - Test normal cases, edge cases, failures
 - Use snapshot testing

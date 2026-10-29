@@ -3,16 +3,53 @@
     IMPORT MODULES / SUBWORKFLOWS / FUNCTIONS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
+include { VALIDATE_GOLD_STANDARD } from '../modules/local/validate_gold_standard/main'
+include { ETE3_BUILD_TAXDB       } from '../modules/local/ete3_build_taxdb/main'
 include { TAXPASTA_STANDARDISE   } from '../modules/local/taxpasta_standardise/main'
 include { TAXPASTA_TO_BIOBOXES   } from '../modules/local/taxpasta_to_bioboxes/main'
-// NOTE: OPAL module deprecated in favor of OPAL_PER_SAMPLE which handles per-sample evaluation
 include { OPAL_PER_SAMPLE        } from '../modules/local/opal_per_sample/main'
 include { COMPARATIVE_ANALYSIS   } from '../modules/local/comparative_analysis/main'
+include { BENCHMARK_SUMMARY      } from '../modules/local/benchmark_summary/main'
 include { MULTIQC                } from '../modules/nf-core/multiqc/main'
 include { paramsSummaryMap       } from 'plugin/nf-schema'
 include { paramsSummaryMultiqc   } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_taxbencher_pipeline'
+
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    FUNCTIONS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+//
+// Decide whether an input file is already a taxpasta standardised profile.
+// A .tsv/.txt file whose header row contains the 'taxonomy_id' and 'count' columns is
+// considered standardised; anything else is sent through taxpasta (DIAMOND and MEGAN6
+// raw outputs are also tab separated text files, so the extension alone is not enough).
+// Remote files are judged by extension only.
+//
+def isStandardisedProfile(input_file) {
+    def name = input_file.name.toLowerCase()
+    if (!(name.endsWith('.tsv') || name.endsWith('.txt'))) {
+        return false
+    }
+    if (input_file.toString() ==~ /^[a-zA-Z][a-zA-Z0-9+.-]*:\/\/.*/ ) {
+        return true
+    }
+    def header = null
+    try {
+        input_file.withReader { reader -> header = reader.readLine() }
+    } catch (Exception e) {
+        log.warn "[TAXBENCHER] Could not read header of ${input_file}: ${e.message}; assuming taxpasta format"
+        return true
+    }
+    if (header == null) {
+        return true
+    }
+    def columns = header.split('\t').collect { column -> column.trim().toLowerCase() }
+    return columns.contains('taxonomy_id') && columns.contains('count')
+}
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -24,176 +61,190 @@ workflow TAXBENCHER {
 
     take:
     ch_input         // channel: [ [meta], path(input_file) ] - Can be taxpasta TSV or raw profiler output
-    ch_gold_standard // channel: path(gold_standard.bioboxes)
+    ch_gold_standard // channel: path(gold_standard.bioboxes) (value channel)
+    ch_taxdump       // channel: path(taxdump.tar.gz) (value channel) or empty
+    multiqc_config
+    multiqc_logo
+    multiqc_methods_description
+    outdir
 
     main:
 
-    ch_versions = Channel.empty()
-    ch_multiqc_files = Channel.empty()
+    def ch_versions = channel.empty()
+    def ch_multiqc_files = channel.empty()
 
     //
-    // BRANCH: Separate inputs that need standardization from those that don't
-    // Check file extension to determine if taxpasta standardisation is needed
-    // .tsv or .txt files are already standardized, others need processing
+    // MODULE: Validate the gold standard (CAMI format, per-rank sums, one @SampleID block per sample)
+    // Downstream processes use the validated file so that OPAL never runs on a malformed gold standard.
     //
-    ch_input
-        .branch { meta, file ->
-            standardised: file.name.endsWith('.tsv') || file.name.endsWith('.txt')
-                return [meta, file]
+    def ch_sample_ids = ch_input.map { meta, _file -> meta.sample_id }.unique().collect()
+    VALIDATE_GOLD_STANDARD(ch_gold_standard, ch_sample_ids)
+    ch_versions = ch_versions.mix(VALIDATE_GOLD_STANDARD.out.versions)
+    def ch_gold_standard_validated = VALIDATE_GOLD_STANDARD.out.gold_standard
+
+    //
+    // BRANCH: Separate inputs that need standardisation from those that don't
+    //
+    def ch_branched = ch_input
+        .branch { meta, input_file ->
+            standardised: isStandardisedProfile(input_file)
+                return [meta, input_file]
             needs_standardisation: true
-                return [meta, file]
+                return [meta, input_file]
         }
-        .set { ch_branched }
 
-    //
-    // Log format detection for user visibility
-    //
     ch_branched.standardised
-        .subscribe { meta, file ->
-            log.info "[TAXBENCHER] Sample ${meta.sample_id} | Label ${meta.label} | Classifier ${meta.classifier}: Using pre-standardised profile ${file.name}"
+        .subscribe { meta, input_file ->
+            log.info "[TAXBENCHER] Sample ${meta.sample_id} | Label ${meta.label} | Classifier ${meta.classifier}: Using pre-standardised profile ${input_file.name}"
         }
 
     ch_branched.needs_standardisation
-        .subscribe { meta, file ->
-            log.info "[TAXBENCHER] Sample ${meta.sample_id} | Label ${meta.label} | Classifier ${meta.classifier}: Standardising raw profiler output ${file.name}"
+        .subscribe { meta, input_file ->
+            log.info "[TAXBENCHER] Sample ${meta.sample_id} | Label ${meta.label} | Classifier ${meta.classifier}: Standardising raw profiler output ${input_file.name}"
         }
 
     //
-    // MODULE: Standardise raw profiler outputs (optional)
-    // Only runs for files that are not already in taxpasta TSV format
+    // MODULE: Standardise raw profiler outputs (only for files not already in taxpasta format)
     //
     TAXPASTA_STANDARDISE(ch_branched.needs_standardisation)
-    // NOTE: .first() optimization - versions.yml content is identical across all invocations
     ch_versions = ch_versions.mix(TAXPASTA_STANDARDISE.out.versions.first())
 
-    //
-    // CHANNEL: Combine standardised and already-standardised files
-    // This creates a unified channel of taxpasta TSV files for downstream processing
-    //
-    ch_taxpasta = ch_branched.standardised
+    def ch_taxpasta = ch_branched.standardised
         .mix(TAXPASTA_STANDARDISE.out.standardised)
+
+    //
+    // MODULE: Build the ete3 taxonomy database once from a pinned taxdump (optional).
+    // Without --taxdump, ete3 uses/downloads its default database inside each task.
+    //
+    ETE3_BUILD_TAXDB(ch_taxdump)
+    ch_versions = ch_versions.mix(ETE3_BUILD_TAXDB.out.versions)
+    def ch_taxdb = ETE3_BUILD_TAXDB.out.db.toList().map { files -> files ? files.flatten() : [] }
 
     //
     // MODULE: Convert taxpasta profiles to CAMI Bioboxes format
     //
     TAXPASTA_TO_BIOBOXES (
-        ch_taxpasta
+        ch_taxpasta,
+        ch_taxdb
     )
-    // NOTE: .first() optimization - versions.yml content is identical across all invocations
     ch_versions = ch_versions.mix(TAXPASTA_TO_BIOBOXES.out.versions.first())
 
     //
-    // Group bioboxes by sample_id for per-sample OPAL evaluation
-    // Each biological sample gets its own OPAL run with all its classifiers
+    // Group bioboxes by sample_id for per-sample OPAL evaluation.
+    // Labels and files are kept in the same order so OPAL's -l matches the file list.
     //
-    // Step 1: Map to [sample_id, label, bioboxes]
-    // Step 2: Group by sample_id using groupTuple
-    // Step 3: Combine with gold standard
-    // Step 4: Transpose to expand bioboxes list while keeping meta+gold together
-    //
-    ch_bioboxes_per_sample = TAXPASTA_TO_BIOBOXES.out.bioboxes
-        .map { meta, bioboxes ->
-            [meta.sample_id, meta.label, bioboxes]
-        }
-        .groupTuple()  // Groups by sample_id: [sample_id, [labels...], [bioboxes...]]
-        .combine(ch_gold_standard)
-        .map { sample_id, labels, bioboxes_files, gold_std ->
-            // Create meta for this sample_id group
+    def ch_bioboxes_per_sample = TAXPASTA_TO_BIOBOXES.out.bioboxes
+        .map { meta, bioboxes -> [meta.sample_id, meta.label, bioboxes] }
+        .groupTuple()
+        .map { sample_id, labels, bioboxes_files ->
+            def order = (0..<labels.size()).toList().sort { index -> labels[index] }
+            def sorted_labels = order.collect { index -> labels[index] }
+            def sorted_files = order.collect { index -> bioboxes_files[index] }
             def meta_grouped = [
                 id: sample_id,
                 sample_id: sample_id,
-                labels: labels.join(','),
-                num_classifiers: labels.size()
+                labels: sorted_labels.join(','),
+                num_classifiers: sorted_labels.size()
             ]
-            // Return: [meta, gold_standard, [bioboxes_files]]
-            tuple(meta_grouped, gold_std, bioboxes_files)
+            [meta_grouped, sorted_files]
         }
 
     //
     // MODULE: Run OPAL evaluation per sample_id
-    // OPAL_PER_SAMPLE is invoked once per sample_id with that sample's bioboxes files
-    //
-    // The ch_bioboxes_per_sample channel already contains:
-    // [meta_grouped, gold_standard, [bioboxes_files]]
-    //
-    // This matches OPAL_PER_SAMPLE signature:
-    // tuple val(meta), path(gold_standard), path(predictions)
     //
     OPAL_PER_SAMPLE (
         ch_bioboxes_per_sample
+            .combine(ch_gold_standard_validated)
+            .map { meta, bioboxes_files, gold_std -> tuple(meta, gold_std, bioboxes_files) }
     )
-    // NOTE: .first() optimization - versions.yml content is identical across all invocations
     ch_versions = ch_versions.mix(OPAL_PER_SAMPLE.out.versions.first())
-    ch_multiqc_files = ch_multiqc_files.mix(OPAL_PER_SAMPLE.out.results.map { meta, dir -> dir })
 
     //
     // MODULE: Comparative analysis of classifiers per sample
-    // Generates PCA plots, differential taxa analysis, and comparison reports
+    // Joined with the sample's bioboxes files so that per-taxon comparisons are possible.
     //
+    def ch_comparative_input = OPAL_PER_SAMPLE.out.results
+        .map { meta, opal_dir -> [meta.id, meta, opal_dir] }
+        .join(ch_bioboxes_per_sample.map { meta, bioboxes_files -> [meta.id, bioboxes_files] }, failOnMismatch: true)
+        .map { _id, meta, opal_dir, bioboxes_files -> [meta, opal_dir, bioboxes_files] }
+
     COMPARATIVE_ANALYSIS (
-        OPAL_PER_SAMPLE.out.results,
-        ch_gold_standard
+        ch_comparative_input,
+        ch_gold_standard_validated
     )
-    // NOTE: .first() optimization - versions.yml content is identical across all invocations
     ch_versions = ch_versions.mix(COMPARATIVE_ANALYSIS.out.versions.first())
-    ch_multiqc_files = ch_multiqc_files.mix(COMPARATIVE_ANALYSIS.out.comparison_report.map { meta, html -> html })
+    ch_multiqc_files = ch_multiqc_files.mix(COMPARATIVE_ANALYSIS.out.multiqc.map { _meta, mqc -> mqc })
+
+    //
+    // MODULE: Cross-sample summary (mean/median/sd per classifier and rank, ranking) for MultiQC
+    //
+    BENCHMARK_SUMMARY (
+        COMPARATIVE_ANALYSIS.out.metrics_wide.map { _meta, tsv -> tsv }.collect()
+    )
+    ch_versions = ch_versions.mix(BENCHMARK_SUMMARY.out.versions)
+    ch_multiqc_files = ch_multiqc_files.mix(BENCHMARK_SUMMARY.out.multiqc.flatten())
 
     //
     // Collate and save software versions
+    // Local modules emit versions.yml files; nf-core modules publish to the 'versions' topic.
     //
-    softwareVersionsToYAML(ch_versions)
+    def topic_versions = channel.topic("versions")
+        .distinct()
+        .branch { entry ->
+            versions_file: entry instanceof Path
+            versions_tuple: true
+        }
+
+    def topic_versions_string = topic_versions.versions_tuple
+        .map { process, tool, version ->
+            [ process[process.lastIndexOf(':')+1..-1], "  ${tool}: ${version}" ]
+        }
+        .groupTuple(by:0)
+        .map { process, tool_versions ->
+            tool_versions.unique().sort()
+            "${process}:\n${tool_versions.join('\n')}"
+        }
+
+    def ch_collated_versions = softwareVersionsToYAML(ch_versions.mix(topic_versions.versions_file))
+        .mix(topic_versions_string)
         .collectFile(
-            storeDir: "${params.outdir}/pipeline_info",
+            storeDir: "${outdir}/pipeline_info",
             name:  'taxbencher_software_'  + 'mqc_'  + 'versions.yml',
             sort: true,
             newLine: true
-        ).set { ch_collated_versions }
-
+        )
 
     //
     // MODULE: MultiQC
     //
-    ch_multiqc_config        = Channel.fromPath(
-        "$projectDir/assets/multiqc_config.yml", checkIfExists: true)
-    ch_multiqc_custom_config = params.multiqc_config ?
-        Channel.fromPath(params.multiqc_config, checkIfExists: true) :
-        Channel.empty()
-    ch_multiqc_logo          = params.multiqc_logo ?
-        Channel.fromPath(params.multiqc_logo, checkIfExists: true) :
-        Channel.empty()
-
-    summary_params      = paramsSummaryMap(
-        workflow, parameters_schema: "nextflow_schema.json")
-    ch_workflow_summary = Channel.value(paramsSummaryMultiqc(summary_params))
-    ch_multiqc_files = ch_multiqc_files.mix(
-        ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
-    ch_multiqc_custom_methods_description = params.multiqc_methods_description ?
-        file(params.multiqc_methods_description, checkIfExists: true) :
-        file("$projectDir/assets/methods_description_template.yml", checkIfExists: true)
-    ch_methods_description                = Channel.value(
-        methodsDescriptionText(ch_multiqc_custom_methods_description))
-
     ch_multiqc_files = ch_multiqc_files.mix(ch_collated_versions)
-    ch_multiqc_files = ch_multiqc_files.mix(
-        ch_methods_description.collectFile(
-            name: 'methods_description_mqc.yaml',
-            sort: true
-        )
-    )
-
-    MULTIQC (
-        ch_multiqc_files.collect(),
-        ch_multiqc_config.toList(),
-        ch_multiqc_custom_config.toList(),
-        ch_multiqc_logo.toList(),
-        [],
-        []
+    def ch_summary_params = paramsSummaryMap(workflow, parameters_schema: "nextflow_schema.json")
+    def ch_workflow_summary = channel.value(paramsSummaryMultiqc(ch_summary_params))
+    ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
+    def ch_multiqc_custom_methods_description = multiqc_methods_description
+        ? file(multiqc_methods_description, checkIfExists: true)
+        : file("${projectDir}/assets/methods_description_template.yml", checkIfExists: true)
+    def ch_methods_description = channel.value(methodsDescriptionText(ch_multiqc_custom_methods_description))
+    ch_multiqc_files = ch_multiqc_files.mix(ch_methods_description.collectFile(name: 'methods_description_mqc.yaml', sort: true))
+    MULTIQC(
+        ch_multiqc_files.flatten().collect().map { files ->
+            [
+                [id: 'taxbencher'],
+                files,
+                multiqc_config
+                    ? file(multiqc_config, checkIfExists: true)
+                    : file("${projectDir}/assets/multiqc_config.yml", checkIfExists: true),
+                multiqc_logo ? file(multiqc_logo, checkIfExists: true) : [],
+                [],
+                [],
+            ]
+        }
     )
 
     emit:
-    opal_results   = OPAL_PER_SAMPLE.out.results // channel: [ [meta], path(opal_results/) ]
-    multiqc_report = MULTIQC.out.report.toList() // channel: /path/to/multiqc_report.html
-    versions       = ch_versions                 // channel: [ path(versions.yml) ]
+    opal_results   = OPAL_PER_SAMPLE.out.results                                    // channel: [ [meta], path(opal_results/) ]
+    multiqc_report = MULTIQC.out.report.map { _meta, report -> [report] }.toList()  // channel: /path/to/multiqc_report.html
+    versions       = ch_versions                                                    // channel: [ path(versions.yml) ]
 
 }
 

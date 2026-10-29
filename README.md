@@ -4,8 +4,8 @@
 [![GitHub Actions Linting Status](https://github.com/FOI-Bioinformatics/taxbencher/actions/workflows/linting.yml/badge.svg)](https://github.com/FOI-Bioinformatics/taxbencher/actions/workflows/linting.yml)[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)
 [![nf-test](https://img.shields.io/badge/unit_tests-nf--test-337ab7.svg)](https://www.nf-test.com)
 
-[![Nextflow](https://img.shields.io/badge/version-%E2%89%A524.10.5-green?style=flat&logo=nextflow&logoColor=white&color=%230DC09D&link=https%3A%2F%2Fnextflow.io)](https://www.nextflow.io/)
-[![nf-core template version](https://img.shields.io/badge/nf--core_template-3.4.1-green?style=flat&logo=nfcore&logoColor=white&color=%2324B064&link=https%3A%2F%2Fnf-co.re)](https://github.com/nf-core/tools/releases/tag/3.4.1)
+[![Nextflow](https://img.shields.io/badge/version-%E2%89%A525.10.4-green?style=flat&logo=nextflow&logoColor=white&color=%230DC09D&link=https%3A%2F%2Fnextflow.io)](https://www.nextflow.io/)
+[![nf-core template version](https://img.shields.io/badge/nf--core_template-4.2.1-green?style=flat&logo=nfcore&logoColor=white&color=%2324B064&link=https%3A%2F%2Fnf-co.re)](https://github.com/nf-core/tools/releases/tag/4.2.1)
 [![run with conda](http://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&logo=anaconda)](https://docs.conda.io/en/latest/)
 [![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
 [![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
@@ -17,15 +17,21 @@
 
 **Pipeline steps:**
 
-1. Convert taxpasta profiles to CAMI Bioboxes format ([`TAXPASTA_TO_BIOBOXES`](modules/local/taxpasta_to_bioboxes/))
-2. Evaluate predictions against gold standard ([`OPAL`](https://github.com/CAMI-challenge/OPAL))
-3. Aggregate results ([`MultiQC`](http://multiqc.info/))
+1. Validate the gold standard CAMI profile ([`VALIDATE_GOLD_STANDARD`](modules/local/validate_gold_standard/))
+2. Standardise raw profiler outputs with [taxpasta](https://taxpasta.readthedocs.io/) when needed ([`TAXPASTA_STANDARDISE`](modules/local/taxpasta_standardise/))
+3. Build a pinned NCBI taxonomy database from `--taxdump` ([`ETE3_BUILD_TAXDB`](modules/local/ete3_build_taxdb/))
+4. Convert profiles to CAMI Bioboxes format with per-rank clade abundances ([`TAXPASTA_TO_BIOBOXES`](modules/local/taxpasta_to_bioboxes/))
+5. Evaluate all classifiers of a sample against the gold standard ([`OPAL`](https://github.com/CAMI-challenge/OPAL))
+6. Compare classifiers per sample: metrics tables, PCA, per-taxon agreement ([`COMPARATIVE_ANALYSIS`](modules/local/comparative_analysis/))
+7. Summarise and rank classifiers across samples ([`BENCHMARK_SUMMARY`](modules/local/benchmark_summary/))
+8. Aggregate results ([`MultiQC`](http://multiqc.info/))
 
 ## Features
 
-- **Standardized Format Conversion**: Converts taxpasta TSV to CAMI Bioboxes format
-- **Comprehensive Metrics**: Precision, recall, F1, UniFrac, Shannon diversity, Bray-Curtis, and more
-- **Built-in Validation**: Pre-flight validation tools for taxpasta and bioboxes formats
+- **Standardized Format Conversion**: Converts taxpasta TSV (or raw profiler output) to valid CAMI Bioboxes profiles
+- **Reproducible Taxonomy**: Pinned NCBI `taxdump.tar.gz` via `--taxdump`, no downloads inside tasks
+- **Comprehensive Metrics**: Precision, recall, F1, UniFrac, Shannon diversity, Bray-Curtis, and more, summarised in MultiQC
+- **Built-in Validation**: Samplesheet schema validation, gold standard sample ID check, pre-flight validation tools for taxpasta and bioboxes formats
 - **nf-core Compliance**: Built using nf-core template with best practices
 - **Full Container Support**: 100% Docker coverage via Seqera Wave, plus Singularity and Conda
 - **Extensive Testing**: Full nf-test suite with validated test data
@@ -38,21 +44,16 @@
 
 ### Test Profiles
 
-Two test profiles are available for validating your setup:
+Three test profiles are available for validating your setup; all run offline against a reduced, pinned NCBI taxonomy:
 
-- **`test`**: Minimal test dataset (12 taxa, 1 classifier) - Quick validation of pipeline structure
-- **`test_realistic`**: Comprehensive test dataset (40+ taxa, 3 classifiers) - **Recommended** for full functionality validation
+- **`test`**: Three pre-standardised taxpasta profiles of one sample
+- **`test_raw`**: Raw Kraken2, Centrifuge and MetaPhlAn outputs that are standardised by the pipeline
+- **`test_realistic`**: Larger profiles (~50 taxa including strains, 3 classifiers)
 
 ```bash
-# Quick structure validation (may fail at OPAL due to minimal data)
-nextflow run FOI-Bioinformatics/taxbencher -profile test,conda
-
-# Full functionality validation (recommended - proves pipeline works correctly)
-nextflow run FOI-Bioinformatics/taxbencher -profile test_realistic,conda
+nextflow run FOI-Bioinformatics/taxbencher -profile test,docker --outdir results_test
+nextflow run FOI-Bioinformatics/taxbencher -profile test_realistic,docker --outdir results_realistic
 ```
-
-> [!TIP]
-> The `test_realistic` profile is recommended for validating your installation, as it includes realistic data that passes all OPAL evaluation steps. The minimal `test` profile may encounter OPAL spider plot errors due to insufficient taxa (known limitation of OPAL 1.0.13).
 
 First, prepare a samplesheet with your input data that looks as follows:
 
@@ -81,6 +82,7 @@ Profiles with the same `sample_id` are evaluated together in a single OPAL run, 
 
 > [!TIP]
 > **Always validate your input files before running the pipeline:**
+>
 > ```bash
 > # Validate taxpasta files
 > python3 bin/validate_taxpasta.py sample1_kraken2.tsv
@@ -94,6 +96,7 @@ Profiles with the same `sample_id` are evaluated together in a single OPAL run, 
 >   -o gold_standard_fixed.bioboxes \
 >   -s sample_id
 > ```
+>
 > See **[Gold Standard Troubleshooting](docs/troubleshooting-gold-standard.md)** for detailed validation and fixing guide.
 
 Now, you can run the pipeline using:
@@ -108,13 +111,13 @@ nextflow run FOI-Bioinformatics/taxbencher \
 
 ### Recommended Profiles
 
-| Platform | Recommended Profile | Notes |
-|----------|-------------------|-------|
-| **Linux x86_64** | `docker,wave` | Best performance, full functionality, 100% module coverage |
-| **Linux ARM64** | `conda` | Docker/Singularity containers are AMD64 only |
-| **macOS (Intel)** | `docker,wave` | Full functionality with Wave containers |
-| **macOS (Apple Silicon)** | `conda` | ⚠️ **Docker has limitations** (see below) |
-| **HPC/Cluster** | `singularity,wave` or `conda` | Depends on cluster configuration |
+| Platform                  | Recommended Profile           | Notes                                                      |
+| ------------------------- | ----------------------------- | ---------------------------------------------------------- |
+| **Linux x86_64**          | `docker,wave`                 | Best performance, full functionality, 100% module coverage |
+| **Linux ARM64**           | `conda`                       | Docker/Singularity containers are AMD64 only               |
+| **macOS (Intel)**         | `docker,wave`                 | Full functionality with Wave containers                    |
+| **macOS (Apple Silicon)** | `conda`                       | ⚠️ **Docker has limitations** (see below)                  |
+| **HPC/Cluster**           | `singularity,wave` or `conda` | Depends on cluster configuration                           |
 
 > [!WARNING]
 > **Apple Silicon (M1/M2/M3) Limitations**: When using `-profile docker,wave` on Apple Silicon Macs, the MultiQC step may fail with "Illegal instruction" errors due to AMD64/ARM64 architecture incompatibility. The core benchmarking processes (TAXPASTA_STANDARDISE, TAXPASTA_TO_BIOBOXES, OPAL) work correctly and produce all evaluation metrics. **Recommended solution**: Use `-profile conda` on Apple Silicon for full compatibility.
@@ -122,6 +125,7 @@ nextflow run FOI-Bioinformatics/taxbencher \
 ### Profile Details
 
 **Conda** (Recommended for macOS):
+
 ```bash
 nextflow run FOI-Bioinformatics/taxbencher \
    -profile conda \
@@ -131,6 +135,7 @@ nextflow run FOI-Bioinformatics/taxbencher \
 ```
 
 **Docker with Wave** (Recommended for Linux/Intel Mac):
+
 ```bash
 nextflow run FOI-Bioinformatics/taxbencher \
    -profile docker,wave \
@@ -142,6 +147,7 @@ nextflow run FOI-Bioinformatics/taxbencher \
 > Wave automatically builds containers for modules requiring scientific Python packages (TAXPASTA_TO_BIOBOXES, COMPARATIVE_ANALYSIS)
 
 **Singularity with Wave** (HPC/Linux):
+
 ```bash
 nextflow run FOI-Bioinformatics/taxbencher \
    -profile singularity,wave \
@@ -158,15 +164,18 @@ nextflow run FOI-Bioinformatics/taxbencher \
 For detailed information, see:
 
 ### User Documentation
+
 - **[Usage Guide](docs/usage.md)** - Complete usage instructions, parameters, and configuration
 - **[Output Files](docs/output.md)** - Description of output files and OPAL metrics interpretation
 - **[Gold Standard Troubleshooting](docs/troubleshooting-gold-standard.md)** - Validate and fix gold standard files
 - **[Validation Tools](docs/local_testing.md#validation-scripts)** - Pre-flight validation scripts and local testing
 
 ### Developer Documentation
+
 - **[Developer Hub](docs/development/README.md)** - Complete developer documentation
 - **[Contributing Guide](CLAUDE.md)** - Quick start for developers and architecture overview
-- **[Code Quality Report](docs/reports/code-quality.md)** - Latest quality assessment (Grade: A-)
+- **[Audit Report 2026-10](docs/reports/audit-2026-10.md)** - Latest code & functionality audit (findings, gap analysis, SWOT)
+- **[Code Quality Report](docs/reports/code-quality.md)** - Earlier quality assessment
 - **[Test Coverage Report](docs/reports/test-coverage.md)** - Detailed test analysis
 - **[Validation Report](docs/reports/validation.md)** - Technical validation infrastructure details
 
@@ -178,7 +187,7 @@ FOI-Bioinformatics/taxbencher was originally written by Andreas Sjödin at the S
 
 ## Contributions and Support
 
-If you would like to contribute to this pipeline, please see the [contributing guidelines](.github/CONTRIBUTING.md).
+If you would like to contribute to this pipeline, please see the [contributing guidelines](docs/CONTRIBUTING.md).
 
 ## Citations
 
@@ -190,7 +199,8 @@ An extensive list of references for the tools used by the pipeline can be found 
 Key tools used in this pipeline:
 
 - **OPAL** (CAMI taxonomic profiling evaluation)
-  > Meyer F, Hofmann P, Belmann P, et al. AMBER: Assessment of Metagenome BinnERs. _GigaScience_. 2018;7(6). doi: [10.1093/gigascience/giy069](https://doi.org/10.1093/gigascience/giy069)
+
+  > Meyer F, Bremges A, Belmann P, Janssen S, McHardy AC, Koslicki D. Assessing taxonomic metagenome profilers with OPAL. _Genome Biology_. 2019;20:51. doi: [10.1186/s13059-019-1646-y](https://doi.org/10.1186/s13059-019-1646-y)
 
 - **taxpasta** (Taxonomic profile standardization)
   > Beber ME, Borry M, Stamouli S, Fellows Yates JA. taxpasta: TAXonomic Profile Aggregation and STAndardisation. _Journal of Open Source Software_. 2023;8(87):5627. doi: [10.21105/joss.05627](https://doi.org/10.21105/joss.05627)
