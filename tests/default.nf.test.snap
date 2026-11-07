@@ -31,7 +31,7 @@
                     "validate_bioboxes": "2.0.0"
                 },
                 "Workflow": {
-                    "FOI-Bioinformatics/taxbencher": "v1.3.0dev"
+                    "FOI-Bioinformatics/taxbencher": "v1.3.0"
                 }
             },
             [
@@ -200,7 +200,7 @@
                     "validate_bioboxes": "2.0.0"
                 },
                 "Workflow": {
-                    "FOI-Bioinformatics/taxbencher": "v1.3.0dev"
+                    "FOI-Bioinformatics/taxbencher": "v1.3.0"
                 }
             },
             [
@@ -372,7 +372,7 @@
                     "validate_bioboxes": "2.0.0"
                 },
                 "Workflow": {
-                    "FOI-Bioinformatics/taxbencher": "v1.3.0dev"
+                    "FOI-Bioinformatics/taxbencher": "v1.3.0"
                 }
             },
             [

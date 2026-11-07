@@ -3,7 +3,7 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## v1.3.0dev - 2026-10-28
+## v1.3.0 - 2026-11-07
 
 Correctness audit of the evaluation path, end-to-end testing with conda, and reproducible offline taxonomy handling.
 See [docs/reports/audit-2026-10.md](docs/reports/audit-2026-10.md) for the full audit (findings, gap analysis, SWOT).
