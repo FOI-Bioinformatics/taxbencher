@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
 name: "benchmark_summary"
 description: Aggregate per-sample OPAL metrics across all samples of a run (mean, median, sd, classifier ranking) and provide MultiQC custom content
 keywords:
@@ -6,37 +7,113 @@ keywords:
   - ranking
   - multiqc
 tools:
-  - summarise_benchmark:
+  - "summarise_benchmark":
       description: Pipeline script (bin/summarise_benchmark.py) built on pandas
       homepage: https://github.com/FOI-Bioinformatics/taxbencher
       documentation: https://github.com/FOI-Bioinformatics/taxbencher/blob/main/docs/output.md
       licence: ["MIT"]
+      identifier: ""
 
 input:
   - metrics:
       type: file
       description: Wide per-sample metric tables (sample, tool, rank, metrics...) from COMPARATIVE_ANALYSIS
       pattern: "*_metrics_wide.tsv"
-
+      ontologies:
+        - edam: http://edamontology.org/format_3475 # TSV
 output:
-  - summary:
-      type: file
-      description: "Per classifier, rank and metric: n_samples, mean, median, sd, min, max"
-      pattern: "*_summary.tsv"
-  - ranking:
-      type: file
-      description: Direction-aware ranking of classifiers per metric at the summary rank plus an overall mean rank
-      pattern: "*_ranking.tsv"
-  - multiqc:
-      type: file
-      description: MultiQC custom content (summary table, F1 and L1 norm error by rank line graphs)
-      pattern: "*_mqc.tsv"
-  - versions:
-      type: file
-      description: File containing software versions
-      pattern: "versions.yml"
-
+  summary:
+    - "*_summary.tsv":
+        type: file
+        description: "Per classifier, rank and metric: n_samples, mean, median, sd, min, max"
+        pattern: "*_summary.tsv"
+        ontologies:
+          - edam: http://edamontology.org/format_3475 # TSV
+  ranking:
+    - "*_ranking.tsv":
+        type: file
+        description: Direction-aware ranking of classifiers per metric at the summary rank plus an overall mean rank
+        pattern: "*_ranking.tsv"
+        ontologies:
+          - edam: http://edamontology.org/format_3475 # TSV
+  multiqc:
+    - "*_mqc.tsv":
+        type: file
+        description: MultiQC custom content (summary table, F1 and L1 norm error by rank line graphs)
+        pattern: "*_mqc.tsv"
+        ontologies:
+          - edam: http://edamontology.org/format_3475 # TSV
+  versions_python:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - python:
+          type: string
+          description: The name of the tool
+      - python --version | sed "s/Python //":
+          type: eval
+          description: The expression to obtain the version of the tool
+  versions_pandas:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - pandas:
+          type: string
+          description: The name of the tool
+      - python -c "import pandas; print(pandas.__version__)":
+          type: eval
+          description: The expression to obtain the version of the tool
+  versions_summarise_benchmark:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - summarise_benchmark:
+          type: string
+          description: The name of the tool
+      - summarise_benchmark.py --version | sed "s/summarise_benchmark.py //":
+          type: eval
+          description: The expression to obtain the version of the tool
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - python:
+          type: string
+          description: The name of the tool
+      - python --version | sed "s/Python //":
+          type: eval
+          description: The expression to obtain the version of the tool
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - pandas:
+          type: string
+          description: The name of the tool
+      - python -c "import pandas; print(pandas.__version__)":
+          type: eval
+          description: The expression to obtain the version of the tool
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - summarise_benchmark:
+          type: string
+          description: The name of the tool
+      - summarise_benchmark.py --version | sed "s/summarise_benchmark.py //":
+          type: eval
+          description: The expression to obtain the version of the tool
 authors:
   - "@andreassjodin"
 maintainers:
   - "@andreassjodin"
+containers:
+  # Frozen Seqera Wave community images built from environment.yml (linux/amd64 only)
+  docker:
+    linux/amd64:
+      name: community.wave.seqera.io/library/python_pandas_scikit-learn_plotly_pruned:afa623fee18ad8e0
+      build_id: bd-afa623fee18ad8e0_1
+  singularity:
+    linux/amd64:
+      name: oras://community.wave.seqera.io/library/python_pandas_scikit-learn_plotly_pruned:24c8063ae8d7b157
+      build_id: bd-24c8063ae8d7b157_1
+      https: https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/e0/e04b00d88399791cdd132f05867b1ade1dc3966a71153eb0f40b60c0185d7e7d/data

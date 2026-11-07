@@ -1,11 +1,12 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/environment-schema.json
 # Pinned to the versions inside the module container
 # (community.wave.seqera.io/library/python_pandas_scikit-learn_plotly_pruned:afa623fee18ad8e0)
 # so that -profile conda and -profile docker report identical software versions.
-name: benchmark_summary
 channels:
   - conda-forge
   - bioconda
 dependencies:
-  - conda-forge::python=3.11.18
-  - conda-forge::pandas=3.1.0
   - conda-forge::numpy=2.4.6
+  - conda-forge::pandas=3.1.0
+  - conda-forge::python=3.11.18

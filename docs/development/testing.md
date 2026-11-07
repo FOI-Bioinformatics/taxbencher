@@ -458,7 +458,7 @@ Snapshots capture the exact output of a test run for future comparison. They pro
           ]
         ],
         "1": [
-          "versions.yml:md5,789ghi012jkl"
+          ["MYMODULE", "tool", "1.0.0"]
         ]
       }
     ],
@@ -477,14 +477,14 @@ Snapshots are recorded with the Docker profile (`nf-test test --profile +docker 
 the same snapshots with the conda, docker and singularity profiles, so every local module's `environment.yml`
 pins Python and library versions to exactly what its container ships (see the comment at the top of each
 file). When you rebuild a container, update the pins in `environment.yml` in the same commit, otherwise the
-`versions.yml` md5 in the snapshots differs between profiles.
+version tuples in the snapshots (`process.out.versions_*`) differ between profiles.
 
 Two sources of non-determinism are neutralised in the modules themselves and must stay in place:
 
 - `OPAL_PER_SAMPLE` runs OPAL with `PYTHONHASHSEED=0`; OPAL sums abundances while iterating over Python sets
   of taxon IDs, and randomised string hashing changes the last digits of UniFrac and other metrics between runs.
 - `OPAL_PER_SAMPLE` points `MPLCONFIGDIR` at the task directory; with a read-only `$HOME` matplotlib prints a
-  warning on every call, which would otherwise end up in `versions.yml`.
+  warning on every call, which would otherwise end up in the reported version string.
 
 
 **First run** (creates snapshot):

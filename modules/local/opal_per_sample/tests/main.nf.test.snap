@@ -15,7 +15,11 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,50e13ec37a6db04f15cee57ef1648cbe"
+                    [
+                        "OPAL_PER_SAMPLE",
+                        "opal",
+                        "1.0.13"
+                    ]
                 ],
                 "results": [
                     [
@@ -29,12 +33,16 @@
                         ]
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,50e13ec37a6db04f15cee57ef1648cbe"
+                "versions_opal": [
+                    [
+                        "OPAL_PER_SAMPLE",
+                        "opal",
+                        "1.0.13"
+                    ]
                 ]
             }
         ],
-        "timestamp": "2026-10-28T15:10:38.392063335",
+        "timestamp": "2026-10-29T04:55:43.792287602",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.4"
