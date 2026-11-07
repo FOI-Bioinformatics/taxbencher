@@ -94,10 +94,11 @@ See [docs/reports/audit-2026-10.md](docs/reports/audit-2026-10.md) for the full 
 
 ### Changed (nf-core module conventions)
 
+- **Minimum Nextflow version raised to 26.10.0** (`manifest.nextflowVersion`, README badge, CI matrix).
 - nf-core components updated with `nf-core modules/subworkflows update`: `multiqc` (1.35) and the
-  `utils_nextflow_pipeline` and `utils_nfcore_pipeline` subworkflows. `utils_nfschema_plugin` stays at the
-  template 4.2.1 version with nf-schema 2.7.3: its newer revision needs nf-schema 3.0.0, which requires
-  Nextflow >= 26.04.0, above the pipeline's minimum of 25.10.4.
+  `utils_nextflow_pipeline`, `utils_nfcore_pipeline` and `utils_nfschema_plugin` subworkflows; the pipeline now
+  uses **nf-schema 3.0.0** (`paramsSummaryMap(parameters_schema: ...)` without the positional workflow argument),
+  which is why the Nextflow minimum had to move above 26.04.
 - All local modules follow the current nf-core module conventions (`nf-core modules lint --local`: 0 failures):
   software versions are reported through the `versions` topic as `(process, tool, version)` tuples with `eval`
   outputs instead of `versions.yml` files (the taxdump name and md5 are still recorded by `ETE3_BUILD_TAXDB`);

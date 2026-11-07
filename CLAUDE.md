@@ -12,7 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Key characteristics:**
 
-- Nextflow DSL2 workflow (≥25.10.4)
+- Nextflow DSL2 workflow (≥26.10.0)
 - nf-core template v4.2.1 compliance
 - **Accepts both raw profiler outputs AND pre-standardized taxpasta TSV files**
 - Automatic format detection and standardization
