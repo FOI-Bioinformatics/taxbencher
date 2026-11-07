@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1260" height="430" viewBox="0 0 1260 430" font-family="Helvetica, Arial, sans-serif">
+  <title>FOI-Bioinformatics/taxbencher workflow</title>
+  <rect width="1260" height="430" fill="#ffffff"/>
+  <text x="630" y="34" text-anchor="middle" font-size="22" font-weight="bold" fill="#222">FOI-Bioinformatics/taxbencher</text>
+  <text x="630" y="56" text-anchor="middle" font-size="13" fill="#555">Benchmarking taxonomic profilers against a CAMI gold standard with OPAL</text>
+
+  <!-- evaluation line -->
+  <line x1="100" y1="210" x2="1160" y2="210" stroke="#2e7d32" stroke-width="8" stroke-linecap="round"/>
+  <!-- raw profiler branch -->
+  <path d="M 100 210 C 150 210, 160 120, 210 120 L 330 120 C 380 120, 390 210, 440 210" fill="none" stroke="#1565c0" stroke-width="8" stroke-linecap="round"/>
+  <!-- taxonomy line -->
+  <path d="M 220 280 L 340 280 C 390 280, 400 210, 440 210" fill="none" stroke="#ef6c00" stroke-width="8" stroke-linecap="round"/>
+  <!-- gold standard line -->
+  <path d="M 100 350 L 600 350 C 660 350, 670 210, 720 210" fill="none" stroke="#c62828" stroke-width="8" stroke-linecap="round"/>
+
+  <!-- stations -->
+  <g fill="#ffffff" stroke="#333" stroke-width="4">
+    <circle cx="100" cy="210" r="12"/>
+    <circle cx="270" cy="120" r="12"/>
+    <circle cx="440" cy="210" r="12"/>
+    <circle cx="580" cy="210" r="12"/>
+    <circle cx="720" cy="210" r="12"/>
+    <circle cx="870" cy="210" r="12"/>
+    <circle cx="1020" cy="210" r="12"/>
+    <circle cx="1160" cy="210" r="12"/>
+    <circle cx="220" cy="280" r="12"/>
+    <circle cx="100" cy="350" r="12"/>
+    <circle cx="440" cy="350" r="12"/>
+  </g>
+
+  <!-- labels -->
+  <g font-size="13" fill="#222" text-anchor="middle">
+    <text x="100" y="246" font-weight="bold">Samplesheet</text>
+    <text x="100" y="262" font-size="11" fill="#555">taxpasta TSV or raw profiles</text>
+
+    <text x="270" y="96" font-weight="bold" fill="#1565c0">TAXPASTA_STANDARDISE</text>
+    <text x="270" y="82" font-size="11" fill="#555">raw Kraken2, MetaPhlAn, Centrifuge, ... to taxpasta TSV</text>
+
+    <text x="458" y="186" font-weight="bold" text-anchor="start">TAXPASTA_TO_BIOBOXES</text>
+    <text x="458" y="170" font-size="11" fill="#555" text-anchor="start">per-rank clade abundances</text>
+
+    <text x="580" y="246" font-weight="bold">group by sample_id</text>
+
+    <text x="720" y="186" font-weight="bold">OPAL_PER_SAMPLE</text>
+    <text x="720" y="170" font-size="11" fill="#555">CAMI OPAL metrics per sample</text>
+
+    <text x="870" y="246" font-weight="bold">COMPARATIVE_ANALYSIS</text>
+    <text x="870" y="262" font-size="11" fill="#555">wide metrics, PCA, per-taxon TP/FP/FN</text>
+
+    <text x="1020" y="186" font-weight="bold">BENCHMARK_SUMMARY</text>
+    <text x="1020" y="170" font-size="11" fill="#555">cross-sample mean/sd and ranking</text>
+
+    <text x="1160" y="246" font-weight="bold">MULTIQC</text>
+    <text x="1160" y="262" font-size="11" fill="#555">report</text>
+
+    <text x="220" y="316" font-weight="bold" fill="#ef6c00">ETE3_BUILD_TAXDB</text>
+    <text x="220" y="332" font-size="11" fill="#555">--taxdump to ete3 database</text>
+
+    <text x="100" y="386" font-weight="bold" fill="#c62828">Gold standard</text>
+    <text x="100" y="402" font-size="11" fill="#555">CAMI profile per sample</text>
+
+    <text x="440" y="386" font-weight="bold" fill="#c62828">VALIDATE_GOLD_STANDARD</text>
+    <text x="440" y="402" font-size="11" fill="#555">format and sample IDs checked first</text>
+  </g>
+
+  <!-- legend -->
+  <g font-size="11" fill="#333">
+    <line x1="760" y1="400" x2="790" y2="400" stroke="#2e7d32" stroke-width="6"/><text x="796" y="404">evaluation</text>
+    <line x1="870" y1="400" x2="900" y2="400" stroke="#1565c0" stroke-width="6"/><text x="906" y="404">raw inputs</text>
+    <line x1="980" y1="400" x2="1010" y2="400" stroke="#ef6c00" stroke-width="6"/><text x="1016" y="404">taxonomy</text>
+    <line x1="1090" y1="400" x2="1120" y2="400" stroke="#c62828" stroke-width="6"/><text x="1126" y="404">gold standard</text>
+  </g>
+</svg>

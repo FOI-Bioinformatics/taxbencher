@@ -9,7 +9,18 @@
                     "gold_standard_validation.txt:md5,cfb40d16f6442b8ce8fc9ad930bec9d2"
                 ],
                 "2": [
-                    "versions.yml:md5,16ce4e5a1754d7c3366cf05d8a84835d"
+                    [
+                        "VALIDATE_GOLD_STANDARD",
+                        "python",
+                        "3.11.10"
+                    ]
+                ],
+                "3": [
+                    [
+                        "VALIDATE_GOLD_STANDARD",
+                        "validate_bioboxes",
+                        "2.0.0"
+                    ]
                 ],
                 "gold_standard": [
                     "gold_standard.bioboxes:md5,1136852c47ccb3eccc4ec56be981b1f5"
@@ -17,12 +28,23 @@
                 "report": [
                     "gold_standard_validation.txt:md5,cfb40d16f6442b8ce8fc9ad930bec9d2"
                 ],
-                "versions": [
-                    "versions.yml:md5,16ce4e5a1754d7c3366cf05d8a84835d"
+                "versions_python": [
+                    [
+                        "VALIDATE_GOLD_STANDARD",
+                        "python",
+                        "3.11.10"
+                    ]
+                ],
+                "versions_validate_bioboxes": [
+                    [
+                        "VALIDATE_GOLD_STANDARD",
+                        "validate_bioboxes",
+                        "2.0.0"
+                    ]
                 ]
             }
         ],
-        "timestamp": "2026-10-28T15:16:33.683101734",
+        "timestamp": "2026-10-29T05:03:03.127725187",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.4"
@@ -33,11 +55,24 @@
             [
                 "gold_standard_realistic.bioboxes:md5,535f11adf141563b9cc5aa4b0f12dc45"
             ],
-            [
-                "versions.yml:md5,16ce4e5a1754d7c3366cf05d8a84835d"
-            ]
+            {
+                "versions_python": [
+                    [
+                        "VALIDATE_GOLD_STANDARD",
+                        "python",
+                        "3.11.10"
+                    ]
+                ],
+                "versions_validate_bioboxes": [
+                    [
+                        "VALIDATE_GOLD_STANDARD",
+                        "validate_bioboxes",
+                        "2.0.0"
+                    ]
+                ]
+            }
         ],
-        "timestamp": "2026-10-28T15:16:24.953416571",
+        "timestamp": "2026-10-29T05:02:53.612891316",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.4"

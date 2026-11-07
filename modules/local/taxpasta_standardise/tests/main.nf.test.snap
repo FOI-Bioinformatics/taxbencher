@@ -13,7 +13,11 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                    [
+                        "TAXPASTA_STANDARDISE",
+                        "taxpasta",
+                        "0.7.0"
+                    ]
                 ],
                 "standardised": [
                     [
@@ -25,12 +29,16 @@
                         "test_kraken2.tsv:md5,4074437ead67f2058fdd95464dfeeaba"
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                "versions_taxpasta": [
+                    [
+                        "TAXPASTA_STANDARDISE",
+                        "taxpasta",
+                        "0.7.0"
+                    ]
                 ]
             }
         ],
-        "timestamp": "2026-10-28T15:11:10.334849249",
+        "timestamp": "2026-10-29T04:56:42.68730618",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.4"
@@ -50,7 +58,11 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                    [
+                        "TAXPASTA_STANDARDISE",
+                        "taxpasta",
+                        "0.7.0"
+                    ]
                 ],
                 "standardised": [
                     [
@@ -62,12 +74,16 @@
                         "test_megan6.tsv:md5,bf678859b81858fc5ce160f1182f50b8"
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                "versions_taxpasta": [
+                    [
+                        "TAXPASTA_STANDARDISE",
+                        "taxpasta",
+                        "0.7.0"
+                    ]
                 ]
             }
         ],
-        "timestamp": "2026-10-28T15:13:05.834247907",
+        "timestamp": "2026-10-29T04:58:58.835745072",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.4"
@@ -87,7 +103,11 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                    [
+                        "TAXPASTA_STANDARDISE",
+                        "taxpasta",
+                        "0.7.0"
+                    ]
                 ],
                 "standardised": [
                     [
@@ -99,12 +119,16 @@
                         "test_diamond.tsv:md5,e3988da6d98e6be209314334f56bb794"
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                "versions_taxpasta": [
+                    [
+                        "TAXPASTA_STANDARDISE",
+                        "taxpasta",
+                        "0.7.0"
+                    ]
                 ]
             }
         ],
-        "timestamp": "2026-10-28T15:13:20.620209917",
+        "timestamp": "2026-10-29T04:59:15.654067103",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.4"
@@ -124,7 +148,11 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                    [
+                        "TAXPASTA_STANDARDISE",
+                        "taxpasta",
+                        "0.7.0"
+                    ]
                 ],
                 "standardised": [
                     [
@@ -136,12 +164,16 @@
                         "test_kmcp.tsv:md5,f3e3d6c8bab97f06ad9da59c532523bb"
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                "versions_taxpasta": [
+                    [
+                        "TAXPASTA_STANDARDISE",
+                        "taxpasta",
+                        "0.7.0"
+                    ]
                 ]
             }
         ],
-        "timestamp": "2026-10-28T15:13:35.377785454",
+        "timestamp": "2026-10-29T04:59:32.573172136",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.4"
@@ -161,7 +193,11 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                    [
+                        "TAXPASTA_STANDARDISE",
+                        "taxpasta",
+                        "0.7.0"
+                    ]
                 ],
                 "standardised": [
                     [
@@ -173,12 +209,16 @@
                         "test_motus.tsv:md5,6b61bfc50acd6208b520b4ab7dd02b7b"
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                "versions_taxpasta": [
+                    [
+                        "TAXPASTA_STANDARDISE",
+                        "taxpasta",
+                        "0.7.0"
+                    ]
                 ]
             }
         ],
-        "timestamp": "2026-10-28T15:12:21.706710491",
+        "timestamp": "2026-10-29T04:58:06.344759921",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.4"
@@ -198,7 +238,11 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                    [
+                        "TAXPASTA_STANDARDISE",
+                        "taxpasta",
+                        "0.7.0"
+                    ]
                 ],
                 "standardised": [
                     [
@@ -210,12 +254,16 @@
                         "test_stub.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                "versions_taxpasta": [
+                    [
+                        "TAXPASTA_STANDARDISE",
+                        "taxpasta",
+                        "0.7.0"
+                    ]
                 ]
             }
         ],
-        "timestamp": "2026-10-28T15:13:48.170971451",
+        "timestamp": "2026-10-29T04:59:48.175300382",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.4"
@@ -235,7 +283,11 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                    [
+                        "TAXPASTA_STANDARDISE",
+                        "taxpasta",
+                        "0.7.0"
+                    ]
                 ],
                 "standardised": [
                     [
@@ -247,12 +299,16 @@
                         "test_centrifuge.tsv:md5,76c7c2744a1acb01b9e13a8d017b5efc"
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                "versions_taxpasta": [
+                    [
+                        "TAXPASTA_STANDARDISE",
+                        "taxpasta",
+                        "0.7.0"
+                    ]
                 ]
             }
         ],
-        "timestamp": "2026-10-28T15:11:24.570653544",
+        "timestamp": "2026-10-29T04:56:59.626960463",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.4"
@@ -272,7 +328,11 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                    [
+                        "TAXPASTA_STANDARDISE",
+                        "taxpasta",
+                        "0.7.0"
+                    ]
                 ],
                 "standardised": [
                     [
@@ -284,12 +344,16 @@
                         "test_bracken.tsv:md5,bf678859b81858fc5ce160f1182f50b8"
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                "versions_taxpasta": [
+                    [
+                        "TAXPASTA_STANDARDISE",
+                        "taxpasta",
+                        "0.7.0"
+                    ]
                 ]
             }
         ],
-        "timestamp": "2026-10-28T15:11:53.808891272",
+        "timestamp": "2026-10-29T04:57:33.019426625",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.4"
@@ -309,7 +373,11 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                    [
+                        "TAXPASTA_STANDARDISE",
+                        "taxpasta",
+                        "0.7.0"
+                    ]
                 ],
                 "standardised": [
                     [
@@ -321,12 +389,16 @@
                         "test_kaiju.tsv:md5,f3e3d6c8bab97f06ad9da59c532523bb"
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                "versions_taxpasta": [
+                    [
+                        "TAXPASTA_STANDARDISE",
+                        "taxpasta",
+                        "0.7.0"
+                    ]
                 ]
             }
         ],
-        "timestamp": "2026-10-28T15:12:07.73656345",
+        "timestamp": "2026-10-29T04:57:49.406663814",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.4"
@@ -346,7 +418,11 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                    [
+                        "TAXPASTA_STANDARDISE",
+                        "taxpasta",
+                        "0.7.0"
+                    ]
                 ],
                 "standardised": [
                     [
@@ -358,12 +434,16 @@
                         "test_metaphlan.tsv:md5,15260ed0e313e397ecae9704df6fa87f"
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                "versions_taxpasta": [
+                    [
+                        "TAXPASTA_STANDARDISE",
+                        "taxpasta",
+                        "0.7.0"
+                    ]
                 ]
             }
         ],
-        "timestamp": "2026-10-28T15:11:38.262468961",
+        "timestamp": "2026-10-29T04:57:16.723227613",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.4"
@@ -383,7 +463,11 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                    [
+                        "TAXPASTA_STANDARDISE",
+                        "taxpasta",
+                        "0.7.0"
+                    ]
                 ],
                 "standardised": [
                     [
@@ -395,12 +479,16 @@
                         "test_ganon.tsv:md5,8ebe09a3aa5691667afab7cc957accb5"
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                "versions_taxpasta": [
+                    [
+                        "TAXPASTA_STANDARDISE",
+                        "taxpasta",
+                        "0.7.0"
+                    ]
                 ]
             }
         ],
-        "timestamp": "2026-10-28T15:12:36.182937471",
+        "timestamp": "2026-10-29T04:58:23.810807747",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.4"
@@ -420,7 +508,11 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                    [
+                        "TAXPASTA_STANDARDISE",
+                        "taxpasta",
+                        "0.7.0"
+                    ]
                 ],
                 "standardised": [
                     [
@@ -432,12 +524,16 @@
                         "test_krakenuniq.tsv:md5,bf678859b81858fc5ce160f1182f50b8"
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,bf00feb66945aab46a78efafac5a261f"
+                "versions_taxpasta": [
+                    [
+                        "TAXPASTA_STANDARDISE",
+                        "taxpasta",
+                        "0.7.0"
+                    ]
                 ]
             }
         ],
-        "timestamp": "2026-10-28T15:12:50.78728727",
+        "timestamp": "2026-10-29T04:58:40.96197696",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.4"

@@ -241,7 +241,7 @@ process MYMODULE {
     label 'process_low'  // or process_medium, process_high
 
     conda "${moduleDir}/environment.yml"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+    container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/tool:version' :
         'quay.io/biocontainers/tool:version' }"
 
@@ -250,7 +250,8 @@ process MYMODULE {
 
     output:
     tuple val(meta), path("*.output"), emit: results
-    path "versions.yml"              , emit: versions
+    // Software versions go to the 'versions' topic (one tuple per tool); the pipeline collates them.
+    tuple val("${task.process}"), val('tool'), eval("tool --version | sed 's/^.*version //'"), topic: versions, emit: versions_tool
 
     when:
     task.ext.when == null || task.ext.when
@@ -279,22 +280,12 @@ process MYMODULE {
     fi
 
     echo "[MYMODULE] Successfully processed ${meta.id}" >&2
-
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        tool: \$(tool --version | sed 's/^.*version //')
-    END_VERSIONS
     """
 
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
     touch ${prefix}.output
-
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        tool: 1.0.0
-    END_VERSIONS
     """
 }
 ```
@@ -306,7 +297,7 @@ process MYMODULE {
 - Implement input validation
 - Provide error messages to stderr
 - Verify outputs before completing
-- Emit `versions.yml` for tracking
+- Report software versions through `topic: versions` outputs (`tuple val("${task.process}"), val('tool'), eval('tool --version')`), one per tool, instead of writing a `versions.yml`
 - Include `stub:` block for testing
 
 #### 3. Create Meta File
@@ -314,46 +305,74 @@ process MYMODULE {
 **File**: `modules/local/mymodule/meta.yml`
 
 ```yaml
-name: mymodule
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: "mymodule"
 description: Brief description of what this module does
 keywords:
   - taxonomic profiling
   - benchmarking
 tools:
-  - tool:
+  - "tool":
       description: Tool description
       homepage: https://tool.homepage
       documentation: https://tool.docs
       tool_dev_url: https://github.com/tool/repo
       doi: "10.1234/doi"
       licence: ["MIT"]
+      identifier: ""
 input:
-  - meta:
-      type: map
-      description: |
-        Groovy Map containing sample information
-        e.g. [id: 'sample1', sample_id: 'sample1', label: 'sample1_kraken2']
-  - input_file:
-      type: file
-      description: Input file in format X
-      pattern: "*.{tsv,txt}"
+  # one list per input channel; tuple channels list each element
+  - - meta:
+        type: map
+        description: |
+          Groovy Map containing sample information
+          e.g. `[ id:'sample1_kraken2', sample_id:'sample1' ]`
+    - input_file:
+        type: file
+        description: Input file in format X
+        pattern: "*.{tsv,txt}"
+        ontologies:
+          - edam: http://edamontology.org/format_3475 # TSV
 output:
-  - meta:
-      type: map
-      description: Groovy Map containing sample information
-  - results:
-      type: file
-      description: Output file in format Y
-      pattern: "*.output"
-  - versions:
-      type: file
-      description: File containing software versions
-      pattern: "versions.yml"
+  results:
+    - - meta:
+          type: map
+          description: Groovy Map containing sample information
+      - "*.output":
+          type: file
+          description: Output file in format Y
+          pattern: "*.output"
+          ontologies: []
+  versions_tool:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - tool:
+          type: string
+          description: The name of the tool
+      - tool --version | sed 's/^.*version //':
+          type: eval
+          description: The expression to obtain the version of the tool
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - tool:
+          type: string
+          description: The name of the tool
+      - tool --version | sed 's/^.*version //':
+          type: eval
+          description: The expression to obtain the version of the tool
 authors:
   - "@your_github_username"
 maintainers:
   - "@your_github_username"
 ```
+
+Validate the module files with `nf-core modules lint --local` (meta.yml schema, environment.yml, container URLs,
+version reporting). The only warnings expected for this pipeline's modules are `main_nf_meta_key`: the local
+modules deliberately read pipeline-specific meta keys (`classifier`, `sample_id`, `labels`, ...).
 
 #### 4. Create Conda Environment
 
@@ -468,7 +487,7 @@ withName: 'MYMODULE' {
     publishDir = [
         path: { "${params.outdir}/mymodule" },
         mode: params.publish_dir_mode,
-        saveAs: { filename -> filename.equals('versions.yml') ? null : filename }
+        saveAs: { filename -> filename }
     ]
 }
 ```
@@ -630,7 +649,7 @@ git diff tests/
     "content": [
       {
         "0": [[{ "id": "test1" }, "test1.output:md5,abc123"]],
-        "1": ["versions.yml:md5,def456"]
+        "versions_tool": [["MYMODULE", "tool", "1.0.0"]]
       }
     ]
   }
@@ -742,7 +761,7 @@ process {
         publishDir = [
             path: { "${params.outdir}/mymodule" },
             mode: params.publish_dir_mode,
-            saveAs: { filename -> filename.equals('versions.yml') ? null : filename }
+            saveAs: { filename -> filename }
         ]
     }
 }

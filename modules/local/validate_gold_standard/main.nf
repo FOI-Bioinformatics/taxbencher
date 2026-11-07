@@ -3,7 +3,7 @@ process VALIDATE_GOLD_STANDARD {
     label 'process_single'
 
     conda "${moduleDir}/environment.yml"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+    container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/python:3.11' :
         'quay.io/biocontainers/python:3.11' }"
 
@@ -14,7 +14,8 @@ process VALIDATE_GOLD_STANDARD {
     output:
     path gold_standard        , emit: gold_standard   // the same file, emitted after successful validation
     path "*_validation.txt"   , emit: report
-    path "versions.yml"       , emit: versions
+    tuple val("${task.process}"), val('python'), eval('python --version | sed "s/Python //"'), topic: versions, emit: versions_python
+    tuple val("${task.process}"), val('validate_bioboxes'), eval('validate_bioboxes.py --version | sed "s/validate_bioboxes.py //"'), topic: versions, emit: versions_validate_bioboxes
 
     when:
     task.ext.when == null || task.ext.when
@@ -35,23 +36,11 @@ process VALIDATE_GOLD_STANDARD {
         exit 1
     fi
     echo "[VALIDATE_GOLD_STANDARD] ${gold_standard} is a valid CAMI profile for sample(s): ${ids.join(', ')}" >&2
-
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        python: \$(python --version | sed 's/Python //g')
-        validate_bioboxes: \$(validate_bioboxes.py --version 2>/dev/null | sed 's/validate_bioboxes.py //g' || echo "unknown")
-    END_VERSIONS
     """
 
     stub:
     def prefix = task.ext.prefix ?: gold_standard.baseName
     """
     echo "stub validation" > ${prefix}_validation.txt
-
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        python: \$(python --version | sed 's/Python //g')
-        validate_bioboxes: 2.0.0
-    END_VERSIONS
     """
 }

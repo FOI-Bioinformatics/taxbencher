@@ -53,7 +53,18 @@
                     ]
                 ],
                 "5": [
-                    "versions.yml:md5,48629380cfb1e50570c67504055dbf78"
+                    [
+                        "COMPARATIVE_ANALYSIS",
+                        "python",
+                        "3.11.18"
+                    ]
+                ],
+                "6": [
+                    [
+                        "COMPARATIVE_ANALYSIS",
+                        "comparative_analysis",
+                        "2.0.0"
+                    ]
                 ],
                 "comparison_report": [
                     [
@@ -105,12 +116,23 @@
                         "sample1_pca.html:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,48629380cfb1e50570c67504055dbf78"
+                "versions_comparative_analysis": [
+                    [
+                        "COMPARATIVE_ANALYSIS",
+                        "comparative_analysis",
+                        "2.0.0"
+                    ]
+                ],
+                "versions_python": [
+                    [
+                        "COMPARATIVE_ANALYSIS",
+                        "python",
+                        "3.11.18"
+                    ]
                 ]
             }
         ],
-        "timestamp": "2026-10-28T15:08:00.070752181",
+        "timestamp": "2026-10-29T04:51:50.376346424",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.4"
@@ -151,11 +173,24 @@
                     "test1_opal_summary_mqc.tsv:md5,8cae0f2b3055522de9f51e3d36cd688a"
                 ]
             ],
-            [
-                "versions.yml:md5,dda16ff44dcf4d4b063a3fc392f29a4b"
-            ]
+            {
+                "versions_comparative_analysis": [
+                    [
+                        "COMPARATIVE_ANALYSIS",
+                        "comparative_analysis",
+                        "2.0.0"
+                    ]
+                ],
+                "versions_python": [
+                    [
+                        "COMPARATIVE_ANALYSIS",
+                        "python",
+                        "3.11.18"
+                    ]
+                ]
+            }
         ],
-        "timestamp": "2026-10-28T15:07:30.252884427",
+        "timestamp": "2026-10-29T04:51:10.517534658",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.4"
@@ -205,7 +240,18 @@
                     ]
                 ],
                 "5": [
-                    "versions.yml:md5,48629380cfb1e50570c67504055dbf78"
+                    [
+                        "COMPARATIVE_ANALYSIS",
+                        "python",
+                        "3.11.18"
+                    ]
+                ],
+                "6": [
+                    [
+                        "COMPARATIVE_ANALYSIS",
+                        "comparative_analysis",
+                        "2.0.0"
+                    ]
                 ],
                 "comparison_report": [
                     [
@@ -247,12 +293,23 @@
                         "sample1_pca.html:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
-                "versions": [
-                    "versions.yml:md5,48629380cfb1e50570c67504055dbf78"
+                "versions_comparative_analysis": [
+                    [
+                        "COMPARATIVE_ANALYSIS",
+                        "comparative_analysis",
+                        "2.0.0"
+                    ]
+                ],
+                "versions_python": [
+                    [
+                        "COMPARATIVE_ANALYSIS",
+                        "python",
+                        "3.11.18"
+                    ]
                 ]
             }
         ],
-        "timestamp": "2026-10-28T15:07:51.722412236",
+        "timestamp": "2026-10-29T04:51:37.13659128",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.4"
