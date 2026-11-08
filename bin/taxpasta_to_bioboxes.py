@@ -27,9 +27,11 @@ Lineage information is taken, in order of preference, from
 1. taxpasta lineage columns (``id_lineage`` and ``rank_lineage``, optionally
    ``lineage``), produced with
    ``taxpasta standardise --add-id-lineage --add-rank-lineage --add-lineage``;
-2. the NCBI taxonomy via ete3, either from a local ``taxdump.tar.gz``
-   (``--taxdump``, recommended for reproducibility) or from the ete3 default
-   database (downloaded from NCBI on first use).
+2. the NCBI taxonomy via taxopy, from a local taxdump (``--taxdump``: an
+   extracted directory or a ``taxdump.tar.gz``/``taxdmp_*.zip`` archive,
+   recommended for reproducibility) or, without ``--taxdump``, from a copy of
+   the current NCBI taxdump downloaded at run time. Merged taxonomy IDs are
+   translated to their current ID.
 
 TAXPATH/TAXPATHSN are restricted to the ranks in ``@Ranks`` (empty fields for
 ranks missing from a lineage), which is what OPAL expects for its tree based
@@ -40,15 +42,18 @@ Author: taxbencher pipeline
 
 import argparse
 import logging
-import os
 import sys
 from collections import defaultdict
 from pathlib import Path
-from typing import Dict, List, Optional, Sequence, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import pandas as pd
 
-__version__ = "2.0.0"
+# shared taxonomy helpers live next to this script in bin/
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from taxbencher_taxonomy import Lineage, TaxonomyResolver  # noqa: E402
+
+__version__ = "2.1.0"
 
 DEFAULT_RANKS = "superkingdom|phylum|class|order|family|genus|species|strain"
 
@@ -87,17 +92,6 @@ def setup_logging(verbose: bool = False) -> None:
     )
 
 
-class Lineage:
-    """Ordered lineage from root to the taxon itself: lists of taxids, ranks, names."""
-
-    __slots__ = ("taxids", "ranks", "names")
-
-    def __init__(self, taxids: Sequence[int], ranks: Sequence[str], names: Sequence[str]):
-        self.taxids = list(taxids)
-        self.ranks = list(ranks)
-        self.names = list(names)
-
-
 class LineageColumnResolver:
     """Resolve lineages from taxpasta ``id_lineage``/``rank_lineage``/``lineage`` columns."""
 
@@ -134,56 +128,6 @@ class LineageColumnResolver:
     @staticmethod
     def available(df: pd.DataFrame) -> bool:
         return {"id_lineage", "rank_lineage"}.issubset(df.columns)
-
-
-class Ete3Resolver:
-    """Resolve lineages with ete3's NCBITaxa."""
-
-    def __init__(self, taxdump: Optional[Path] = None, dbfile: Optional[Path] = None):
-        try:
-            from ete3 import NCBITaxa  # noqa: WPS433
-        except ImportError as exc:  # pragma: no cover - depends on environment
-            raise RuntimeError("ete3 is required for taxonomy lookups but is not installed") from exc
-
-        kwargs = {}
-        if dbfile is not None:
-            kwargs["dbfile"] = str(dbfile)
-        if taxdump is not None:
-            if not Path(taxdump).exists():
-                raise RuntimeError(f"taxdump file not found: {taxdump}")
-            kwargs["taxdump_file"] = str(taxdump)
-            if dbfile is None:
-                # Build the database next to the output instead of in $HOME,
-                # which may be read-only inside containers.
-                kwargs["dbfile"] = str(Path.cwd() / "taxa.sqlite")
-        logging.info(
-            "Initialising NCBI taxonomy via ete3"
-            + (f" from {taxdump}" if taxdump else " (default database; downloads from NCBI if absent)")
-        )
-        self._ncbi = NCBITaxa(**kwargs)
-        self._cache: Dict[int, Optional[Lineage]] = {}
-
-    def resolve(self, taxid: int) -> Optional[Lineage]:
-        if taxid in self._cache:
-            return self._cache[taxid]
-        try:
-            lineage_ids = self._ncbi.get_lineage(taxid)
-        except Exception as exc:  # ete3 raises ValueError for unknown taxids
-            logging.debug(f"taxid {taxid} not found in taxonomy: {exc}")
-            self._cache[taxid] = None
-            return None
-        if not lineage_ids:
-            self._cache[taxid] = None
-            return None
-        ranks = self._ncbi.get_rank(lineage_ids)
-        names = self._ncbi.get_taxid_translator(lineage_ids)
-        lineage = Lineage(
-            lineage_ids,
-            [ranks.get(t, "no rank") for t in lineage_ids],
-            [names.get(t, f"taxid_{t}") for t in lineage_ids],
-        )
-        self._cache[taxid] = lineage
-        return lineage
 
 
 def normalise_rank(rank: str) -> str:
@@ -266,9 +210,8 @@ def convert_taxpasta_to_bioboxes(
     version: str = "0.9.1",
     abundance_mode: str = "direct",
     include_unclassified: bool = False,
-    use_ete3: bool = True,
+    use_taxonomy: bool = True,
     taxdump: Optional[Path] = None,
-    ete3_db: Optional[Path] = None,
     allow_empty: bool = False,
     min_percentage: float = 0.0,
 ) -> int:
@@ -291,14 +234,14 @@ def convert_taxpasta_to_bioboxes(
         if taxonomy_db.upper() != "NCBI":
             raise RuntimeError(
                 f"taxonomy_db={taxonomy_db!r} requires taxpasta lineage columns "
-                "(id_lineage/rank_lineage); only NCBI can be resolved via ete3"
+                "(id_lineage/rank_lineage); only NCBI can be resolved from a taxdump"
             )
-        if not use_ete3:
+        if not use_taxonomy:
             raise RuntimeError(
-                "No lineage columns in input and ete3 lookups disabled (--no-ete3); "
+                "No lineage columns in input and taxonomy lookups disabled (--no-taxonomy); "
                 "cannot build a CAMI profile without taxonomy information"
             )
-        resolver = Ete3Resolver(taxdump=taxdump, dbfile=ete3_db)
+        resolver = TaxonomyResolver(taxdump=taxdump)
 
     unclassified = float(df.loc[df["taxonomy_id"] == UNCLASSIFIED_TAXID, "count"].sum())
     classified_df = df[(df["taxonomy_id"] != UNCLASSIFIED_TAXID) & (df["count"] > 0)]
@@ -325,7 +268,7 @@ def convert_taxpasta_to_bioboxes(
 
         selected = select_rank_nodes(lineage, ranks)
 
-        def path_for(rank: str) -> Tuple[str, str]:
+        def path_for(rank: str, selected: Dict[str, Tuple[int, str]] = selected) -> Tuple[str, str]:
             idx = ranks.index(rank)
             ids, names = [], []
             for r in ranks[: idx + 1]:
@@ -489,9 +432,9 @@ Examples:
   # MetaPhlAn profile (clade-cumulative relative abundances)
   taxpasta_to_bioboxes.py -i metaphlan.tsv -o metaphlan.bioboxes -s sample_1 --abundance-mode clade
 
-  # Profile with taxpasta lineage columns (no ete3 needed)
+  # Profile with taxpasta lineage columns (no taxonomy lookups needed)
   taxpasta standardise -p kraken2 --taxonomy taxdump_dir --add-id-lineage --add-rank-lineage --add-lineage ...
-  taxpasta_to_bioboxes.py -i kraken2_lineage.tsv -o kraken2.bioboxes -s sample_1 --no-ete3
+  taxpasta_to_bioboxes.py -i kraken2_lineage.tsv -o kraken2.bioboxes -s sample_1 --no-taxonomy
         """,
     )
     parser.add_argument("-i", "--input", type=Path, required=True, help="Input taxpasta TSV file")
@@ -514,11 +457,11 @@ Examples:
     parser.add_argument("--min-percentage", type=float, default=0.0,
                         help="Drop entries below this percentage (default: 0, keep all non-zero)")
     parser.add_argument("--taxdump", type=Path, default=None,
-                        help="NCBI taxdump.tar.gz to build the ete3 database from (recommended)")
-    parser.add_argument("--ete3-db", type=Path, default=None,
-                        help="Path of the ete3 sqlite database to use/create")
-    parser.add_argument("--no-ete3", action="store_true",
-                        help="Disable ete3 lookups; requires taxpasta lineage columns in the input")
+                        help="NCBI taxdump: directory with nodes.dmp/names.dmp/merged.dmp, or a "
+                             "taxdump.tar.gz / taxdmp_*.zip archive (recommended; without it the "
+                             "current taxonomy is downloaded)")
+    parser.add_argument("--no-taxonomy", action="store_true",
+                        help="Disable taxonomy lookups; requires taxpasta lineage columns in the input")
     parser.add_argument("--allow-empty", action="store_true",
                         help="Write a header-only file instead of failing when no taxa can be placed")
     parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose logging")
@@ -541,9 +484,8 @@ Examples:
             version=args.version_bioboxes,
             abundance_mode=args.abundance_mode,
             include_unclassified=args.include_unclassified,
-            use_ete3=not args.no_ete3,
+            use_taxonomy=not args.no_taxonomy,
             taxdump=args.taxdump,
-            ete3_db=args.ete3_db,
             allow_empty=args.allow_empty,
             min_percentage=args.min_percentage,
         )

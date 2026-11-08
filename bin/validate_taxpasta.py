@@ -38,7 +38,7 @@ def validate_taxpasta(input_file: Path) -> Tuple[bool, List[str], Dict[str, any]
     # Check file is readable
     try:
         with open(input_file, 'r') as f:
-            first_line = f.readline()
+            f.readline()
     except Exception as e:
         return False, [f"Cannot read file: {e}"], {}
 

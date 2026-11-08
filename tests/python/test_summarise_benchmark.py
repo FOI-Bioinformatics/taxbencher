@@ -60,10 +60,10 @@ def test_mqc_outputs(summariser, wide_files, tmp_path):
     line = tmp_path / "f1_mqc.tsv"
     summariser.write_mqc_table(summary, "species", table)
     summariser.write_mqc_linegraph(summary, "F1 score", "x", "F1", "F1", line)
-    tl = [l for l in table.read_text().splitlines() if not l.startswith("#")]
+    tl = [row for row in table.read_text().splitlines() if not row.startswith("#")]
     assert tl[0].split("\t")[:3] == ["Classifier", "Rank", "n_samples"]
     assert len(tl) == 3  # header + 2 classifiers
-    ll = [l for l in line.read_text().splitlines() if not l.startswith("#")]
+    ll = [row for row in line.read_text().splitlines() if not row.startswith("#")]
     # MultiQC only uses the header row as x categories when its first cell is empty
     assert ll[0] == "\tgenus\tspecies"
     assert "# plot_type: 'linegraph'" in line.read_text()

@@ -52,8 +52,8 @@
                     "exists": true,
                     "mimetype": "application/gzip",
                     "pattern": "^\\S+\\.(tar\\.gz|tgz|zip)$",
-                    "description": "NCBI taxonomy dump archive (taxdump.tar.gz, or a dated taxdmp_YYYY-MM-DD.zip) used to build a pinned ete3 taxonomy database for lineage lookups.",
-                    "help_text": "Strongly recommended for reproducible runs. Download from https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz (or a dated archive such as https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump_archive/taxdmp_2025-01-01.zip; zip archives are converted automatically). Without it, ete3 downloads the current NCBI taxonomy into $HOME/.etetoolkit inside every TAXPASTA_TO_BIOBOXES task, which requires network access and makes results depend on the download date.",
+                    "description": "NCBI taxonomy dump archive (taxdump.tar.gz, or a dated taxdmp_YYYY-MM-DD.zip) used for lineage lookups (taxopy).",
+                    "help_text": "Strongly recommended for reproducible runs. Download from https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz (or a dated archive such as https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump_archive/taxdmp_2025-01-01.zip). The archive is extracted once (nodes.dmp, names.dmp, merged.dmp) and shared by all conversions; merged taxonomy IDs are translated to their current ID. Without it, every TAXPASTA_TO_BIOBOXES task downloads the current NCBI taxdump, which requires network access and makes results depend on the download date.",
                     "fa_icon": "fas fa-sitemap"
                 },
                 "include_unclassified": {

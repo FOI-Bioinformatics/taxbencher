@@ -3,21 +3,21 @@ process TAXPASTA_TO_BIOBOXES {
     label 'process_single'
 
     conda "${moduleDir}/environment.yml"
-    // Frozen Seqera Wave community image built from environment.yml (python 3.11, pandas, ete3).
-    // NOTE: ete3 3.1.3 does not work on python >= 3.13 (removed 'cgi' module).
+    // The taxpasta biocontainer ships pandas and taxopy (taxpasta's own taxonomy library),
+    // so the conversion needs no extra image.
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
-        'https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/ed/ed50e74c200cc2f449192d3b3b2e444b8ab6a41a0c8f5e1af40c28583c774527/data' :
-        'community.wave.seqera.io/library/python_pandas_ete3:0aabbd50f04018cb' }"
+        'https://depot.galaxyproject.org/singularity/taxpasta:0.7.0--pyhdfd78af_0':
+        'quay.io/biocontainers/taxpasta:0.7.0--pyhdfd78af_0' }"
 
     input:
     tuple val(meta), path(taxpasta_tsv)
-    path taxdb                              // optional: ete3 taxa.sqlite (+ .traverse.pkl) from ETE3_BUILD_TAXDB, or []
+    path taxdump                            // optional: extracted taxdump directory from PREPARE_TAXDUMP, or []
 
     output:
     tuple val(meta), path("*.bioboxes"), emit: bioboxes
     tuple val("${task.process}"), val('python'), eval('python --version | sed "s/Python //"'), topic: versions, emit: versions_python
     tuple val("${task.process}"), val('pandas'), eval('python -c "import pandas; print(pandas.__version__)"'), topic: versions, emit: versions_pandas
-    tuple val("${task.process}"), val('ete3'), eval('python -c "import ete3; print(ete3.__version__)"'), topic: versions, emit: versions_ete3
+    tuple val("${task.process}"), val('taxopy'), eval('python -c "import taxopy; print(taxopy.__version__)"'), topic: versions, emit: versions_taxopy
     tuple val("${task.process}"), val('taxpasta_to_bioboxes'), eval('taxpasta_to_bioboxes.py --version | sed "s/taxpasta_to_bioboxes.py //"'), topic: versions, emit: versions_taxpasta_to_bioboxes
 
     when:
@@ -37,9 +37,8 @@ process TAXPASTA_TO_BIOBOXES {
     // abundance_mode column overrides the guess for other cumulative profilers.
     def is_metaphlan = (meta.classifier ?: '').toString().toLowerCase().startsWith('metaphlan')
     def abundance_mode = meta.abundance_mode ?: (is_metaphlan ? 'clade' : 'direct')
-    def taxdb_files = taxdb instanceof List ? taxdb : (taxdb ? [taxdb] : [])
-    def sqlite = taxdb_files.find { db_file -> db_file.name.endsWith('.sqlite') }
-    def taxdb_arg = sqlite ? "--ete3-db ${sqlite}" : ''
+    def taxdump_dir = taxdump instanceof List ? (taxdump ? taxdump[0] : null) : taxdump
+    def taxdump_arg = taxdump_dir ? "--taxdump ${taxdump_dir}" : ''
 
     """
     # Validate taxonomy database parameter
@@ -56,7 +55,7 @@ process TAXPASTA_TO_BIOBOXES {
         exit 1
     fi
 
-    echo "[TAXPASTA_TO_BIOBOXES] ${meta.id}: classifier=${meta.classifier ?: 'n/a'} abundance_mode=${abundance_mode} taxonomy=${sqlite ? sqlite : 'ete3 default database'}" >&2
+    echo "[TAXPASTA_TO_BIOBOXES] ${meta.id}: classifier=${meta.classifier ?: 'n/a'} abundance_mode=${abundance_mode} taxonomy=${taxdump_dir ?: 'download of the current NCBI taxdump'}" >&2
 
     # Run conversion with error handling
     if ! taxpasta_to_bioboxes.py \\
@@ -67,7 +66,7 @@ process TAXPASTA_TO_BIOBOXES {
         -d ${taxonomy_db} \\
         --abundance-mode ${abundance_mode} \\
         --version-bioboxes ${version_bioboxes} \\
-        ${taxdb_arg} \\
+        ${taxdump_arg} \\
         ${args}; then
         echo "ERROR: Conversion from taxpasta to bioboxes failed for ${meta.id}" >&2
         echo "Input: ${taxpasta_tsv}" >&2

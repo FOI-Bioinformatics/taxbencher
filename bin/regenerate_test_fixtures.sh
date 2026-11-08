@@ -2,7 +2,7 @@
 # Regenerate the derived test fixtures (gold standards, converted CAMI profiles and
 # OPAL results) from the primary test inputs using the pipeline's own scripts.
 #
-# Requirements on PATH: python3 with pandas + ete3, taxpasta, opal.py
+# Requirements on PATH: python3 with pandas + taxopy, taxpasta, opal.py
 # Usage: bin/regenerate_test_fixtures.sh   (from the repository root)
 set -euo pipefail
 
@@ -14,18 +14,14 @@ WORK=$(mktemp -d)
 trap 'rm -rf "$WORK"' EXIT
 export DISABLE_PANDERA_IMPORT_WARNING=True
 
-echo "== building ete3 database from $TAXDUMP"
-python3 - "$TAXDUMP" "$WORK/taxa.sqlite" <<'PY'
-import sys
-from ete3 import NCBITaxa
-NCBITaxa(dbfile=sys.argv[2], taxdump_file=sys.argv[1])
-PY
-DB="$WORK/taxa.sqlite"
+echo "== extracting $TAXDUMP"
+python3 "$BIN/taxbencher_taxonomy.py" extract "$TAXDUMP" "$WORK/taxdump" > /dev/null
+DB="$WORK/taxdump"
 
 echo "== gold standards"
-python3 "$BIN/fix_gold_standard.py" -i "$TD/truth/truth_test_sample.tsv"     -o "$TD/gold_standard.bioboxes"           --ete3-db "$DB" --fill-higher-ranks
-python3 "$BIN/fix_gold_standard.py" -i "$TD/truth/truth_test_sample_raw.tsv" -o "$TD/gold_standard_raw.bioboxes"       --ete3-db "$DB" --fill-higher-ranks
-python3 "$BIN/fix_gold_standard.py" -i "$TD/truth/truth_test1.tsv"           -o "$TD/gold_standard_realistic.bioboxes" --ete3-db "$DB" --fill-higher-ranks
+python3 "$BIN/fix_gold_standard.py" -i "$TD/truth/truth_test_sample.tsv"     -o "$TD/gold_standard.bioboxes"           --taxdump "$DB" --fill-higher-ranks
+python3 "$BIN/fix_gold_standard.py" -i "$TD/truth/truth_test_sample_raw.tsv" -o "$TD/gold_standard_raw.bioboxes"       --taxdump "$DB" --fill-higher-ranks
+python3 "$BIN/fix_gold_standard.py" -i "$TD/truth/truth_test1.tsv"           -o "$TD/gold_standard_realistic.bioboxes" --taxdump "$DB" --fill-higher-ranks
 for f in "$TD"/gold_standard*.bioboxes; do python3 "$BIN/validate_bioboxes.py" --strict --quiet "$f" > /dev/null; done
 
 echo "== OPAL_PER_SAMPLE test data"
@@ -33,7 +29,7 @@ OPAL_TD="$ROOT/modules/local/opal_per_sample/testdata"
 cp "$TD/gold_standard.bioboxes" "$OPAL_TD/gold_standard.bioboxes"
 cp "$TD/gold_standard_realistic.bioboxes" "$OPAL_TD/gold_standard_realistic.bioboxes"
 conv() { # input tsv, output, sample, mode
-    python3 "$BIN/taxpasta_to_bioboxes.py" -i "$1" -o "$2" -s "$3" --abundance-mode "$4" --ete3-db "$DB" > /dev/null 2>&1
+    python3 "$BIN/taxpasta_to_bioboxes.py" -i "$1" -o "$2" -s "$3" --abundance-mode "$4" --taxdump "$DB" > /dev/null 2>&1
 }
 conv "$TD/taxpasta/sample1_kraken2.tsv"      "$OPAL_TD/prediction1.bioboxes" test_sample direct
 conv "$TD/taxpasta/sample1_metaphlan.tsv"    "$OPAL_TD/prediction2.bioboxes" test_sample clade

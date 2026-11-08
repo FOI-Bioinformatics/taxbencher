@@ -1,0 +1,16 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/environment-schema.json
+# Pinned to the versions inside the biocontainer quay.io/biocontainers/taxpasta:0.7.0--pyhdfd78af_0,
+# which TAXPASTA_STANDARDISE, PREPARE_TAXDUMP and TAXPASTA_TO_BIOBOXES share.
+# pandas/numpy: taxpasta 0.7.0 does not constrain pandas, and with pandas >= 3 its
+# pandera schemas reject MetaPhlAn (empty `additional_species` column) and KMCP profiles.
+# taxopy: lineage lookups in bin/taxbencher_taxonomy.py.
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - bioconda::taxopy=0.12.0
+  - bioconda::taxpasta=0.7.0
+  - conda-forge::numpy=1.26.4
+  - conda-forge::pandas=2.2.2
+  - conda-forge::python=3.12

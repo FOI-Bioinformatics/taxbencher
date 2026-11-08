@@ -113,8 +113,8 @@ test1_kraken2	class	Bray-Curtis distance	test1	0.022236090117677187
 test1_kraken2	order	Bray-Curtis distance	test1	0.019139857652317942
 test1_kraken2	family	Bray-Curtis distance	test1	0.019080333609362753
 test1_kraken2	genus	Bray-Curtis distance	test1	0.06554381867832405
-test1_kraken2	species	Bray-Curtis distance	test1	0.29279322248381134
-test1_kraken2	strain	Bray-Curtis distance	test1	0.9925493777442346
+test1_kraken2	species	Bray-Curtis distance	test1	0.29279322248381145
+test1_kraken2	strain	Bray-Curtis distance	test1	0.9925493777442339
 test1_kraken2	superkingdom	Shannon diversity	test1	0.0009437341217119923
 test1_kraken2	superkingdom	Shannon equitability	test1	0.0
 test1_kraken2	phylum	Shannon diversity	test1	0.013702928810853913
@@ -193,11 +193,11 @@ test1_kraken2	class	L1 norm error	test1	0.04411905000000004
 test1_kraken2	order	L1 norm error	test1	0.03785588000000004
 test1_kraken2	family	L1 norm error	test1	0.03773585999999995
 test1_kraken2	genus	L1 norm error	test1	0.12906824999999997
-test1_kraken2	species	L1 norm error	test1	0.49794679000000003
-test1_kraken2	strain	L1 norm error	test1	0.8268964300000001
-test1_kraken2	na	Weighted UniFrac error	test1	0.01239530845857143
-test1_kraken2	na	Unweighted UniFrac error	test1	1.4846446984980943
-test1_kraken2	na	Weighted UniFrac (CAMI)	test1	1.685106477634053
+test1_kraken2	species	L1 norm error	test1	0.49794679
+test1_kraken2	strain	L1 norm error	test1	0.8268964299999999
+test1_kraken2	na	Weighted UniFrac error	test1	0.012395308458571428
+test1_kraken2	na	Unweighted UniFrac error	test1	1.4846446984980946
+test1_kraken2	na	Weighted UniFrac (CAMI)	test1	1.685106477634052
 test1_kraken2	na	Unweighted UniFrac (CAMI)	test1	118.0
 test1_kraken2	superkingdom	Sum of abundances	test1	0.9990558199999999
 test1_kraken2	phylum	Sum of abundances	test1	0.9862014299999999
@@ -221,8 +221,8 @@ test1_metaphlan	class	Bray-Curtis distance	test1	0.022610923924029486
 test1_metaphlan	order	Bray-Curtis distance	test1	0.019527702855599297
 test1_metaphlan	family	Bray-Curtis distance	test1	0.019458883937285436
 test1_metaphlan	genus	Bray-Curtis distance	test1	0.06578331380589825
-test1_metaphlan	species	Bray-Curtis distance	test1	0.2939235628922674
-test1_metaphlan	strain	Bray-Curtis distance	test1	0.9920463101969478
+test1_metaphlan	species	Bray-Curtis distance	test1	0.29392356289226734
+test1_metaphlan	strain	Bray-Curtis distance	test1	0.9920397850185863
 test1_metaphlan	superkingdom	Shannon diversity	test1	0.0
 test1_metaphlan	superkingdom	Shannon equitability	test1	0.0
 test1_metaphlan	phylum	Shannon diversity	test1	0.012950857084993063
@@ -237,8 +237,8 @@ test1_metaphlan	genus	Shannon diversity	test1	0.03053563663954885
 test1_metaphlan	genus	Shannon equitability	test1	0.04405361155026446
 test1_metaphlan	species	Shannon diversity	test1	0.2611040933474878
 test1_metaphlan	species	Shannon equitability	test1	0.09033581671083706
-test1_metaphlan	strain	Shannon diversity	test1	0.028635679862677253
-test1_metaphlan	strain	Shannon equitability	test1	0.010328138332592107
+test1_metaphlan	strain	Shannon diversity	test1	0.022496701629861195
+test1_metaphlan	strain	Shannon equitability	test1	0.012555648241978298
 test1_metaphlan	superkingdom	True positives	test1	1.0
 test1_metaphlan	superkingdom	False negatives	test1	1.0
 test1_metaphlan	superkingdom	False positives	test1	0.0
@@ -290,11 +290,11 @@ test1_metaphlan	species	F1 score	test1	0.6428571428571429
 test1_metaphlan	species	Jaccard index	test1	0.47368421052631576
 test1_metaphlan	strain	True positives	test1	6.0
 test1_metaphlan	strain	False negatives	test1	0.0
-test1_metaphlan	strain	False positives	test1	10.0
+test1_metaphlan	strain	False positives	test1	0.0
 test1_metaphlan	strain	Completeness	test1	1.0
-test1_metaphlan	strain	Purity	test1	0.375
-test1_metaphlan	strain	F1 score	test1	0.5454545454545454
-test1_metaphlan	strain	Jaccard index	test1	0.375
+test1_metaphlan	strain	Purity	test1	1.0
+test1_metaphlan	strain	F1 score	test1	1.0
+test1_metaphlan	strain	Jaccard index	test1	1.0
 test1_metaphlan	superkingdom	L1 norm error	test1	0.06
 test1_metaphlan	phylum	L1 norm error	test1	0.04696380000000005
 test1_metaphlan	class	L1 norm error	test1	0.04487996999999993
@@ -302,11 +302,11 @@ test1_metaphlan	order	L1 norm error	test1	0.03863826000000003
 test1_metaphlan	family	L1 norm error	test1	0.038499390000000036
 test1_metaphlan	genus	L1 norm error	test1	0.12957387999999995
 test1_metaphlan	species	L1 norm error	test1	0.5007718
-test1_metaphlan	strain	L1 norm error	test1	0.82736696
-test1_metaphlan	na	Weighted UniFrac error	test1	0.012516498573809525
-test1_metaphlan	na	Unweighted UniFrac error	test1	1.9327878652021222
-test1_metaphlan	na	Weighted UniFrac (CAMI)	test1	1.6866940600000009
-test1_metaphlan	na	Unweighted UniFrac (CAMI)	test1	210.0
+test1_metaphlan	strain	L1 norm error	test1	0.82668331
+test1_metaphlan	na	Weighted UniFrac error	test1	0.012490848879523812
+test1_metaphlan	na	Unweighted UniFrac error	test1	1.6376746618844804
+test1_metaphlan	na	Weighted UniFrac (CAMI)	test1	1.6860104100000017
+test1_metaphlan	na	Unweighted UniFrac (CAMI)	test1	130.0
 test1_metaphlan	superkingdom	Sum of abundances	test1	1.0
 test1_metaphlan	phylum	Sum of abundances	test1	0.9869638000000001
 test1_metaphlan	class	Sum of abundances	test1	0.9848799699999999
@@ -314,7 +314,7 @@ test1_metaphlan	order	Sum of abundances	test1	0.97863826
 test1_metaphlan	family	Sum of abundances	test1	0.9784993900000001
 test1_metaphlan	genus	Sum of abundances	test1	0.9697073999999999
 test1_metaphlan	species	Sum of abundances	test1	0.7037483999999999
-test1_metaphlan	strain	Sum of abundances	test1	0.0040003400000000015
+test1_metaphlan	strain	Sum of abundances	test1	0.0033166900000000006
 test1_metaphlan	superkingdom	Taxon counts	test1	1.0
 test1_metaphlan	phylum	Taxon counts	test1	1.0
 test1_metaphlan	class	Taxon counts	test1	1.0
@@ -322,7 +322,7 @@ test1_metaphlan	order	Taxon counts	test1	1.0
 test1_metaphlan	family	Taxon counts	test1	2.0
 test1_metaphlan	genus	Taxon counts	test1	2.0
 test1_metaphlan	species	Taxon counts	test1	18.0
-test1_metaphlan	strain	Taxon counts	test1	16.0
+test1_metaphlan	strain	Taxon counts	test1	6.0
 test1_centrifuge	superkingdom	Bray-Curtis distance	test1	0.029525976815745755
 test1_centrifuge	phylum	Bray-Curtis distance	test1	0.02337903724786039
 test1_centrifuge	class	Bray-Curtis distance	test1	0.02235525805814856
@@ -411,9 +411,9 @@ test1_centrifuge	family	L1 norm error	test1	0.038228999999999964
 test1_centrifuge	genus	L1 norm error	test1	0.12962883000000006
 test1_centrifuge	species	L1 norm error	test1	0.49476695000000004
 test1_centrifuge	strain	L1 norm error	test1	0.8271247700000001
-test1_centrifuge	na	Weighted UniFrac error	test1	0.012397489130952366
-test1_centrifuge	na	Unweighted UniFrac error	test1	1.6376746618844802
-test1_centrifuge	na	Weighted UniFrac (CAMI)	test1	1.6843542687415918
+test1_centrifuge	na	Weighted UniFrac error	test1	0.012397489130952373
+test1_centrifuge	na	Unweighted UniFrac error	test1	1.6376746618844804
+test1_centrifuge	na	Weighted UniFrac (CAMI)	test1	1.6843542687415916
 test1_centrifuge	na	Unweighted UniFrac (CAMI)	test1	130.0
 test1_centrifuge	superkingdom	Sum of abundances	test1	0.99902311
 test1_centrifuge	phylum	Sum of abundances	test1	0.9864410800000001
