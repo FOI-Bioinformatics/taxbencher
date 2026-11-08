@@ -63,7 +63,7 @@
                     [
                         "COMPARATIVE_ANALYSIS",
                         "comparative_analysis",
-                        "2.0.0"
+                        "2.1.0"
                     ]
                 ],
                 "comparison_report": [
@@ -120,7 +120,7 @@
                     [
                         "COMPARATIVE_ANALYSIS",
                         "comparative_analysis",
-                        "2.0.0"
+                        "2.1.0"
                     ]
                 ],
                 "versions_python": [
@@ -132,10 +132,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-29T04:51:50.376346424",
+        "timestamp": "2026-11-08T05:37:05.538678919",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.10.4"
+            "nextflow": "26.10.0"
         }
     },
     "comparative_analysis - functional - realistic data with profiles": {
@@ -159,7 +159,7 @@
                         "labels": "test1_kraken2,test1_metaphlan,test1_centrifuge",
                         "num_classifiers": 3
                     },
-                    "test1_metrics_wide.tsv:md5,e04540d0564d0dc44872f74e393da37f"
+                    "test1_metrics_wide.tsv:md5,1e71257b255a162616b0cec185c219a1"
                 ]
             ],
             [
@@ -178,7 +178,7 @@
                     [
                         "COMPARATIVE_ANALYSIS",
                         "comparative_analysis",
-                        "2.0.0"
+                        "2.1.0"
                     ]
                 ],
                 "versions_python": [
@@ -190,10 +190,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-29T04:51:10.517534658",
+        "timestamp": "2026-11-08T05:36:41.856432985",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.10.4"
+            "nextflow": "26.10.0"
         }
     },
     "comparative_analysis - stub - basic": {
@@ -250,7 +250,7 @@
                     [
                         "COMPARATIVE_ANALYSIS",
                         "comparative_analysis",
-                        "2.0.0"
+                        "2.1.0"
                     ]
                 ],
                 "comparison_report": [
@@ -297,7 +297,7 @@
                     [
                         "COMPARATIVE_ANALYSIS",
                         "comparative_analysis",
-                        "2.0.0"
+                        "2.1.0"
                     ]
                 ],
                 "versions_python": [
@@ -309,10 +309,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-29T04:51:37.13659128",
+        "timestamp": "2026-11-08T05:36:57.876376676",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.10.4"
+            "nextflow": "26.10.0"
         }
     }
 }
