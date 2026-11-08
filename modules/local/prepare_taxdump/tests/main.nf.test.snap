@@ -1,0 +1,87 @@
+{
+    "prepare taxdump - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        "merged.dmp:md5,d41d8cd98f00b204e9800998ecf8427e",
+                        "names.dmp:md5,d41d8cd98f00b204e9800998ecf8427e",
+                        "nodes.dmp:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        "PREPARE_TAXDUMP",
+                        "python",
+                        "3.12.3"
+                    ]
+                ],
+                "2": [
+                    [
+                        "PREPARE_TAXDUMP",
+                        "taxdump (taxdump.tar.gz) md5",
+                        "79849d307630344a7046aaeb5d4e72c6"
+                    ]
+                ],
+                "taxdump": [
+                    [
+                        "merged.dmp:md5,d41d8cd98f00b204e9800998ecf8427e",
+                        "names.dmp:md5,d41d8cd98f00b204e9800998ecf8427e",
+                        "nodes.dmp:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions_python": [
+                    [
+                        "PREPARE_TAXDUMP",
+                        "python",
+                        "3.12.3"
+                    ]
+                ],
+                "versions_taxdump": [
+                    [
+                        "PREPARE_TAXDUMP",
+                        "taxdump (taxdump.tar.gz) md5",
+                        "79849d307630344a7046aaeb5d4e72c6"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-11-08T07:34:49.93534413",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.0"
+        }
+    },
+    "prepare taxdump - reduced taxdump": {
+        "content": [
+            [
+                [
+                    "merged.dmp:md5,d41d8cd98f00b204e9800998ecf8427e",
+                    "names.dmp:md5,584486b289bb68879a52025ffa8483db",
+                    "nodes.dmp:md5,26e930aeeef63e6881e77233ce3b885c"
+                ]
+            ],
+            {
+                "versions_python": [
+                    [
+                        "PREPARE_TAXDUMP",
+                        "python",
+                        "3.12.3"
+                    ]
+                ],
+                "versions_taxdump": [
+                    [
+                        "PREPARE_TAXDUMP",
+                        "taxdump (taxdump.tar.gz) md5",
+                        "79849d307630344a7046aaeb5d4e72c6"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-11-08T07:36:09.145443597",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.10.0"
+        }
+    }
+}
