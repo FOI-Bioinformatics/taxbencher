@@ -37,7 +37,7 @@ template:
   name: taxbencher
   description: Benchmark taxonomic classifiers using standardized metrics and CAMI OPAL evaluation
   author: "Andreas Sjödin"
-  version: 1.4.0
+  version: 1.5.0dev
   force: true
   outdir: .
   skip_features:
