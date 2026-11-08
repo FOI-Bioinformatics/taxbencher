@@ -3,11 +3,11 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## v1.4.0dev - unreleased
+## v1.4.0 - 2026-11-08
+
+Second audit round (scripts, cross-sample summary and Nextflow layer).
 
 ### Fixed
-
-Second audit round (scripts, summary and Nextflow layer).
 
 - **Benchmark summary never pooled samples**: it grouped by the profile label, which is unique per profile,
   so every "mean over samples" was a single value. Profiles are now pooled by the samplesheet `classifier`
