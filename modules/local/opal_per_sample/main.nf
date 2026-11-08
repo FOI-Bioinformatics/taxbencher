@@ -11,7 +11,9 @@ process OPAL_PER_SAMPLE {
         'quay.io/biocontainers/cami-opal:1.0.13--pyhdfd78af_0' }"
 
     input:
-    tuple val(meta), path(gold_standard), path(predictions)
+    // the gold standard is staged in its own directory so a prediction label equal to its
+    // file name cannot collide with it
+    tuple val(meta), path(gold_standard, stageAs: 'gold_standard/*'), path(predictions)
 
     output:
     tuple val(meta), path("${task.ext.prefix ?: meta.id}", type: 'dir'), emit: results

@@ -22,6 +22,7 @@ Usage:
 """
 
 import argparse
+import math
 import re
 import sys
 from collections import defaultdict
@@ -47,6 +48,8 @@ def split_samples(lines: List[str]) -> List[Tuple[Dict[str, str], List[str], Lis
     data: List[Tuple[int, str]] = []
     block_errors: List[str] = []
     reading_data = False
+    after_columns = False
+    canonical = {"SAMPLEID": "SampleID", "VERSION": "Version", "RANKS": "Ranks", "TAXONOMYID": "TaxonomyID"}
 
     def flush():
         if headers or columns or data:
@@ -59,15 +62,23 @@ def split_samples(lines: List[str]) -> List[Tuple[Dict[str, str], List[str], Lis
         if line.startswith("@@"):
             columns = [c.strip() for c in line[2:].split("\t")]
             reading_data = False
+            after_columns = True
             continue
         if line.startswith("@"):
             if reading_data:
                 flush()
                 headers, columns, data, block_errors = {}, [], [], []
                 reading_data = False
+                after_columns = False
+            elif after_columns:
+                # OPAL requires the @@ column line to be the last header line of a block
+                block_errors.append(
+                    f"Line {lineno}: header line after the @@ column header (OPAL rejects this): {line}"
+                )
             match = re.match(r"@([^:]+):(.*)$", line)
             if match:
-                headers[match.group(1).strip()] = match.group(2).strip()
+                key = match.group(1).strip()
+                headers[canonical.get(key.upper(), key)] = match.group(2).strip()
             else:
                 block_errors.append(f"Line {lineno}: Invalid header format: {line}")
             continue
@@ -186,7 +197,9 @@ def validate_block(headers, columns, data, errors: List[str], warnings: List[str
         # PERCENTAGE
         try:
             pct = float(percentage)
-            if pct < 0 or pct > 100:
+            if not math.isfinite(pct):
+                errors.append(f"{prefix}Line {lineno}: PERCENTAGE is not a finite number: {percentage}")
+            elif pct < 0 or pct > 100:
                 errors.append(f"{prefix}Line {lineno}: PERCENTAGE out of range [0, 100]: {pct}")
             else:
                 rank_sums[rank] += pct

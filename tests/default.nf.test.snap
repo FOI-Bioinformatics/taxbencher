@@ -6,10 +6,10 @@
                 "BENCHMARK_SUMMARY": {
                     "pandas": "3.1.0",
                     "python": "3.11.18",
-                    "summarise_benchmark": "1.0.0"
+                    "summarise_benchmark": "1.1.0"
                 },
                 "COMPARATIVE_ANALYSIS": {
-                    "comparative_analysis": "2.0.0",
+                    "comparative_analysis": "2.1.0",
                     "python": "3.11.18"
                 },
                 "ETE3_BUILD_TAXDB": {
@@ -130,42 +130,42 @@
                 "validation/gold_standard_realistic_validation.txt"
             ],
             [
-                "benchmark_f1_by_rank_mqc.tsv:md5,525528fc4b4cf51af0770fd43a197f98",
-                "benchmark_l1_by_rank_mqc.tsv:md5,9682590abba9bbbd164d0af759a4074f",
-                "benchmark_ranking.tsv:md5,3f45f2f491fe40465839abc5dc7589be",
-                "benchmark_summary.tsv:md5,6fccf2f00f43acde6aa4fecc87d430da",
-                "benchmark_table_mqc.tsv:md5,2a8d7888e4f03528988515630a9882f1",
-                "test1_diff_taxa.tsv:md5,4ff996f3d0198bace429e1a6f5adb460",
-                "test1_metrics_wide.tsv:md5,448bf01602e989d47e16b4f4de50cbdd",
-                "test1_opal_summary_mqc.tsv:md5,06c544b3b952514c99cb045746d81a34",
+                "benchmark_f1_by_rank_mqc.tsv:md5,792f15265aadef6e4ae6d8d54ce0af73",
+                "benchmark_l1_by_rank_mqc.tsv:md5,5fe09846cd9c34abf081d13b88fa9c21",
+                "benchmark_ranking.tsv:md5,8f50e8b8bb55cbb279f2f98fec65680a",
+                "benchmark_summary.tsv:md5,98baf5b9fac8f8e9a6dd39f2ca510fbd",
+                "benchmark_table_mqc.tsv:md5,63fc003a50defeb7206d6d0e3f328f14",
+                "test1_diff_taxa.tsv:md5,b3c4779fbea361f78acab4cc4e0c2709",
+                "test1_metrics_wide.tsv:md5,1051e423fa44903bfa31adda2ee1cac2",
+                "test1_opal_summary_mqc.tsv:md5,d8d97308d77f6de889cdc6979c167092",
                 "multiqc_citations.txt:md5,4c806e63a283ec1b7e78cdae3a923d4f",
-                "multiqc_taxbencher_benchmark_summary_table.txt:md5,37e7fbb3dddd75386adf21da9dc33bb0",
-                "multiqc_taxbencher_f1_by_rank_plot.txt:md5,fc594915f05f311ed6f00677f577b036",
-                "multiqc_taxbencher_l1_by_rank_plot.txt:md5,9e11623e828d24245a34efebdb862e1e",
-                "multiqc_taxbencher_opal_summary_table.txt:md5,7b86ce826593262ac965772c9819c3a0",
-                "class.tsv:md5,c88184895c2de62364012118485ea9d4",
-                "family.tsv:md5,2f2855e347ee5c3fc86daacebdaa0389",
-                "genus.tsv:md5,6d5926bc4f7705e732145777a771fecd",
-                "order.tsv:md5,eb78e7a7916ca653fcd5a1558cb4a2d3",
-                "phylum.tsv:md5,6504f66c89e723cf31746a089c3b3cdf",
-                "species.tsv:md5,e485336e66646a4094efcdc8e776c2cc",
-                "strain.tsv:md5,717b76d0949960cb787da261e38e60fa",
-                "superkingdom.tsv:md5,bcba10a62b44eef2dfafdf306af83ab9",
+                "multiqc_taxbencher_benchmark_summary_table.txt:md5,b2fe8c9e4b268031da6ddf4d6582a09c",
+                "multiqc_taxbencher_f1_by_rank_plot.txt:md5,dba89e495a1ac5e3e4299e110e49cf7f",
+                "multiqc_taxbencher_l1_by_rank_plot.txt:md5,44866ba337376cf3506f89ebe2701f03",
+                "multiqc_taxbencher_opal_summary_table.txt:md5,50a41c8cb805980c47c7ed566129477a",
+                "class.tsv:md5,bbf89f0f9d604f6ec66c092733c052e6",
+                "family.tsv:md5,36c20c09e6f5b50a8f542b45bd8fe39b",
+                "genus.tsv:md5,1dc8fca558a379652fb9c1c8cbb6d5a4",
+                "order.tsv:md5,0498e7266ecd2b5d30082e3802da1d5a",
+                "phylum.tsv:md5,98df7ba9bd31f9dde3d53f03796749ea",
+                "species.tsv:md5,0d93af2f62dc99b93a49bc6e44663dfa",
+                "strain.tsv:md5,e76bfd6bfeb5cfb6f77ef7d35f364c6a",
+                "superkingdom.tsv:md5,a29c653a6735ebab395ac408a0a18feb",
                 "test1_centrifuge.tsv:md5,214e5523daa562ddd9b41c62b296dbb7",
                 "test1_kraken2.tsv:md5,c1962525c60a6c9ccc28219a1756adf9",
-                "test1_metaphlan.tsv:md5,657bc3485cd6e71ae63cb76156bc834c",
-                "confusion.tsv:md5,d991cea50a40acb84af500e7fdb90b59",
-                "results.tsv:md5,3005f5e453a0bfd88a76fa58cbce58a9",
+                "test1_metaphlan.tsv:md5,b56858dfeb98936c3538906dfac97151",
+                "confusion.tsv:md5,7f30ac4a8e4f1a255adc0909e13799b0",
+                "results.tsv:md5,dca0d80894dbf7e92da8da7ac4e26b27",
                 "test1_centrifuge.bioboxes:md5,d2fffdce69f033fa7c1857f4d97118aa",
                 "test1_kraken2.bioboxes:md5,8b5fcde17837274461d94693aba528e0",
-                "test1_metaphlan.bioboxes:md5,58fb9e12fc5169c555987c0090ad8566",
+                "test1_metaphlan.bioboxes:md5,bdcd1ef1539ffcf14c57cbbb16ce2cc7",
                 "gold_standard_realistic_validation.txt:md5,a23018476c3c6ab02eb5f1375183f192"
             ]
         ],
-        "timestamp": "2026-10-29T05:07:39.55319017",
+        "timestamp": "2026-11-08T05:45:45.560998191",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.10.4"
+            "nextflow": "26.10.0"
         }
     },
     "-profile test": {
@@ -175,10 +175,10 @@
                 "BENCHMARK_SUMMARY": {
                     "pandas": "3.1.0",
                     "python": "3.11.18",
-                    "summarise_benchmark": "1.0.0"
+                    "summarise_benchmark": "1.1.0"
                 },
                 "COMPARATIVE_ANALYSIS": {
-                    "comparative_analysis": "2.0.0",
+                    "comparative_analysis": "2.1.0",
                     "python": "3.11.18"
                 },
                 "ETE3_BUILD_TAXDB": {
@@ -299,18 +299,18 @@
                 "validation/gold_standard_validation.txt"
             ],
             [
-                "benchmark_f1_by_rank_mqc.tsv:md5,b978ecd8477b5dd755c62d5c9313f35c",
-                "benchmark_l1_by_rank_mqc.tsv:md5,5625b61bba1f4bd38efe80ff6010d127",
-                "benchmark_ranking.tsv:md5,d3378a6d2e56cf053d7749d229a1cdb6",
-                "benchmark_summary.tsv:md5,760be4bc417245b508d2e473e53249b3",
-                "benchmark_table_mqc.tsv:md5,18e360eb1e34d195a4fe6a14bbe12000",
+                "benchmark_f1_by_rank_mqc.tsv:md5,8514e5ce766ff95dbc434a84fd791060",
+                "benchmark_l1_by_rank_mqc.tsv:md5,7abd9b8f3f0383184cbbc4f9b49c4e7f",
+                "benchmark_ranking.tsv:md5,145494fc8931d5c6ef1b9ec8c65595d0",
+                "benchmark_summary.tsv:md5,39f036ab1711953f56a47d12bc238a6c",
+                "benchmark_table_mqc.tsv:md5,6f70f0cf815a95bd53093b8d79967534",
                 "test_sample_diff_taxa.tsv:md5,b7cb168b60f4bc5d6ccac619e3586aa7",
-                "test_sample_metrics_wide.tsv:md5,ede6070bad6bbfb636da8217ee31665e",
+                "test_sample_metrics_wide.tsv:md5,6c6322c65ae67ca045149614ab8f21d7",
                 "test_sample_opal_summary_mqc.tsv:md5,db25a9ba1db92028fa6f4c46c2859af9",
                 "multiqc_citations.txt:md5,4c806e63a283ec1b7e78cdae3a923d4f",
-                "multiqc_taxbencher_benchmark_summary_table.txt:md5,03cdad19017b44a92e493047d8266c06",
-                "multiqc_taxbencher_f1_by_rank_plot.txt:md5,edeacb48a3ecf34ab7b08170c75c6e9b",
-                "multiqc_taxbencher_l1_by_rank_plot.txt:md5,10bf76ee0a3266b51a0a90f207482135",
+                "multiqc_taxbencher_benchmark_summary_table.txt:md5,07b554199806f32f87d302b76a41c0e1",
+                "multiqc_taxbencher_f1_by_rank_plot.txt:md5,3592a274d2da69351d9c03f78d8204d4",
+                "multiqc_taxbencher_l1_by_rank_plot.txt:md5,65ab1e64a224dce6f12c743b9602f8d3",
                 "multiqc_taxbencher_opal_summary_table.txt:md5,25c3a4980fd23067f37cd36cab9f582b",
                 "class.tsv:md5,f41072c39cfd0f6c9a22a5c3d3e59177",
                 "family.tsv:md5,bcc34086ce35c44b8f810139578aab79",
@@ -331,10 +331,10 @@
                 "gold_standard_validation.txt:md5,ed24c8b612e2a9ee9e33a98db69b3e59"
             ]
         ],
-        "timestamp": "2026-10-29T05:05:03.15263738",
+        "timestamp": "2026-11-08T05:44:14.308979085",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.10.4"
+            "nextflow": "26.10.0"
         }
     },
     "-profile test_raw with raw profiler inputs": {
@@ -344,10 +344,10 @@
                 "BENCHMARK_SUMMARY": {
                     "pandas": "3.1.0",
                     "python": "3.11.18",
-                    "summarise_benchmark": "1.0.0"
+                    "summarise_benchmark": "1.1.0"
                 },
                 "COMPARATIVE_ANALYSIS": {
-                    "comparative_analysis": "2.0.0",
+                    "comparative_analysis": "2.1.0",
                     "python": "3.11.18"
                 },
                 "ETE3_BUILD_TAXDB": {
@@ -471,18 +471,18 @@
                 "validation/gold_standard_raw_validation.txt"
             ],
             [
-                "benchmark_f1_by_rank_mqc.tsv:md5,a2e14a791aba7121d6ac924379ca83d7",
-                "benchmark_l1_by_rank_mqc.tsv:md5,ab70193762772c47d60013b646a085d1",
-                "benchmark_ranking.tsv:md5,b534d56b0df4c8491f7337117f1d8294",
-                "benchmark_summary.tsv:md5,2cd858d437be84faad470775ca875fb5",
-                "benchmark_table_mqc.tsv:md5,c83ac76d15113fa58615b97df7c7afba",
+                "benchmark_f1_by_rank_mqc.tsv:md5,773923105b2a51c6481904dbd5e06097",
+                "benchmark_l1_by_rank_mqc.tsv:md5,f8e45d26cc20ab1f6575d11b06c69d57",
+                "benchmark_ranking.tsv:md5,f7d8f41978427e210d2cb412f8692e59",
+                "benchmark_summary.tsv:md5,2748ab1d9fde4d453c69fc47c5a4e240",
+                "benchmark_table_mqc.tsv:md5,44518a612d3a812d03e561aa5cf5d0ac",
                 "test_sample_diff_taxa.tsv:md5,866bf8dfca63cc19496c60e4a6a63f0b",
-                "test_sample_metrics_wide.tsv:md5,7c7ee90f8dc9caf05fcd1282a9f9be1e",
+                "test_sample_metrics_wide.tsv:md5,d03f1a121633a0e8b18ec49ebce8b5b1",
                 "test_sample_opal_summary_mqc.tsv:md5,3a1e1d901012e4baade0053e88c534b9",
                 "multiqc_citations.txt:md5,4c806e63a283ec1b7e78cdae3a923d4f",
-                "multiqc_taxbencher_benchmark_summary_table.txt:md5,43080f7ef9a4220ee1f2efe2d3e70513",
-                "multiqc_taxbencher_f1_by_rank_plot.txt:md5,a8bf5724d1041c691164aa4d5fd851e9",
-                "multiqc_taxbencher_l1_by_rank_plot.txt:md5,4d8f7701dab7632e8671ea342541b89f",
+                "multiqc_taxbencher_benchmark_summary_table.txt:md5,32710b421da7ebc355e07749f00b21ab",
+                "multiqc_taxbencher_f1_by_rank_plot.txt:md5,205c6e3f5b1a6bf5d609a2fc632acb10",
+                "multiqc_taxbencher_l1_by_rank_plot.txt:md5,8a0baf3492bef4ff10e04b2bd3c1e018",
                 "multiqc_taxbencher_opal_summary_table.txt:md5,c821eefa60eddd36a2b7b70c36170c4c",
                 "class.tsv:md5,7af2849fcfcc824b15632dcf771cbb0f",
                 "family.tsv:md5,7af2849fcfcc824b15632dcf771cbb0f",
@@ -503,10 +503,10 @@
                 "gold_standard_raw_validation.txt:md5,5fc50e7df90e28f853dd4f6cbb70aaa6"
             ]
         ],
-        "timestamp": "2026-10-29T05:06:33.040541247",
+        "timestamp": "2026-11-08T05:45:06.49142284",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.10.4"
+            "nextflow": "26.10.0"
         }
     }
 }

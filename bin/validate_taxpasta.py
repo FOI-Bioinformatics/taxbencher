@@ -82,14 +82,15 @@ def validate_taxpasta(input_file: Path) -> Tuple[bool, List[str], Dict[str, any]
     except Exception as e:
         errors.append(f"Error validating taxonomy_id: {e}")
 
-    # Check for negative or zero taxonomy_id
+    # Check for negative taxonomy_id (0 is taxpasta's "unclassified" and is valid)
     if 'taxonomy_id_int' in df.columns:
         valid_taxids = df['taxonomy_id_int'].dropna()
         if len(valid_taxids) > 0:
-            negative_taxid = (valid_taxids <= 0).sum()
+            negative_taxid = (valid_taxids < 0).sum()
             if negative_taxid > 0:
-                errors.append(f"Found {negative_taxid} rows with non-positive taxonomy_id")
+                errors.append(f"Found {negative_taxid} rows with negative taxonomy_id")
                 stats['negative_taxonomy_id'] = negative_taxid
+            stats['unclassified_rows'] = int((valid_taxids == 0).sum())
 
     # Check count column
     # Check for missing counts
@@ -111,14 +112,17 @@ def validate_taxpasta(input_file: Path) -> Tuple[bool, List[str], Dict[str, any]
     except Exception as e:
         errors.append(f"Error validating count: {e}")
 
-    # Check for negative or zero counts
+    # Check for negative counts (taxpasta writes 0 for taxa with no directly assigned reads)
     if 'count_numeric' in df.columns:
         valid_counts = df['count_numeric'].dropna()
         if len(valid_counts) > 0:
-            negative_count = (valid_counts <= 0).sum()
+            negative_count = (valid_counts < 0).sum()
             if negative_count > 0:
-                errors.append(f"Found {negative_count} rows with non-positive count")
+                errors.append(f"Found {negative_count} rows with negative count")
                 stats['negative_count'] = negative_count
+            stats['zero_count_rows'] = int((valid_counts == 0).sum())
+            if (valid_counts > 0).sum() == 0:
+                errors.append("No row has a positive count; the profile is empty")
 
             # Statistics on counts
             stats['total_reads'] = int(valid_counts.sum())

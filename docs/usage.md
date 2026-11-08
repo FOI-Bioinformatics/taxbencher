@@ -27,13 +27,14 @@ You will need to create a samplesheet with information about the taxonomic profi
 
 The samplesheet has the following required columns:
 
-| Column          | Description                                                                                                                                                                                                                                                                              |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `sample_id`     | Biological sample identifier. Profiles with the same sample_id are evaluated together in per-sample OPAL analysis.                                                                                                                                                                       |
-| `label`         | Unique identifier for this taxonomic profile. Used for distinguishing profiles in reports.                                                                                                                                                                                               |
-| `classifier`    | Name of the taxonomic classifier (e.g., kraken2, metaphlan, centrifuge). Used for labeling in reports and for automatic format detection.                                                                                                                                                |
-| `taxpasta_file` | Path to the taxonomic profile file: taxpasta standardized TSV OR raw profiler output (e.g., .kreport, .report, .profile). Absolute paths and remote URIs are used as given; relative paths are resolved against the samplesheet directory, then the launch directory. See formats below. |
-| `taxonomy_db`   | Taxonomy database used (e.g., NCBI, GTDB). Optional, defaults to NCBI.                                                                                                                                                                                                                   |
+| Column           | Description                                                                                                                                                                                                                                                                              |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `sample_id`      | Biological sample identifier. Profiles with the same sample_id are evaluated together in per-sample OPAL analysis. Letters, digits, `.`, `_` and `-` only.                                                                                                                               |
+| `label`          | Unique identifier for this taxonomic profile (e.g. `sample1_kraken2`). Used for distinguishing profiles in reports. Letters, digits, `.`, `_` and `-` only.                                                                                                                              |
+| `classifier`     | Name of the taxonomic classifier (e.g., kraken2, metaphlan, centrifuge). Raw outputs need the exact taxpasta profiler name. Used to choose the abundance mode and to pool samples in the cross-sample summary, so use the same name for the same classifier in every sample.             |
+| `taxpasta_file`  | Path to the taxonomic profile file: taxpasta standardized TSV OR raw profiler output (e.g., .kreport, .report, .profile). Absolute paths and remote URIs are used as given; relative paths are resolved against the samplesheet directory, then the launch directory. See formats below. |
+| `taxonomy_db`    | Taxonomy database used (e.g., NCBI, GTDB). Optional, defaults to NCBI.                                                                                                                                                                                                                   |
+| `abundance_mode` | Optional: `direct` (counts assigned directly to each taxon, e.g. Kraken2) or `clade` (cumulative clade abundances, e.g. MetaPhlAn). Defaults to `clade` for classifiers whose name starts with `metaphlan`, otherwise `direct`.                                                          |
 
 ### Example samplesheet
 
@@ -168,15 +169,16 @@ For more information on the CAMI Bioboxes format, see the [CAMI documentation](h
 ### Taxonomy database (`--taxdump`)
 
 Converting profiles to CAMI format needs the NCBI taxonomy to build lineages. Provide a pinned
-`taxdump.tar.gz` (from <https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/>, dated archives under
-`taxdump_archive/`) with `--taxdump`; it is turned into an ete3 database once and reused by every
-conversion, so runs are reproducible and need no network access inside tasks:
+`taxdump.tar.gz` (from <https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/>) or a dated archive
+(`taxdump_archive/taxdmp_YYYY-MM-DD.zip`, converted automatically) with `--taxdump`; it is turned into an
+ete3 database once and reused by every conversion, so runs are reproducible and need no network access
+inside tasks:
 
 ```bash
 nextflow run FOI-Bioinformatics/taxbencher \
   --input samplesheet.csv \
   --gold_standard gold_standard.bioboxes \
-  --taxdump taxdump_2025-01-01.tar.gz \
+  --taxdump taxdmp_2025-01-01.zip \
   --outdir results -profile docker
 ```
 
@@ -189,7 +191,9 @@ supported route for `taxonomy_db: GTDB`.
 
 Per-rank abundances are computed from taxpasta counts according to the profiler: read counts assigned
 directly to a taxon (Kraken2, Centrifuge, Kaiju, ...) are summed over descendants, MetaPhlAn clade abundances
-are used as they are (see [raw inputs](raw-inputs.md#abundance-semantics)). By default percentages are
+are used as they are (see [raw inputs](raw-inputs.md#abundance-semantics)). The mode follows the
+`classifier` column (any name starting with `metaphlan` means clade abundances) unless the samplesheet sets
+`abundance_mode` for the row. By default percentages are
 relative to classified reads; `--include_unclassified` makes them relative to all reads so that unclassified
 reads appear as missing abundance.
 

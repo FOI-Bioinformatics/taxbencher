@@ -22,11 +22,12 @@ from pathlib import Path
 # Format specifications for each profiler
 PROFILER_SPECS = {
     "kraken2": {
-        "extensions": [".kreport", ".kreport2"],
+        # nf-core/taxprofiler writes *.kraken2.report.txt; --report-minimizer-data adds two columns
+        "extensions": [".kreport", ".kreport2", ".report", ".txt"],
         "delimiter": "\t",
         "min_columns": 6,
-        "max_columns": 6,
-        "description": "Kraken2 report format (6 tab-separated columns)",
+        "max_columns": 8,
+        "description": "Kraken2 report format (6 tab-separated columns, 8 with --report-minimizer-data)",
         "example_columns": ["percentage", "clade_reads", "taxon_reads", "rank", "taxID", "name"],
     },
     "bracken": {
@@ -92,6 +93,7 @@ PROFILER_SPECS = {
         "min_columns": 2,
         "max_columns": None,
         "description": "mOTUs profiling output (tab-separated)",
+        "header_marker": "#",
         "example_columns": ["taxonomy", "count"],
     },
     "krakenuniq": {
@@ -231,7 +233,8 @@ Supported profilers:
     parser.add_argument(
         "file",
         type=Path,
-        help="Path to profiler output file",
+        nargs="?",
+        help="Path to profiler output file (not needed with --show-spec)",
     )
 
     parser.add_argument(
@@ -241,6 +244,8 @@ Supported profilers:
     )
 
     args = parser.parse_args()
+    if not args.show_spec and args.file is None:
+        parser.error("the following arguments are required: file")
 
     profiler = args.profiler.lower()
 

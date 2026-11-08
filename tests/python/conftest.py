@@ -81,3 +81,10 @@ def rank_sums(rows):
     for row in rows:
         sums[row["RANK"]] = sums.get(row["RANK"], 0.0) + float(row["PERCENTAGE"])
     return sums
+
+
+@pytest.fixture(scope="session")
+def comparer():
+    pytest.importorskip("sklearn")
+    pytest.importorskip("plotly")
+    return load_script("comparative_analysis")

@@ -33,8 +33,10 @@ process TAXPASTA_TO_BIOBOXES {
     // MetaPhlAn reports clade-cumulative relative abundances for every level of the
     // lineage; every other taxpasta-supported profiler reports reads assigned directly
     // to a taxon, which have to be summed over descendants to obtain clade abundances.
-    def clade_profilers = ['metaphlan']
-    def abundance_mode = meta.abundance_mode ?: (clade_profilers.contains((meta.classifier ?: '').toString().toLowerCase()) ? 'clade' : 'direct')
+    // Any MetaPhlAn version (metaphlan, metaphlan4, MetaPhlAn_4.1, ...); a samplesheet
+    // abundance_mode column overrides the guess for other cumulative profilers.
+    def is_metaphlan = (meta.classifier ?: '').toString().toLowerCase().startsWith('metaphlan')
+    def abundance_mode = meta.abundance_mode ?: (is_metaphlan ? 'clade' : 'direct')
     def taxdb_files = taxdb instanceof List ? taxdb : (taxdb ? [taxdb] : [])
     def sqlite = taxdb_files.find { db_file -> db_file.name.endsWith('.sqlite') }
     def taxdb_arg = sqlite ? "--ete3-db ${sqlite}" : ''

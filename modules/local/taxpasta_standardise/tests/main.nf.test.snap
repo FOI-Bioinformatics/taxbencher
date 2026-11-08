@@ -9,7 +9,7 @@
                             "classifier": "kraken2",
                             "taxonomy_db": "NCBI"
                         },
-                        "test_kraken2.tsv:md5,4074437ead67f2058fdd95464dfeeaba"
+                        "test_kraken2.taxpasta.tsv:md5,4074437ead67f2058fdd95464dfeeaba"
                     ]
                 ],
                 "1": [
@@ -26,7 +26,7 @@
                             "classifier": "kraken2",
                             "taxonomy_db": "NCBI"
                         },
-                        "test_kraken2.tsv:md5,4074437ead67f2058fdd95464dfeeaba"
+                        "test_kraken2.taxpasta.tsv:md5,4074437ead67f2058fdd95464dfeeaba"
                     ]
                 ],
                 "versions_taxpasta": [
@@ -38,10 +38,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-29T04:56:42.68730618",
+        "timestamp": "2026-11-08T05:39:37.816345557",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.10.4"
+            "nextflow": "26.10.0"
         }
     },
     "taxpasta standardise - megan6": {
@@ -54,7 +54,7 @@
                             "classifier": "megan6",
                             "taxonomy_db": "NCBI"
                         },
-                        "test_megan6.tsv:md5,bf678859b81858fc5ce160f1182f50b8"
+                        "test_megan6.taxpasta.tsv:md5,bf678859b81858fc5ce160f1182f50b8"
                     ]
                 ],
                 "1": [
@@ -71,7 +71,7 @@
                             "classifier": "megan6",
                             "taxonomy_db": "NCBI"
                         },
-                        "test_megan6.tsv:md5,bf678859b81858fc5ce160f1182f50b8"
+                        "test_megan6.taxpasta.tsv:md5,bf678859b81858fc5ce160f1182f50b8"
                     ]
                 ],
                 "versions_taxpasta": [
@@ -83,10 +83,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-29T04:58:58.835745072",
+        "timestamp": "2026-11-08T05:40:58.439881584",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.10.4"
+            "nextflow": "26.10.0"
         }
     },
     "taxpasta standardise - diamond": {
@@ -99,7 +99,7 @@
                             "classifier": "diamond",
                             "taxonomy_db": "NCBI"
                         },
-                        "test_diamond.tsv:md5,e3988da6d98e6be209314334f56bb794"
+                        "test_diamond.taxpasta.tsv:md5,e3988da6d98e6be209314334f56bb794"
                     ]
                 ],
                 "1": [
@@ -116,7 +116,7 @@
                             "classifier": "diamond",
                             "taxonomy_db": "NCBI"
                         },
-                        "test_diamond.tsv:md5,e3988da6d98e6be209314334f56bb794"
+                        "test_diamond.taxpasta.tsv:md5,e3988da6d98e6be209314334f56bb794"
                     ]
                 ],
                 "versions_taxpasta": [
@@ -128,10 +128,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-29T04:59:15.654067103",
+        "timestamp": "2026-11-08T05:41:08.276484159",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.10.4"
+            "nextflow": "26.10.0"
         }
     },
     "taxpasta standardise - kmcp": {
@@ -144,7 +144,7 @@
                             "classifier": "kmcp",
                             "taxonomy_db": "NCBI"
                         },
-                        "test_kmcp.tsv:md5,f3e3d6c8bab97f06ad9da59c532523bb"
+                        "test_kmcp.taxpasta.tsv:md5,f3e3d6c8bab97f06ad9da59c532523bb"
                     ]
                 ],
                 "1": [
@@ -161,7 +161,7 @@
                             "classifier": "kmcp",
                             "taxonomy_db": "NCBI"
                         },
-                        "test_kmcp.tsv:md5,f3e3d6c8bab97f06ad9da59c532523bb"
+                        "test_kmcp.taxpasta.tsv:md5,f3e3d6c8bab97f06ad9da59c532523bb"
                     ]
                 ],
                 "versions_taxpasta": [
@@ -173,10 +173,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-29T04:59:32.573172136",
+        "timestamp": "2026-11-08T05:41:18.157319008",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.10.4"
+            "nextflow": "26.10.0"
         }
     },
     "taxpasta standardise - motus": {
@@ -189,7 +189,7 @@
                             "classifier": "motus",
                             "taxonomy_db": "NCBI"
                         },
-                        "test_motus.tsv:md5,6b61bfc50acd6208b520b4ab7dd02b7b"
+                        "test_motus.taxpasta.tsv:md5,6b61bfc50acd6208b520b4ab7dd02b7b"
                     ]
                 ],
                 "1": [
@@ -206,7 +206,7 @@
                             "classifier": "motus",
                             "taxonomy_db": "NCBI"
                         },
-                        "test_motus.tsv:md5,6b61bfc50acd6208b520b4ab7dd02b7b"
+                        "test_motus.taxpasta.tsv:md5,6b61bfc50acd6208b520b4ab7dd02b7b"
                     ]
                 ],
                 "versions_taxpasta": [
@@ -218,10 +218,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-29T04:58:06.344759921",
+        "timestamp": "2026-11-08T05:40:29.327106473",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.10.4"
+            "nextflow": "26.10.0"
         }
     },
     "taxpasta standardise - stub": {
@@ -234,7 +234,7 @@
                             "classifier": "kraken2",
                             "taxonomy_db": "NCBI"
                         },
-                        "test_stub.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        "test_stub.taxpasta.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
                 "1": [
@@ -251,7 +251,7 @@
                             "classifier": "kraken2",
                             "taxonomy_db": "NCBI"
                         },
-                        "test_stub.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        "test_stub.taxpasta.tsv:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
                 "versions_taxpasta": [
@@ -263,10 +263,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-29T04:59:48.175300382",
+        "timestamp": "2026-11-08T05:41:26.894540218",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.10.4"
+            "nextflow": "26.10.0"
         }
     },
     "taxpasta standardise - centrifuge": {
@@ -279,7 +279,7 @@
                             "classifier": "centrifuge",
                             "taxonomy_db": "NCBI"
                         },
-                        "test_centrifuge.tsv:md5,76c7c2744a1acb01b9e13a8d017b5efc"
+                        "test_centrifuge.taxpasta.tsv:md5,76c7c2744a1acb01b9e13a8d017b5efc"
                     ]
                 ],
                 "1": [
@@ -296,7 +296,7 @@
                             "classifier": "centrifuge",
                             "taxonomy_db": "NCBI"
                         },
-                        "test_centrifuge.tsv:md5,76c7c2744a1acb01b9e13a8d017b5efc"
+                        "test_centrifuge.taxpasta.tsv:md5,76c7c2744a1acb01b9e13a8d017b5efc"
                     ]
                 ],
                 "versions_taxpasta": [
@@ -308,10 +308,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-29T04:56:59.626960463",
+        "timestamp": "2026-11-08T05:39:48.335120974",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.10.4"
+            "nextflow": "26.10.0"
         }
     },
     "taxpasta standardise - bracken": {
@@ -324,7 +324,7 @@
                             "classifier": "bracken",
                             "taxonomy_db": "NCBI"
                         },
-                        "test_bracken.tsv:md5,bf678859b81858fc5ce160f1182f50b8"
+                        "test_bracken.taxpasta.tsv:md5,bf678859b81858fc5ce160f1182f50b8"
                     ]
                 ],
                 "1": [
@@ -341,7 +341,7 @@
                             "classifier": "bracken",
                             "taxonomy_db": "NCBI"
                         },
-                        "test_bracken.tsv:md5,bf678859b81858fc5ce160f1182f50b8"
+                        "test_bracken.taxpasta.tsv:md5,bf678859b81858fc5ce160f1182f50b8"
                     ]
                 ],
                 "versions_taxpasta": [
@@ -353,10 +353,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-29T04:57:33.019426625",
+        "timestamp": "2026-11-08T05:40:08.594003154",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.10.4"
+            "nextflow": "26.10.0"
         }
     },
     "taxpasta standardise - kaiju": {
@@ -369,7 +369,7 @@
                             "classifier": "kaiju",
                             "taxonomy_db": "NCBI"
                         },
-                        "test_kaiju.tsv:md5,f3e3d6c8bab97f06ad9da59c532523bb"
+                        "test_kaiju.taxpasta.tsv:md5,f3e3d6c8bab97f06ad9da59c532523bb"
                     ]
                 ],
                 "1": [
@@ -386,7 +386,7 @@
                             "classifier": "kaiju",
                             "taxonomy_db": "NCBI"
                         },
-                        "test_kaiju.tsv:md5,f3e3d6c8bab97f06ad9da59c532523bb"
+                        "test_kaiju.taxpasta.tsv:md5,f3e3d6c8bab97f06ad9da59c532523bb"
                     ]
                 ],
                 "versions_taxpasta": [
@@ -398,10 +398,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-29T04:57:49.406663814",
+        "timestamp": "2026-11-08T05:40:18.936300243",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.10.4"
+            "nextflow": "26.10.0"
         }
     },
     "taxpasta standardise - metaphlan": {
@@ -414,7 +414,7 @@
                             "classifier": "metaphlan",
                             "taxonomy_db": "NCBI"
                         },
-                        "test_metaphlan.tsv:md5,15260ed0e313e397ecae9704df6fa87f"
+                        "test_metaphlan.taxpasta.tsv:md5,15260ed0e313e397ecae9704df6fa87f"
                     ]
                 ],
                 "1": [
@@ -431,7 +431,7 @@
                             "classifier": "metaphlan",
                             "taxonomy_db": "NCBI"
                         },
-                        "test_metaphlan.tsv:md5,15260ed0e313e397ecae9704df6fa87f"
+                        "test_metaphlan.taxpasta.tsv:md5,15260ed0e313e397ecae9704df6fa87f"
                     ]
                 ],
                 "versions_taxpasta": [
@@ -443,10 +443,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-29T04:57:16.723227613",
+        "timestamp": "2026-11-08T05:39:58.500088618",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.10.4"
+            "nextflow": "26.10.0"
         }
     },
     "taxpasta standardise - ganon": {
@@ -459,7 +459,7 @@
                             "classifier": "ganon",
                             "taxonomy_db": "NCBI"
                         },
-                        "test_ganon.tsv:md5,8ebe09a3aa5691667afab7cc957accb5"
+                        "test_ganon.taxpasta.tsv:md5,8ebe09a3aa5691667afab7cc957accb5"
                     ]
                 ],
                 "1": [
@@ -476,7 +476,7 @@
                             "classifier": "ganon",
                             "taxonomy_db": "NCBI"
                         },
-                        "test_ganon.tsv:md5,8ebe09a3aa5691667afab7cc957accb5"
+                        "test_ganon.taxpasta.tsv:md5,8ebe09a3aa5691667afab7cc957accb5"
                     ]
                 ],
                 "versions_taxpasta": [
@@ -488,10 +488,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-29T04:58:23.810807747",
+        "timestamp": "2026-11-08T05:40:38.992319654",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.10.4"
+            "nextflow": "26.10.0"
         }
     },
     "taxpasta standardise - krakenuniq": {
@@ -504,7 +504,7 @@
                             "classifier": "krakenuniq",
                             "taxonomy_db": "NCBI"
                         },
-                        "test_krakenuniq.tsv:md5,bf678859b81858fc5ce160f1182f50b8"
+                        "test_krakenuniq.taxpasta.tsv:md5,bf678859b81858fc5ce160f1182f50b8"
                     ]
                 ],
                 "1": [
@@ -521,7 +521,7 @@
                             "classifier": "krakenuniq",
                             "taxonomy_db": "NCBI"
                         },
-                        "test_krakenuniq.tsv:md5,bf678859b81858fc5ce160f1182f50b8"
+                        "test_krakenuniq.taxpasta.tsv:md5,bf678859b81858fc5ce160f1182f50b8"
                     ]
                 ],
                 "versions_taxpasta": [
@@ -533,10 +533,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-29T04:58:40.96197696",
+        "timestamp": "2026-11-08T05:40:48.943499198",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.10.4"
+            "nextflow": "26.10.0"
         }
     }
 }

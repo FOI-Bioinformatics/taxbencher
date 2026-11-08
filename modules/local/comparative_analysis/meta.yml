@@ -23,7 +23,7 @@ input:
         type: map
         description: |
           Groovy Map containing sample information
-          e.g. `[ id:'sample1', sample_id:'sample1', labels:'sample1_kraken2,sample1_metaphlan', num_classifiers:2 ]`
+          e.g. `[ id:'sample1', sample_id:'sample1', labels:'sample1_kraken2,sample1_metaphlan', classifiers:'kraken2,metaphlan', num_classifiers:2 ]`
     - opal_dir:
         type: directory
         description: OPAL results directory containing results.tsv (long format) and evaluation data
@@ -44,7 +44,7 @@ output:
           type: map
           description: |
             Groovy Map containing sample information
-            e.g. `[ id:'sample1', sample_id:'sample1', labels:'sample1_kraken2,sample1_metaphlan', num_classifiers:2 ]`
+            e.g. `[ id:'sample1', sample_id:'sample1', labels:'sample1_kraken2,sample1_metaphlan', classifiers:'kraken2,metaphlan', num_classifiers:2 ]`
       - "*_pca.html":
           type: file
           description: Interactive PCA of the classifiers over all metric/rank features
@@ -56,7 +56,7 @@ output:
           type: map
           description: |
             Groovy Map containing sample information
-            e.g. `[ id:'sample1', sample_id:'sample1', labels:'sample1_kraken2,sample1_metaphlan', num_classifiers:2 ]`
+            e.g. `[ id:'sample1', sample_id:'sample1', labels:'sample1_kraken2,sample1_metaphlan', classifiers:'kraken2,metaphlan', num_classifiers:2 ]`
       - "*_diff_taxa.tsv":
           type: file
           description: Per-taxon observed vs expected abundance with absolute/log2 difference and TP/FP/FN status per classifier and rank
@@ -68,7 +68,7 @@ output:
           type: map
           description: |
             Groovy Map containing sample information
-            e.g. `[ id:'sample1', sample_id:'sample1', labels:'sample1_kraken2,sample1_metaphlan', num_classifiers:2 ]`
+            e.g. `[ id:'sample1', sample_id:'sample1', labels:'sample1_kraken2,sample1_metaphlan', classifiers:'kraken2,metaphlan', num_classifiers:2 ]`
       - "*_comparison.html":
           type: file
           description: HTML report with the classifier comparison of this sample
@@ -80,7 +80,7 @@ output:
           type: map
           description: |
             Groovy Map containing sample information
-            e.g. `[ id:'sample1', sample_id:'sample1', labels:'sample1_kraken2,sample1_metaphlan', num_classifiers:2 ]`
+            e.g. `[ id:'sample1', sample_id:'sample1', labels:'sample1_kraken2,sample1_metaphlan', classifiers:'kraken2,metaphlan', num_classifiers:2 ]`
       - "*_metrics_wide.tsv":
           type: file
           description: OPAL metrics pivoted to one row per tool and rank (with a sample column)
@@ -92,7 +92,7 @@ output:
           type: map
           description: |
             Groovy Map containing sample information
-            e.g. `[ id:'sample1', sample_id:'sample1', labels:'sample1_kraken2,sample1_metaphlan', num_classifiers:2 ]`
+            e.g. `[ id:'sample1', sample_id:'sample1', labels:'sample1_kraken2,sample1_metaphlan', classifiers:'kraken2,metaphlan', num_classifiers:2 ]`
       - "*_mqc.tsv":
           type: file
           description: MultiQC custom-content table with key OPAL metrics per classifier

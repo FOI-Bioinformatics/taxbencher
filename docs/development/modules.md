@@ -76,7 +76,7 @@ tuple val(meta), path("*.tsv"), emit: standardised
 path "versions.yml"           , emit: versions
 ```
 
-**Output file**: `{meta.id}.tsv` - Standardized taxpasta format with columns:
+**Output file**: `{meta.id}.taxpasta.tsv` - Standardized taxpasta format with columns:
 
 - `taxonomy_id`: NCBI taxonomy ID
 - `count`: Read count assigned to this taxon
@@ -122,14 +122,14 @@ fi
 # Run taxpasta with error handling
 if ! taxpasta standardise \
     --profiler ${meta.classifier} \
-    --output ${prefix}.tsv \
+    --output ${prefix}.taxpasta.tsv \
     $profiler_output; then
     echo "ERROR: taxpasta standardisation failed"
     exit 1
 fi
 
 # Verify output
-if [ ! -s ${prefix}.tsv ]; then
+if [ ! -s ${prefix}.taxpasta.tsv ]; then
     echo "ERROR: Output file was not created or is empty"
     exit 1
 fi
