@@ -27,9 +27,10 @@ taxonomy_id    count
 ## Features
 
 - Converts read counts to percentages
-- Retrieves taxonomic lineage information using ete3
+- Retrieves taxonomic lineages from taxpasta lineage columns or, otherwise, from an NCBI taxdump via taxopy
+  (merged taxonomy IDs are translated to their current ID)
 - Supports custom taxonomic ranks and database identifiers
-- Handles missing or invalid taxonomy IDs gracefully
+- Reports unknown taxonomy IDs and fails instead of writing an empty profile
 - Includes both full taxonomy paths (IDs) and scientific names
 
 ## Usage
@@ -42,7 +43,10 @@ ch_taxpasta = Channel.of([
     file('sample1_taxpasta.tsv')
 ])
 
-TAXPASTA_TO_BIOBOXES(ch_taxpasta)
+// taxdump directory (nodes.dmp, names.dmp, merged.dmp) from PREPARE_TAXDUMP, or [] for profiles
+// that carry taxpasta lineage columns
+PREPARE_TAXDUMP(file('taxdump.tar.gz'))
+TAXPASTA_TO_BIOBOXES(ch_taxpasta, PREPARE_TAXDUMP.out.taxdump)
 ```
 
 ### With Custom Parameters
@@ -58,7 +62,7 @@ ch_taxpasta = Channel.of([
     file('sample1_taxpasta.tsv')
 ])
 
-TAXPASTA_TO_BIOBOXES(ch_taxpasta)
+TAXPASTA_TO_BIOBOXES(ch_taxpasta, PREPARE_TAXDUMP.out.taxdump)
 ```
 
 ## Parameters
@@ -72,15 +76,14 @@ TAXPASTA_TO_BIOBOXES(ch_taxpasta)
 
 ## Dependencies
 
-- Python 3.11
-- pandas >= 2.0
-- ete3 >= 3.1.3
+- Python 3.12, pandas 2.2 and taxopy 0.12 (all in `quay.io/biocontainers/taxpasta:0.7.0--pyhdfd78af_0`)
 
 ## Notes
 
-- The script requires the NCBI taxonomy database for ete3. On first run, ete3 will download the database (~500MB).
-- If ete3 is not available, the script falls back to a simplified mode without lineage information.
-- For large-scale conversions, consider pre-downloading the NCBI taxonomy database.
+- Without a taxdump (and without lineage columns) the script downloads the current NCBI taxdump (~80 MB) in every
+  task; pass `--taxdump` to the pipeline for reproducible, offline runs.
+- Loading the full NCBI taxonomy takes about 15 s and 3 GB of memory per task (the `process_single` label
+  provides 6 GB).
 
 ## References
 

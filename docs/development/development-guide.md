@@ -100,7 +100,7 @@ pip install nf-core
 nf-core tools install nf-test
 
 # Install Python dependencies (for bin/ scripts)
-pip install pandas ete3 biopython
+pip install pandas taxopy pytest
 ```
 
 **Configure editor**:

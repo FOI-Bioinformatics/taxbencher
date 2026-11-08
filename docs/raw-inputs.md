@@ -118,9 +118,9 @@ directory, then the launch directory; absolute paths and remote URIs (`s3://`, `
 5. **taxonomy_db** (string, default: `NCBI`)
    - Taxonomy database used by the profiler
    - Options: `NCBI`, `GTDB`
-   - `NCBI` profiles get their lineages from ete3 (`--taxdump`); `GTDB` profiles must carry taxpasta lineage
-     columns (`--add-id-lineage --add-rank-lineage --add-lineage` with a GTDB taxonomy) because ete3 only
-     knows the NCBI taxonomy
+   - `NCBI` profiles get their lineages from the NCBI taxdump (`--taxdump`, read with taxopy); `GTDB`
+     profiles must carry taxpasta lineage columns (`--add-id-lineage --add-rank-lineage --add-lineage` with a
+     GTDB taxonomy) because the pipeline only resolves NCBI taxonomy IDs
 
 ## Abundance semantics
 

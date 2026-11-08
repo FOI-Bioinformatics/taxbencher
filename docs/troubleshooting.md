@@ -82,16 +82,12 @@ Command error:
   ModuleNotFoundError: No module named 'pandas'
 ```
 
-**Cause:** Running with `-profile docker` without `-profile wave`. The base `biocontainers/python:3.11` image lacks pandas and ete3.
+**Cause:** An outdated or custom container configuration. `TAXPASTA_TO_BIOBOXES` runs in the taxpasta biocontainer (`quay.io/biocontainers/taxpasta:0.7.0--pyhdfd78af_0`), which ships pandas and taxopy; a plain Python image lacks both.
 
-**Solution:** Always use Wave with Docker:
+**Solution:** Remove custom `container` overrides for `TAXPASTA_TO_BIOBOXES` and use the pipeline's defaults:
 
 ```bash
-# Correct
-nextflow run FOI-Bioinformatics/taxbencher -profile docker,wave
-
-# Alternative: Use conda
-nextflow run FOI-Bioinformatics/taxbencher -profile conda
+nextflow run FOI-Bioinformatics/taxbencher -profile docker   # or singularity / conda
 ```
 
 ### "Manifest not found" Error

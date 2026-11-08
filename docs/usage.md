@@ -170,9 +170,11 @@ For more information on the CAMI Bioboxes format, see the [CAMI documentation](h
 
 Converting profiles to CAMI format needs the NCBI taxonomy to build lineages. Provide a pinned
 `taxdump.tar.gz` (from <https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/>) or a dated archive
-(`taxdump_archive/taxdmp_YYYY-MM-DD.zip`, converted automatically) with `--taxdump`; it is turned into an
-ete3 database once and reused by every conversion, so runs are reproducible and need no network access
-inside tasks:
+(`taxdump_archive/taxdmp_YYYY-MM-DD.zip`) with `--taxdump`. It is extracted once (`PREPARE_TAXDUMP`:
+`nodes.dmp`, `names.dmp`, `merged.dmp`) and read by every conversion with
+[taxopy](https://github.com/apcamargo/taxopy), so runs are reproducible and need no network access inside
+tasks. Outdated (merged) taxonomy IDs in a profile are replaced by their current ID, so they match the gold
+standard:
 
 ```bash
 nextflow run FOI-Bioinformatics/taxbencher \
@@ -182,8 +184,9 @@ nextflow run FOI-Bioinformatics/taxbencher \
   --outdir results -profile docker
 ```
 
-Without `--taxdump`, ete3 downloads the current NCBI taxonomy into `$HOME/.etetoolkit` inside each
-conversion task. Profiles that already carry taxpasta lineage columns (`taxpasta standardise --taxonomy <dir>
+Without `--taxdump`, every conversion task downloads the current NCBI taxdump (about 80 MB) and loads it,
+which needs network access and makes results depend on the download date. Loading the full NCBI taxonomy
+takes about 15 s and 3 GB of memory per conversion task. Profiles that already carry taxpasta lineage columns (`taxpasta standardise --taxonomy <dir>
 --add-id-lineage --add-rank-lineage --add-lineage`) need no taxonomy database at all; this is also the only
 supported route for `taxonomy_db: GTDB`.
 

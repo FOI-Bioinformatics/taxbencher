@@ -676,7 +676,7 @@ ch_versions = ch_versions.mix(OPAL_PER_SAMPLE.out.versions.first())
 "TAXPASTA_TO_BIOBOXES":
     python: 3.11.0
     pandas: 2.0.0
-    ete3: 3.1.2
+    taxopy: 0.12.0
 """
 
 ch_versions = ch_versions.mix(TAXPASTA_TO_BIOBOXES.out.versions)
