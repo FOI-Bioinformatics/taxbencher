@@ -3,12 +3,6 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## v1.6.0dev - unreleased
-
-### Changed
-
-- Version bumped to 1.6.0dev after the 1.5.0 release.
-
 ## v1.5.0 - 2026-11-08
 
 Taxonomy lookups move from ete3 to taxopy (identical lineages, merged taxonomy IDs translated, one container
