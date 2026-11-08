@@ -33,13 +33,14 @@ def taxdump() -> Path:
 
 
 @pytest.fixture(scope="session")
-def ete3_db(tmp_path_factory, taxdump) -> Path:
-    """ete3 sqlite database built once per session from the reduced taxdump."""
-    from ete3 import NCBITaxa  # noqa: WPS433
+def taxonomy():
+    return load_script("taxbencher_taxonomy")
 
-    db = tmp_path_factory.mktemp("taxdb") / "taxa.sqlite"
-    NCBITaxa(dbfile=str(db), taxdump_file=str(taxdump))
-    return db
+
+@pytest.fixture(scope="session")
+def taxonomy_dir(tmp_path_factory, taxdump, taxonomy) -> Path:
+    """The reduced taxdump extracted once per session (nodes.dmp, names.dmp, merged.dmp)."""
+    return taxonomy.extract_taxdump(taxdump, tmp_path_factory.mktemp("taxdump"))
 
 
 @pytest.fixture(scope="session")

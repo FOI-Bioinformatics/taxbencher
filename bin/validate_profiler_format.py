@@ -287,9 +287,9 @@ Supported profilers:
         for issue in issues:
             print(f"  • {issue}", file=sys.stderr)
 
-        print(f"\nFor format details, run:", file=sys.stderr)
+        print("\nFor format details, run:", file=sys.stderr)
         print(f"  {sys.argv[0]} {profiler} --show-spec", file=sys.stderr)
-        print(f"\nSee docs/raw-inputs.md for comprehensive format documentation", file=sys.stderr)
+        print("\nSee docs/raw-inputs.md for comprehensive format documentation", file=sys.stderr)
 
         sys.exit(1)
 

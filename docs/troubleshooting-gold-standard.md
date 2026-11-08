@@ -43,15 +43,16 @@ CRITICAL: Data contains unsupported ranks for OPAL: ['cellular root', 'domain', 
 
 **Fix:** The `fix_gold_standard.py` script automatically:
 
-- Reconstructs TAXPATH/TAXPATHSN from the NCBI taxonomy (ete3), one element per rank of `@Ranks`
+- Reconstructs TAXPATH/TAXPATHSN from the NCBI taxonomy (taxopy), one element per rank of `@Ranks`; merged
+  (outdated) taxonomy IDs are replaced by their current ID
 - Filters out unsupported ranks (root, no rank, kingdom, cellular root, etc.)
 - Maps `domain` → `superkingdom` and `subspecies`/`no rank` below species → `strain`; taxa below the strain
   level are aggregated into their strain ancestor
 - Optionally derives higher ranks from species/strain level truth (`--fill-higher-ranks`)
 - Optionally rescales every rank to exactly 100 % (`--renormalise`)
 
-Pass `--taxdump taxdump.tar.gz` to use the same pinned NCBI taxonomy as the pipeline (`--taxdump`); without
-it ete3 downloads the current taxonomy into `~/.etetoolkit`.
+Pass `--taxdump taxdump.tar.gz` (or an extracted taxdump directory) to use the same pinned NCBI taxonomy as
+the pipeline (`--taxdump`); without it the current taxonomy is downloaded into the working directory.
 
 ### Issue 2b: Abundances do not sum to 100 % per rank
 

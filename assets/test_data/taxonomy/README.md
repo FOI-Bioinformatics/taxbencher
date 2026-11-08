@@ -6,8 +6,8 @@ bundled test data (Francisellaceae, a few Enterobacterales/Bacillales/Burkholder
 species, Methanobacteriaceae) and their ancestors.
 
 It exists so that the test profiles and the module tests can be run **offline and
-reproducibly**: `ete3` otherwise downloads the live NCBI taxonomy (~60 MB, changing
-weekly) on first use, which makes snapshot tests non-deterministic and fails on
+reproducibly**: without `--taxdump` the conversion downloads the live NCBI taxonomy
+(~80 MB, changing weekly), which makes snapshot tests non-deterministic and fails on
 machines without internet access.
 
 Two taxonomy IDs present in the realistic Kraken2 test profile (`1001542`, `1341656`)

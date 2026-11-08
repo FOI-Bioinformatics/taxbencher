@@ -66,7 +66,6 @@ taxid	rank	pct	classification	pct_gs	sample	tool
 653937	species	0.0025	FP		test1	test1_kraken2
 72273	order	97.785588	TP	97.0	test1	test1_kraken2
 954	species	0.032806	TP	6.0	test1	test1_kraken2
-1001534	strain	0.000267	FP		test1	test1_metaphlan
 1085644	species	0.001869	FP		test1	test1_metaphlan
 1085647	species	0.002403	TP	3.0	test1	test1_metaphlan
 1086726	strain	0.035695	TP	6.0	test1	test1_metaphlan
@@ -74,15 +73,10 @@ taxid	rank	pct	classification	pct_gs	sample	tool
 119856	strain	0.006587	TP	18.0	test1	test1_metaphlan
 119857	strain	0.069165	TP	20.0	test1	test1_metaphlan
 1224	phylum	98.69638	TP	97.0	test1	test1_metaphlan
-1232394	strain	0.002493	FP		test1	test1_metaphlan
 1236	class	98.487997	TP	97.0	test1	test1_metaphlan
 135617	family	8.9e-05	FP		test1	test1_metaphlan
-1386968	strain	0.007299	FP		test1	test1_metaphlan
 1395624	species	0.001781	FP		test1	test1_metaphlan
-1432652	strain	0.021809	FP		test1	test1_metaphlan
-1450527	strain	0.012729	FP		test1	test1_metaphlan
 1542390	species	0.004361	TP	4.0	test1	test1_metaphlan
-177416	strain	0.000267	FP		test1	test1_metaphlan
 183925	class		FN	3.0	test1	test1_metaphlan
 1869285	genus	0.006676	TP	5.0	test1	test1_metaphlan
 2	superkingdom	100.0	TP	97.0	test1	test1_metaphlan
@@ -102,9 +96,6 @@ taxid	rank	pct	classification	pct_gs	sample	tool
 28890	phylum		FN	3.0	test1	test1_metaphlan
 299583	species	0.003115	TP	3.0	test1	test1_metaphlan
 34064	family	97.84985	TP	97.0	test1	test1_metaphlan
-393011	strain	0.000535	FP		test1	test1_metaphlan
-393115	strain	0.000178	FP		test1	test1_metaphlan
-401614	strain	0.005964	FP		test1	test1_metaphlan
 539329	strain	0.000356	TP	5.0	test1	test1_metaphlan
 549298	species	0.001514	FP		test1	test1_metaphlan
 573569	species	0.000535	FP		test1	test1_metaphlan
@@ -114,7 +105,6 @@ taxid	rank	pct	classification	pct_gs	sample	tool
 653937	species	0.00276	FP		test1	test1_metaphlan
 72273	order	97.863826	TP	97.0	test1	test1_metaphlan
 954	species	0.035784	TP	6.0	test1	test1_metaphlan
-984129	strain	0.016824	FP		test1	test1_metaphlan
 1085644	species	0.001552	FP		test1	test1_centrifuge
 1085647	species	0.001996	TP	3.0	test1	test1_centrifuge
 1086726	strain	0.030604	TP	6.0	test1	test1_centrifuge

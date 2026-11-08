@@ -85,7 +85,7 @@ nextflow run . \
 
 ```
 VALIDATE_GOLD_STANDARD ─┐
-Input → TAXPASTA_STANDARDISE* → TAXPASTA_TO_BIOBOXES (+ ETE3_BUILD_TAXDB from --taxdump) →
+Input → TAXPASTA_STANDARDISE* → TAXPASTA_TO_BIOBOXES (+ PREPARE_TAXDUMP from --taxdump) →
 Group by sample_id → OPAL_PER_SAMPLE → COMPARATIVE_ANALYSIS → BENCHMARK_SUMMARY → MULTIQC
 ```
 
@@ -109,8 +109,9 @@ TAXPATH restricted to `@Ranks`. Direct read counts (Kraken2 etc.) are summed ove
 values are cumulative already (`--abundance-mode clade`, chosen from the classifier column). Gold standards must
 follow the same per-rank convention and their `@SampleID` must equal the samplesheet `sample_id` (checked at start).
 
-**Taxonomy**: `--taxdump taxdump.tar.gz` builds one ete3 database (`ETE3_BUILD_TAXDB`) shared by all
-conversions. Tests use the reduced archive in `assets/test_data/taxonomy/` (offline, deterministic).
+**Taxonomy**: `--taxdump taxdump.tar.gz` is extracted once (`PREPARE_TAXDUMP`) and read with taxopy by all
+conversions (`bin/taxbencher_taxonomy.py`; merged taxids are translated to their current ID). Tests use the
+reduced archive in `assets/test_data/taxonomy/` (offline, deterministic).
 
 ### Directory Structure
 
@@ -134,16 +135,16 @@ See [docs/development/architecture.md](docs/development/architecture.md) for det
 **When**: Automatically for non-.tsv/.txt inputs
 **Supports**: Kraken2, MetaPhlAn, Centrifuge, Kaiju, Bracken, ganon, KMCP, mOTUs, DIAMOND, MALT
 
-### ETE3_BUILD_TAXDB
+### PREPARE_TAXDUMP
 
-**Purpose**: Builds the ete3 NCBI taxonomy sqlite database once from `--taxdump`
-**Output**: `taxa.sqlite` (+ traverse index) passed to every TAXPASTA_TO_BIOBOXES task
+**Purpose**: Extracts `nodes.dmp`, `names.dmp` and `merged.dmp` once from `--taxdump` (tar.gz or zip)
+**Output**: `taxdump/` directory passed to every TAXPASTA_TO_BIOBOXES task
 
 ### TAXPASTA_TO_BIOBOXES
 
 **Purpose**: Converts taxpasta TSV to CAMI Bioboxes format (per-rank clade abundances)
-**Uses**: Python + ete3 (or taxpasta lineage columns) for taxonomy lookups; `--abundance-mode direct|clade`
-**Container**: Seqera Wave (pandas + ete3)
+**Uses**: Python + taxopy (or taxpasta lineage columns) for taxonomy lookups; `--abundance-mode direct|clade`
+**Container**: taxpasta biocontainer (pandas + taxopy), shared with TAXPASTA_STANDARDISE and PREPARE_TAXDUMP
 **Fails** instead of writing empty profiles (unknown taxids, inconsistent abundance mode)
 
 ### OPAL_PER_SAMPLE
@@ -171,7 +172,8 @@ nf-core pipelines lint
 
 # 2. Run tests
 nf-test test --profile +docker
-pytest tests/python          # unit tests of bin/ scripts (pandas, ete3, pytest)
+pytest tests/python          # unit tests of bin/ scripts (pandas, taxopy, pytest)
+ruff check bin tests/python  # Python lint (also a pre-commit hook)
 
 # 3. Check for issues
 grep -r "TODO\|FIXME" modules/ workflows/

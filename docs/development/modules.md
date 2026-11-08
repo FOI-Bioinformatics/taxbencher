@@ -20,13 +20,13 @@ This document provides detailed specifications for all modules in the taxbencher
 | ---------------------- | ----------------------------------------------------------- | ------------- | ----------------------------------- |
 | VALIDATE_GOLD_STANDARD | Validate gold standard CAMI profile before evaluation       | ✅ Production | Biocontainer (python)               |
 | TAXPASTA_STANDARDISE   | Convert raw profiler outputs to taxpasta TSV                | ✅ Production | Biocontainer (taxpasta)             |
-| ETE3_BUILD_TAXDB       | Build ete3 taxonomy database from a pinned taxdump          | ✅ Production | Frozen Wave community (pandas+ete3) |
-| TAXPASTA_TO_BIOBOXES   | Convert taxpasta TSV to CAMI Bioboxes (per-rank abundances) | ✅ Production | Frozen Wave community (pandas+ete3) |
+| PREPARE_TAXDUMP        | Extract nodes/names/merged.dmp from a pinned taxdump        | ✅ Production | Biocontainer (taxpasta)             |
+| TAXPASTA_TO_BIOBOXES   | Convert taxpasta TSV to CAMI Bioboxes (per-rank abundances) | ✅ Production | Biocontainer (taxpasta: taxopy)     |
 | OPAL_PER_SAMPLE        | Per-sample OPAL evaluation                                  | ✅ Production | Biocontainer (cami-opal)            |
 | COMPARATIVE_ANALYSIS   | Classifier comparison per sample (metrics, PCA, per-taxon)  | ✅ Production | Frozen Wave community (scipy stack) |
 | BENCHMARK_SUMMARY      | Cross-sample summary and ranking, MultiQC content           | ✅ Production | Frozen Wave community (scipy stack) |
 
-New modules added in v1.3.0 (`VALIDATE_GOLD_STANDARD`, `ETE3_BUILD_TAXDB`, `BENCHMARK_SUMMARY`) are documented in
+Modules added since v1.3.0 (`VALIDATE_GOLD_STANDARD`, `PREPARE_TAXDUMP`, `BENCHMARK_SUMMARY`) are documented in
 their `meta.yml` files and in [docs/output.md](../output.md); the sections below describe the original modules.
 
 ### nf-core Modules
@@ -205,16 +205,17 @@ Converts taxpasta TSV format to CAMI profiling Bioboxes format required by OPAL.
 
 **Status**: ✅ Production-ready
 
-**Container**: Seqera Wave (pandas + ete3)
+**Container**: taxpasta biocontainer (pandas + taxopy)
 
-- Container: `community.wave.seqera.io/library/python_pandas_ete3:0aabbd50f04018cb` (frozen Wave community image, Python 3.11)
-- Fallback: Conda environment
+- Container: `quay.io/biocontainers/taxpasta:0.7.0--pyhdfd78af_0` (Python 3.12, shared with TAXPASTA_STANDARDISE and PREPARE_TAXDUMP)
+- Conda: same pinned environment (taxpasta 0.7.0, taxopy 0.12.0, pandas 2.2.2)
 
 ### Inputs
 
 ```groovy
 input:
 tuple val(meta), path(taxpasta_tsv)
+path taxdump        // extracted taxdump directory from PREPARE_TAXDUMP, or []
 ```
 
 **Meta map structure**:
@@ -252,7 +253,8 @@ path "versions.yml"                , emit: versions
 
 **Key features**:
 
-1. **Taxonomy lookup**: Uses ete3 to get full lineage paths
+1. **Taxonomy lookup**: taxpasta lineage columns or the NCBI taxdump via taxopy (`bin/taxbencher_taxonomy.py`);
+   merged taxonomy IDs are translated to their current ID
 2. **Percentage calculation**: Converts counts to percentages
 3. **Lineage paths**: Generates TAXPATH (IDs) and TAXPATHSN (names)
 4. **CAMI format**: Proper Bioboxes headers and formatting
@@ -262,7 +264,7 @@ path "versions.yml"                , emit: versions
 - Taxonomy database validated (NCBI, GTDB)
 - Input file existence and size checked
 - Output file creation verified
-- Graceful fallback if ete3 unavailable (uses placeholder paths)
+- Fails instead of writing an empty profile when no taxon can be placed
 
 **Error Handling**:
 

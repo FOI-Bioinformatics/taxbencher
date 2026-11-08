@@ -62,7 +62,7 @@ The scientific core of the pipeline lives in `bin/` (`taxpasta_to_bioboxes.py`, 
 Nextflow, against the reduced pinned taxonomy in `assets/test_data/taxonomy/`:
 
 ```bash
-pip install pandas ete3 pytest        # or: conda activate an env with these packages
+pip install pandas taxopy pytest      # or: conda activate an env with these packages
 pytest -v tests/python
 ```
 
@@ -684,8 +684,9 @@ nf-test test --profile singularity
 ### Container Dependencies
 
 **Modules with Wave containers**:
-- `TAXPASTA_TO_BIOBOXES`: pandas + ete3
-- `COMPARATIVE_ANALYSIS`: pandas + scikit-learn + plotly + scipy + statsmodels
+- `COMPARATIVE_ANALYSIS`, `BENCHMARK_SUMMARY`: pandas + scikit-learn + plotly + scipy + statsmodels
+
+`TAXPASTA_TO_BIOBOXES` and `PREPARE_TAXDUMP` use the taxpasta biocontainer (pandas + taxopy).
 
 **Why Wave?**: No pre-built biocontainer with these exact dependencies.
 
@@ -890,8 +891,7 @@ at cami_opal/plots.py:382 in spider_plot
 **Issue**: Some modules require Seqera Wave for container building
 
 **Affected Modules**:
-- TAXPASTA_TO_BIOBOXES (pandas + ete3)
-- COMPARATIVE_ANALYSIS (full scipy stack)
+- COMPARATIVE_ANALYSIS, BENCHMARK_SUMMARY (full scipy stack)
 
 **Why**: No pre-built biocontainers with these exact dependency combinations
 
@@ -908,14 +908,14 @@ at cami_opal/plots.py:382 in spider_plot
 
 3. **Pre-pull Wave containers**:
    ```bash
-   docker pull community.wave.seqera.io/library/python_pandas_ete3:0aabbd50f04018cb
+   docker pull community.wave.seqera.io/library/python_pandas_scikit-learn_plotly_pruned:afa623fee18ad8e0
    ```
 
 ### 3. Conda Environment Build Time
 
 **Issue**: First conda test run takes 5-10 minutes
 
-**Reason**: Building environments from scratch (pandas, ete3, scipy stack)
+**Reason**: Building environments from scratch (taxpasta/taxopy, scipy stack)
 
 **Impact**: Slow CI/CD if not cached
 
@@ -933,19 +933,12 @@ nf-test test modules/local/taxpasta_to_bioboxes/tests/ --profile conda
 nf-test test modules/local/taxpasta_to_bioboxes/tests/ --profile conda
 ```
 
-### 4. ete3 NCBI Taxonomy Download
+### 4. NCBI Taxonomy Download
 
-**Issue**: First run downloads ~500MB NCBI taxonomy database
+**Issue**: Without a taxdump, every conversion downloads the current NCBI taxdump (~80 MB)
 
-**Location**: `~/.etetoolkit/taxa.sqlite`
-
-**Timing**:
-- First run: ~2-3 minutes (downloading + indexing)
-- Subsequent runs: instant (cached)
-
-**CI/CD Impact**: Slow first run, fast after cache
-
-**Solution**: Pre-populate taxonomy DB in container or CI cache
+**Solution**: Tests always pass the reduced archive `assets/test_data/taxonomy/taxdump.tar.gz` (through
+`PREPARE_TAXDUMP` or `--taxdump`), so they run offline and deterministically
 
 ### 5. Test Data Size Constraints
 

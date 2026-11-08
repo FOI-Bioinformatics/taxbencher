@@ -250,7 +250,7 @@ def toolCitationText() {
             "Tools used in the workflow included:",
             "OPAL (Meyer et al. 2019),",
             "taxpasta (Beber et al. 2023),",
-            "ete3 (Huerta-Cepas et al. 2016),",
+            "taxopy (Camargo),",
             "MultiQC (Ewels et al. 2016)",
             "."
         ].join(' ').trim()
@@ -262,7 +262,7 @@ def toolBibliographyText() {
     def reference_text = [
             "<li>Meyer, F., Bremges, A., Belmann, P., Janssen, S., McHardy, A. C., & Koslicki, D. (2019). Assessing taxonomic metagenome profilers with OPAL. Genome Biology, 20, 51. doi: 10.1186/s13059-019-1646-y</li>",
             "<li>Beber, M. E., Borry, M., Stamouli, S., & Fellows Yates, J. A. (2023). taxpasta: TAXonomic Profile Aggregation and STAndardization. Journal of Open Source Software, 8(87), 5627. doi: 10.21105/joss.05627</li>",
-            "<li>Huerta-Cepas, J., Serra, F., & Bork, P. (2016). ETE 3: Reconstruction, Analysis, and Visualization of Phylogenomic Data. Molecular Biology and Evolution, 33(6), 1635–1638. doi: 10.1093/molbev/msw046</li>",
+            "<li>Camargo, A. P. taxopy: A Python package for obtaining complete lineages and the lowest common ancestor (LCA) from a set of taxonomic identifiers. https://github.com/apcamargo/taxopy</li>",
             "<li>Ewels, P., Magnusson, M., Lundin, S., & Käller, M. (2016). MultiQC: summarize analysis results from multiple tools and samples in a single report. Bioinformatics, 32(19), 3047–3048. doi: 10.1093/bioinformatics/btw354</li>"
         ].join(' ').trim()
 

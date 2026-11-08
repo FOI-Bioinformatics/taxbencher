@@ -7,7 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Taxonomy lookups use taxopy instead of ete3.** The new shared helper `bin/taxbencher_taxonomy.py` reads the
+  NCBI taxdump (`nodes.dmp`, `names.dmp`, `merged.dmp`) with taxopy, the library taxpasta itself uses, for
+  `taxpasta_to_bioboxes.py` and `fix_gold_standard.py`. Lineages are identical to ete3 (checked on 20,600
+  taxonomy IDs of the full NCBI taxonomy and on all test fixtures). ete3 is unmaintained (last release 2023)
+  and does not run on Python >= 3.13.
+- `ETE3_BUILD_TAXDB` is replaced by `PREPARE_TAXDUMP`, which extracts the `--taxdump` archive (tar.gz or zip)
+  once instead of building an sqlite database. `TAXPASTA_TO_BIOBOXES` and `PREPARE_TAXDUMP` run in the taxpasta
+  biocontainer the pipeline already uses for `TAXPASTA_STANDARDISE`; the 2.6 GB custom Wave image is no longer
+  needed. Loading the full NCBI taxonomy takes about 15 s and 3 GB of memory per conversion task.
+- `taxpasta_to_bioboxes.py` and `fix_gold_standard.py`: `--taxdump` accepts an archive or an extracted taxdump
+  directory; `--ete3-db` is removed and `--no-ete3` is renamed `--no-taxonomy`.
+- Python code is linted with ruff (`pyproject.toml`, pre-commit hook).
 - Version bumped to 1.5.0dev after the 1.4.0 release.
+
+### Fixed
+
+- Merged (outdated) NCBI taxonomy IDs are translated to their current ID before the lineage is built, so they
+  land on the same node as in the gold standard (taxopy alone would keep the outdated ID as the leaf).
+- The realistic MetaPhlAn test fixtures (`OPAL_PER_SAMPLE` and `COMPARATIVE_ANALYSIS` test data) were not
+  regenerated after the 1.4.0 nested-strain fix; `bin/regenerate_test_fixtures.sh` now uses taxopy and was rerun.
+- Removed dead code found by ruff (unused variables and imports in `comparative_analysis.py`,
+  `validate_bioboxes.py`, `validate_taxpasta.py`, `taxpasta_to_bioboxes.py`).
+
+### Added
+
+- Unit tests for `validate_profiler_format.py` and for the taxonomy helper (archive formats, merged IDs).
 
 ## v1.4.0 - 2026-11-08
 

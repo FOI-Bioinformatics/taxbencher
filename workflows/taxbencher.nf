@@ -4,7 +4,7 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 include { VALIDATE_GOLD_STANDARD } from '../modules/local/validate_gold_standard/main'
-include { ETE3_BUILD_TAXDB       } from '../modules/local/ete3_build_taxdb/main'
+include { PREPARE_TAXDUMP        } from '../modules/local/prepare_taxdump/main'
 include { TAXPASTA_STANDARDISE   } from '../modules/local/taxpasta_standardise/main'
 include { TAXPASTA_TO_BIOBOXES   } from '../modules/local/taxpasta_to_bioboxes/main'
 include { OPAL_PER_SAMPLE        } from '../modules/local/opal_per_sample/main'
@@ -111,18 +111,18 @@ workflow TAXBENCHER {
         .mix(TAXPASTA_STANDARDISE.out.standardised)
 
     //
-    // MODULE: Build the ete3 taxonomy database once from a pinned taxdump (optional).
-    // Without --taxdump, ete3 uses/downloads its default database inside each task.
+    // MODULE: Extract the pinned taxdump once (optional) for the taxopy lookups of every conversion.
+    // Without --taxdump, each TAXPASTA_TO_BIOBOXES task downloads the current NCBI taxdump.
     //
-    ETE3_BUILD_TAXDB(ch_taxdump)
-    def ch_taxdb = ETE3_BUILD_TAXDB.out.db.toList().map { files -> files ? files.flatten() : [] }
+    PREPARE_TAXDUMP(ch_taxdump)
+    def ch_taxonomy = PREPARE_TAXDUMP.out.taxdump.toList().map { dirs -> dirs ? dirs[0] : [] }
 
     //
     // MODULE: Convert taxpasta profiles to CAMI Bioboxes format
     //
     TAXPASTA_TO_BIOBOXES (
         ch_taxpasta,
-        ch_taxdb
+        ch_taxonomy
     )
 
     //

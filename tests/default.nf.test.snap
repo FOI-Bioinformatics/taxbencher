@@ -12,19 +12,18 @@
                     "comparative_analysis": "2.1.0",
                     "python": "3.11.18"
                 },
-                "ETE3_BUILD_TAXDB": {
-                    "ete3": "3.1.3",
-                    "python": "3.11.18",
-                    "taxdump (taxdump.tar.gz) md5": "79849d307630344a7046aaeb5d4e72c6"
-                },
                 "OPAL_PER_SAMPLE": {
                     "opal": "1.0.13"
                 },
+                "PREPARE_TAXDUMP": {
+                    "python": "3.12.3",
+                    "taxdump (taxdump.tar.gz) md5": "79849d307630344a7046aaeb5d4e72c6"
+                },
                 "TAXPASTA_TO_BIOBOXES": {
-                    "ete3": "3.1.3",
-                    "pandas": "3.1.0",
-                    "python": "3.11.18",
-                    "taxpasta_to_bioboxes": "2.0.0"
+                    "pandas": "2.2.2",
+                    "python": "3.12.3",
+                    "taxopy": "0.12.0",
+                    "taxpasta_to_bioboxes": "2.1.0"
                 },
                 "VALIDATE_GOLD_STANDARD": {
                     "python": "3.11.10",
@@ -162,7 +161,7 @@
                 "gold_standard_realistic_validation.txt:md5,a23018476c3c6ab02eb5f1375183f192"
             ]
         ],
-        "timestamp": "2026-11-08T05:45:45.560998191",
+        "timestamp": "2026-11-08T07:47:16.447386539",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.0"
@@ -181,19 +180,18 @@
                     "comparative_analysis": "2.1.0",
                     "python": "3.11.18"
                 },
-                "ETE3_BUILD_TAXDB": {
-                    "ete3": "3.1.3",
-                    "python": "3.11.18",
-                    "taxdump (taxdump.tar.gz) md5": "79849d307630344a7046aaeb5d4e72c6"
-                },
                 "OPAL_PER_SAMPLE": {
                     "opal": "1.0.13"
                 },
+                "PREPARE_TAXDUMP": {
+                    "python": "3.12.3",
+                    "taxdump (taxdump.tar.gz) md5": "79849d307630344a7046aaeb5d4e72c6"
+                },
                 "TAXPASTA_TO_BIOBOXES": {
-                    "ete3": "3.1.3",
-                    "pandas": "3.1.0",
-                    "python": "3.11.18",
-                    "taxpasta_to_bioboxes": "2.0.0"
+                    "pandas": "2.2.2",
+                    "python": "3.12.3",
+                    "taxopy": "0.12.0",
+                    "taxpasta_to_bioboxes": "2.1.0"
                 },
                 "VALIDATE_GOLD_STANDARD": {
                     "python": "3.11.10",
@@ -331,7 +329,7 @@
                 "gold_standard_validation.txt:md5,ed24c8b612e2a9ee9e33a98db69b3e59"
             ]
         ],
-        "timestamp": "2026-11-08T05:44:14.308979085",
+        "timestamp": "2026-11-08T07:45:46.544260111",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.0"
@@ -350,22 +348,21 @@
                     "comparative_analysis": "2.1.0",
                     "python": "3.11.18"
                 },
-                "ETE3_BUILD_TAXDB": {
-                    "ete3": "3.1.3",
-                    "python": "3.11.18",
-                    "taxdump (taxdump.tar.gz) md5": "79849d307630344a7046aaeb5d4e72c6"
-                },
                 "OPAL_PER_SAMPLE": {
                     "opal": "1.0.13"
+                },
+                "PREPARE_TAXDUMP": {
+                    "python": "3.12.3",
+                    "taxdump (taxdump.tar.gz) md5": "79849d307630344a7046aaeb5d4e72c6"
                 },
                 "TAXPASTA_STANDARDISE": {
                     "taxpasta": "0.7.0"
                 },
                 "TAXPASTA_TO_BIOBOXES": {
-                    "ete3": "3.1.3",
-                    "pandas": "3.1.0",
-                    "python": "3.11.18",
-                    "taxpasta_to_bioboxes": "2.0.0"
+                    "pandas": "2.2.2",
+                    "python": "3.12.3",
+                    "taxopy": "0.12.0",
+                    "taxpasta_to_bioboxes": "2.1.0"
                 },
                 "VALIDATE_GOLD_STANDARD": {
                     "python": "3.11.10",
@@ -503,7 +500,7 @@
                 "gold_standard_raw_validation.txt:md5,5fc50e7df90e28f853dd4f6cbb70aaa6"
             ]
         ],
-        "timestamp": "2026-11-08T05:45:06.49142284",
+        "timestamp": "2026-11-08T07:46:38.80579391",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.0"
