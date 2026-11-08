@@ -163,7 +163,7 @@ converted classifier profiles.
 #### Metrics table (`*_metrics_wide.tsv`)
 
 OPAL writes metrics in a long format (`tool, rank, metric, sample, value`). This table pivots them to one row
-per `tool` and `rank` with one column per metric (Completeness, Purity, F1 score, L1 norm error, Bray-Curtis
+per `tool` (label) and `rank`, with the samplesheet `classifier` in its own column and one column per metric (Completeness, Purity, F1 score, L1 norm error, Bray-Curtis
 distance, Shannon diversity, True/False positives, False negatives, Taxon counts, ...). Rank independent
 metrics (weighted and unweighted UniFrac) are repeated on every rank row of a tool.
 
@@ -190,7 +190,7 @@ placeholder page is written.
 
 No p-values are reported: with a single profile per classifier there is no replication to test against, so
 the comparison is descriptive. Use `--diff-min-abs` (module `ext.args`) to restrict the table to larger
-differences.
+differences (the TP/FP/FN counts in the report always use all taxa).
 
 #### Comparison report (`*_comparison.html`)
 
@@ -203,16 +203,20 @@ and classifier, the full metrics table and a TP/FP/FN summary per classifier and
 <summary>Output files</summary>
 
 - `benchmark_summary/`
-  - `benchmark_summary.tsv` - Per classifier, rank and metric: `n_samples`, `mean`, `median`, `sd`, `min`, `max` over all samples
-  - `benchmark_ranking.tsv` - Direction-aware rank of every classifier per metric at the summary rank (1 = best) and an overall mean rank
+  - `benchmark_summary.tsv` - Per classifier, rank and metric: `n_samples`, `n_missing`, `mean`, `median`, `sd`, `min`, `max` over all samples
+  - `benchmark_ranking.tsv` - Direction-aware rank of every classifier per metric at the summary rank (1 = best) and an overall mean rank; classifiers with missing values for a metric are ranked last for it
   - `benchmark_table_mqc.tsv`, `benchmark_f1_by_rank_mqc.tsv`, `benchmark_l1_by_rank_mqc.tsv` - MultiQC custom content
 
 </details>
 
 **Description:**
 
-Aggregates the per-sample metric tables of all samples. With one sample the summary equals that sample's
-values. The ranking uses Completeness, Purity, F1 score, L1 norm error, Bray-Curtis distance, weighted UniFrac
+Aggregates the per-sample metric tables of all samples, pooling profiles by the samplesheet `classifier`
+column (labels are unique per profile, so they cannot be used to pool samples). If a classifier appears more
+than once in a sample (e.g. two databases), its labels are kept apart instead. `n_missing` counts samples in
+which OPAL reported no value (e.g. no prediction at that rank; a missing F1 score with a reported
+Completeness counts as 0). With one sample the summary equals that sample's values. If the summary rank is
+absent from the results, the lowest available rank is used. The ranking uses Completeness, Purity, F1 score, L1 norm error, Bray-Curtis distance, weighted UniFrac
 error and Jaccard index at the species rank by default (`--summary-rank` via the module `ext.args`); lower
 values rank first for the distance metrics. The MultiQC report shows the summary table and line graphs of mean
 F1 score and L1 norm error across ranks.

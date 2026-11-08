@@ -5,6 +5,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## v1.4.0dev - unreleased
 
+### Fixed
+
+Second audit round (scripts, summary and Nextflow layer).
+
+- **Benchmark summary never pooled samples**: it grouped by the profile label, which is unique per profile,
+  so every "mean over samples" was a single value. Profiles are now pooled by the samplesheet `classifier`
+  (carried into the per-sample metrics table as a new `classifier` column); a classifier used twice in one
+  sample keeps its labels apart. Missing OPAL values are counted (`n_missing`) instead of silently dropped,
+  classifiers with missing values rank last, and the summary rank falls back to the lowest available rank.
+- MultiQC line graphs of F1 / L1 by rank had a shifted header (the first rank was used as the row label).
+- Converter (`taxpasta_to_bioboxes.py`): nested strain-level nodes in clade mode were double counted; tiny
+  abundances were rounded to `0.000000` (and then dropped by OPAL); MetaPhlAn 4 `UNCLASSIFIED` could push the
+  total above 100 %; multi-sample (long) taxpasta tables are now rejected instead of being summed.
+- `fix_gold_standard.py` merged all samples of a multi-sample gold standard into one; it now fixes each
+  `@SampleID` block separately and rejects NaN/negative percentages.
+- Validators: NaN percentages, header lines after `@@` (rejected by OPAL) and lower-case header keys are
+  detected in `validate_bioboxes.py`; `validate_taxpasta.py` no longer rejects taxid 0 (unclassified) or zero
+  counts; Kraken2 `.report` and 8-column reports, and the mOTUs header, are recognised by
+  `validate_profiler_format.py`.
+- MetaPhlAn detection for the abundance mode now matches any classifier name starting with `metaphlan`
+  (e.g. `MetaPhlAn4`); `abundance_mode` can be set per row in the samplesheet.
+- Input file name collisions: standardised profiles are named `*.taxpasta.tsv` (a raw `*.tsv` input with the
+  same label no longer overwrites itself), and the gold standard is staged in its own directory in OPAL and
+  comparative analysis (a label such as `gold` no longer collides with `gold.bioboxes`).
+- Samplesheet `sample_id`/`label` are restricted to `[A-Za-z0-9._-]` (shell metacharacters broke tasks); the
+  gold standard `@SampleID` check is case-insensitive like OPAL; `--gold_standard` accepts `.profile`/`.tsv`/
+  `.txt`; `--taxdump` accepts NCBI `taxdmp_*.zip` archives.
+- `--diff-min-abs` filtered the TP/FP/FN counts in the comparison report as well as the written table.
+- `test_full` profile pointed at missing files; `pipeline_info` file names in `docs/output.md` corrected.
+- Benchmark summary input is collected in sorted order (stable `-resume` caching).
+
 ### Changed
 
 - Version bumped to 1.4.0dev after the 1.3.0 release.
