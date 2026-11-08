@@ -30,7 +30,7 @@ input:
           e.g. `[ id:'sample1_kraken2', sample_id:'sample1', classifier:'kraken2', taxonomy_db:'NCBI' ]`
           - id: profile identifier (required)
           - sample_id: @SampleID written to the profile (optional, defaults to id)
-          - classifier: profiler name; 'metaphlan' selects the clade abundance mode (optional)
+          - classifier: profiler name; names starting with 'metaphlan' select the clade abundance mode (optional)
           - abundance_mode: 'direct' or 'clade', overrides the classifier based default (optional)
           - taxonomy_db: NCBI or GTDB (optional, default NCBI)
           - ranks: pipe-separated ranks (optional, default superkingdom|phylum|class|order|family|genus|species|strain)
@@ -57,7 +57,7 @@ output:
             e.g. `[ id:'sample1_kraken2', sample_id:'sample1', classifier:'kraken2', taxonomy_db:'NCBI' ]`
             - id: profile identifier (required)
             - sample_id: @SampleID written to the profile (optional, defaults to id)
-            - classifier: profiler name; 'metaphlan' selects the clade abundance mode (optional)
+            - classifier: profiler name; names starting with 'metaphlan' select the clade abundance mode (optional)
             - abundance_mode: 'direct' or 'clade', overrides the classifier based default (optional)
             - taxonomy_db: NCBI or GTDB (optional, default NCBI)
             - ranks: pipe-separated ranks (optional, default superkingdom|phylum|class|order|family|genus|species|strain)

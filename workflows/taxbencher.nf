@@ -130,16 +130,19 @@ workflow TAXBENCHER {
     // Labels and files are kept in the same order so OPAL's -l matches the file list.
     //
     def ch_bioboxes_per_sample = TAXPASTA_TO_BIOBOXES.out.bioboxes
-        .map { meta, bioboxes -> [meta.sample_id, meta.label, bioboxes] }
+        .map { meta, bioboxes -> [meta.sample_id, meta.label, meta.classifier, bioboxes] }
         .groupTuple()
-        .map { sample_id, labels, bioboxes_files ->
+        .map { sample_id, labels, classifiers, bioboxes_files ->
             def order = (0..<labels.size()).toList().sort { index -> labels[index] }
             def sorted_labels = order.collect { index -> labels[index] }
+            def sorted_classifiers = order.collect { index -> classifiers[index] }
             def sorted_files = order.collect { index -> bioboxes_files[index] }
             def meta_grouped = [
                 id: sample_id,
                 sample_id: sample_id,
                 labels: sorted_labels.join(','),
+                // samplesheet classifier per label: BENCHMARK_SUMMARY pools samples by classifier
+                classifiers: sorted_classifiers.join(','),
                 num_classifiers: sorted_labels.size()
             ]
             [meta_grouped, sorted_files]
@@ -173,7 +176,8 @@ workflow TAXBENCHER {
     // MODULE: Cross-sample summary (mean/median/sd per classifier and rank, ranking) for MultiQC
     //
     BENCHMARK_SUMMARY (
-        COMPARATIVE_ANALYSIS.out.metrics_wide.map { _meta, tsv -> tsv }.collect()
+        // sorted so the task hash, and -resume, do not depend on completion order
+        COMPARATIVE_ANALYSIS.out.metrics_wide.map { _meta, tsv -> tsv }.collect(sort: true)
     )
     ch_multiqc_files = ch_multiqc_files.mix(BENCHMARK_SUMMARY.out.multiqc.flatten())
 

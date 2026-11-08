@@ -20,3 +20,4 @@ __pycache__/
 results_*/
 *.log
 !.nf-core.log
+.nf-test-*.nf

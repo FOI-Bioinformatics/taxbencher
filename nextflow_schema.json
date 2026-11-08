@@ -28,7 +28,7 @@
                     "format": "file-path",
                     "exists": true,
                     "mimetype": "text/plain",
-                    "pattern": "^\\S+\\.bioboxes$",
+                    "pattern": "^\\S+\\.(bioboxes|profile|tsv|txt)$",
                     "description": "Path to gold standard bioboxes file containing ground truth taxonomic composition.",
                     "help_text": "This file should be in CAMI profiling Bioboxes format and will be used as the reference for evaluating classifier predictions.",
                     "fa_icon": "fas fa-bullseye"
@@ -51,9 +51,9 @@
                     "format": "file-path",
                     "exists": true,
                     "mimetype": "application/gzip",
-                    "pattern": "^\\S+\\.(tar\\.gz|tgz)$",
-                    "description": "NCBI taxonomy dump archive (taxdump.tar.gz) used to build a pinned ete3 taxonomy database for lineage lookups.",
-                    "help_text": "Strongly recommended for reproducible runs. Download from https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz (or use a dated taxdump_archive). Without it, ete3 downloads the current NCBI taxonomy into $HOME/.etetoolkit inside every TAXPASTA_TO_BIOBOXES task, which requires network access and makes results depend on the download date.",
+                    "pattern": "^\\S+\\.(tar\\.gz|tgz|zip)$",
+                    "description": "NCBI taxonomy dump archive (taxdump.tar.gz, or a dated taxdmp_YYYY-MM-DD.zip) used to build a pinned ete3 taxonomy database for lineage lookups.",
+                    "help_text": "Strongly recommended for reproducible runs. Download from https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz (or a dated archive such as https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump_archive/taxdmp_2025-01-01.zip; zip archives are converted automatically). Without it, ete3 downloads the current NCBI taxonomy into $HOME/.etetoolkit inside every TAXPASTA_TO_BIOBOXES task, which requires network access and makes results depend on the download date.",
                     "fa_icon": "fas fa-sitemap"
                 },
                 "include_unclassified": {

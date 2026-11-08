@@ -11,7 +11,7 @@ process TAXPASTA_STANDARDISE {
     tuple val(meta), path(profiler_output)
 
     output:
-    tuple val(meta), path("*.tsv"), emit: standardised
+    tuple val(meta), path("*.taxpasta.tsv"), emit: standardised
     tuple val("${task.process}"), val('taxpasta'), eval('taxpasta --version | sed "s/taxpasta, version //"'), topic: versions, emit: versions_taxpasta
 
     when:
@@ -37,7 +37,7 @@ process TAXPASTA_STANDARDISE {
     # Run taxpasta standardisation with error handling
     if ! taxpasta standardise \\
         --profiler ${meta.classifier} \\
-        --output ${prefix}.tsv \\
+        --output ${prefix}.taxpasta.tsv \\
         $args \\
         $profiler_output 2>&1 | tee taxpasta.log; then
 
@@ -57,18 +57,18 @@ process TAXPASTA_STANDARDISE {
     fi
 
     # Verify output was created
-    if [ ! -s ${prefix}.tsv ]; then
-        echo "ERROR: Output file ${prefix}.tsv was not created or is empty" >&2
+    if [ ! -s ${prefix}.taxpasta.tsv ]; then
+        echo "ERROR: Output file ${prefix}.taxpasta.tsv was not created or is empty" >&2
         exit 1
     fi
 
     echo "[TAXPASTA_STANDARDISE] Successfully standardised ${meta.id}" >&2
-    echo "[TAXPASTA_STANDARDISE] Output: ${prefix}.tsv (\$(wc -l < ${prefix}.tsv) lines)" >&2
+    echo "[TAXPASTA_STANDARDISE] Output: ${prefix}.taxpasta.tsv (\$(wc -l < ${prefix}.taxpasta.tsv) lines)" >&2
     """
 
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
-    touch ${prefix}.tsv
+    touch ${prefix}.taxpasta.tsv
     """
 }

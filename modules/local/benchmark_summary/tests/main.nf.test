@@ -30,9 +30,10 @@ nextflow_process {
             assertAll(
                 { assert process.success },
                 { assert snapshot(process.out.summary, process.out.ranking, process.out.multiqc, process.out.findAll { key, _value -> key.startsWith('versions') }).match() },
-                { assert summary[0] == 'classifier\trank\tmetric\tn_samples\tmean\tmedian\tsd\tmin\tmax' },
-                // every classifier/rank/metric row aggregates both samples; gold standard excluded
-                { assert summary.drop(1).every { it.split('\t')[3] == '2' } },
+                { assert summary[0] == 'classifier\trank\tmetric\tn_samples\tn_missing\tmean\tmedian\tsd\tmin\tmax' },
+                // labels differ between the samples: rows are pooled by classifier over both samples;
+                // gold standard excluded
+                { assert summary.drop(1).every { it.split('\t')[3] == '2' && it.split('\t')[4] == '0' } },
                 { assert !summary.any { it.startsWith('Gold standard') } },
                 { assert ranking.any { it.contains('Overall (mean rank)') } },
                 { assert process.out.multiqc.get(0).size() == 3 }
