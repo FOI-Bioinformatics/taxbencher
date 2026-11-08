@@ -211,7 +211,6 @@ def read_bioboxes(path: Path, sample_id: Optional[str] = None) -> "pd.DataFrame"
     rows = []
     columns: List[str] = []
     current_sample = None
-    reading = False
     with open(path) as handle:
         for raw in handle:
             line = raw.rstrip("\n")
@@ -224,9 +223,7 @@ def read_bioboxes(path: Path, sample_id: Optional[str] = None) -> "pd.DataFrame"
                 key, _, value = line[1:].partition(":")
                 if key.strip().lower() == "sampleid":
                     current_sample = value.strip()
-                reading = False
                 continue
-            reading = True
             if sample_id is not None and current_sample is not None and current_sample != sample_id:
                 continue
             fields = line.split("\t")
@@ -418,7 +415,7 @@ No significance testing is performed: one profile per classifier provides no rep
 # --------------------------------------------------------------------------------------
 def main() -> None:
     args = parse_args()
-    labels = [l.strip() for l in args.labels.split(",") if l.strip()]
+    labels = [label.strip() for label in args.labels.split(",") if label.strip()]
     classifiers = [c.strip() for c in args.classifiers.split(",") if c.strip()]
     if classifiers and len(classifiers) != len(labels):
         log(f"WARNING: {len(classifiers)} classifier names for {len(labels)} labels; using labels")
@@ -447,7 +444,7 @@ def main() -> None:
     if long_df is not None and not long_df.empty:
         wide = pivot_metrics(long_df, args.sample_id, classifier_of)
         wide.to_csv(wide_tsv, sep="\t", index=False)
-        missing_labels = [l for l in labels if l not in set(wide["tool"])]
+        missing_labels = [label for label in labels if label not in set(wide["tool"])]
         if missing_labels:
             log(f"WARNING: labels without OPAL metrics: {missing_labels}")
         perform_pca_analysis(long_df, args.sample_id, pca_html)

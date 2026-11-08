@@ -1,0 +1,76 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: "prepare_taxdump"
+description: Extract nodes.dmp, names.dmp and merged.dmp from a pinned NCBI taxdump archive for taxopy lookups
+keywords:
+  - taxonomy
+  - NCBI
+  - taxdump
+  - reproducibility
+tools:
+  - "taxopy":
+      description: A Python package for obtaining complete lineages and the lowest common ancestor from taxonomy IDs
+      homepage: https://github.com/apcamargo/taxopy
+      documentation: https://apcamargo.github.io/taxopy/
+      licence: ["GPL-3.0"]
+      identifier: ""
+
+input:
+  - taxdump:
+      type: file
+      description: |
+        NCBI taxonomy dump archive (taxdump.tar.gz / .tgz, or a dated taxdmp_YYYY-MM-DD.zip) containing
+        nodes.dmp, names.dmp and merged.dmp, for example from https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/
+        or a reduced archive for testing.
+      pattern: "*.{tar.gz,tgz,zip}"
+      ontologies:
+        - edam: http://edamontology.org/format_3989 # GZIP
+output:
+  taxdump:
+    - taxdump:
+        type: directory
+        description: Directory with nodes.dmp, names.dmp and merged.dmp (empty when absent from the archive)
+        pattern: "taxdump"
+  versions_python:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - python:
+          type: string
+          description: The name of the tool
+      - python --version | sed "s/Python //":
+          type: eval
+          description: The expression to obtain the version of the tool
+  versions_taxdump:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - taxdump (${taxdump.name}) md5:
+          type: string
+          description: The name of the tool
+      - md5sum ${taxdump} | cut -d' ' -f1:
+          type: eval
+          description: The expression to obtain the version of the tool
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - python:
+          type: string
+          description: The name of the tool
+      - python --version | sed "s/Python //":
+          type: eval
+          description: The expression to obtain the version of the tool
+    - - ${task.process}:
+          type: string
+          description: The name of the process
+      - taxdump (${taxdump.name}) md5:
+          type: string
+          description: The name of the tool
+      - md5sum ${taxdump} | cut -d' ' -f1:
+          type: eval
+          description: The expression to obtain the version of the tool
+authors:
+  - "@andreassjodin"
+maintainers:
+  - "@andreassjodin"

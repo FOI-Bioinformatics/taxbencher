@@ -22,7 +22,7 @@ Input: Raw profiler outputs OR taxpasta TSV files + gold standard bioboxes (+ op
     ↓
 [TAXPASTA_STANDARDISE] - Standardise raw profiler outputs (automatic, header/extension based)
     ↓
-[ETE3_BUILD_TAXDB] - Build the ete3 taxonomy database once from --taxdump
+[PREPARE_TAXDUMP] - Extract the pinned NCBI taxdump once from --taxdump
     ↓
 [TAXPASTA_TO_BIOBOXES] - Convert to CAMI format (per-rank clade abundances, direct/clade count modes)
     ↓
@@ -97,7 +97,7 @@ Supported profilers:
 **Process**:
 
 1. Read taxpasta TSV (taxonomy_id, count columns)
-2. Use ete3 to lookup full taxonomy lineages
+2. Look up full taxonomy lineages (taxpasta lineage columns, else the NCBI taxdump via taxopy)
 3. Calculate percentages from counts
 4. Generate CAMI Bioboxes format with headers and lineage paths
 
@@ -597,11 +597,13 @@ ch_standardised.mix(TAXPASTA_STANDARDISE.out.standardised)
 
 ### Why Wave Containers?
 
-**Decision**: Use Seqera Wave for Python scientific stack.
+**Decision**: Use frozen Seqera Wave community images where no biocontainer has the Python stack
+(COMPARATIVE_ANALYSIS, BENCHMARK_SUMMARY). TAXPASTA_TO_BIOBOXES and PREPARE_TAXDUMP use the taxpasta
+biocontainer, which already ships pandas and taxopy.
 
 **Rationale**:
 
-1. **Dependency complexity**: pandas + ete3 not in single biocontainer
+1. **Dependency complexity**: pandas + scikit-learn + plotly are not in a single biocontainer
 2. **Reproducibility**: Wave builds deterministic containers
 3. **Flexibility**: Easy to update dependencies
 4. **Fallback**: Conda available when Wave unavailable

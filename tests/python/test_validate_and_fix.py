@@ -67,11 +67,11 @@ def test_unsupported_rank_and_duplicate_taxid(validator, tmp_path):
 
 
 # --------------------------------------------------------------------------- fixer
-def test_fill_higher_ranks_from_species_and_strain(fixer, ete3_db, tmp_path):
+def test_fill_higher_ranks_from_species_and_strain(fixer, taxonomy_dir, tmp_path):
     truth = write(tmp_path / "truth.tsv", HEADER.format(sid="demo") +
                   "@@TAXID\tRANK\tPERCENTAGE\n264\tstrain\t30\n119857\tstrain\t45\n622488\tspecies\t20\n2173\tspecies\t5\n")
     out = tmp_path / "gs.bioboxes"
-    fixer.fix_gold_standard(truth, out, None, fixer.DEFAULT_RANKS, None, ete3_db,
+    fixer.fix_gold_standard(truth, out, None, fixer.DEFAULT_RANKS, taxonomy_dir,
                             fill_higher=True, renormalise=False, taxonomy_db="NCBI", version="0.9.1")
     headers, rows = read_profile(out)
     assert headers["SampleID"] == "demo"
@@ -87,11 +87,11 @@ def test_fill_higher_ranks_from_species_and_strain(fixer, ete3_db, tmp_path):
     assert sk == {"2": pytest.approx(95.0), "2157": pytest.approx(5.0)}
 
 
-def test_renormalise_is_per_rank(fixer, ete3_db, tmp_path):
+def test_renormalise_is_per_rank(fixer, taxonomy_dir, tmp_path):
     src = write(tmp_path / "scaled.tsv", HEADER.format(sid="s") +
                 "@@TAXID\tRANK\tPERCENTAGE\n2\tsuperkingdom\t50\n562\tspecies\t10\n1280\tspecies\t30\n")
     out = tmp_path / "gs.bioboxes"
-    fixer.fix_gold_standard(src, out, "s", fixer.DEFAULT_RANKS, None, ete3_db,
+    fixer.fix_gold_standard(src, out, "s", fixer.DEFAULT_RANKS, taxonomy_dir,
                             fill_higher=False, renormalise=True, taxonomy_db="NCBI", version="0.9.1")
     _, rows = read_profile(out)
     sums = rank_sums(rows)
@@ -101,12 +101,12 @@ def test_renormalise_is_per_rank(fixer, ete3_db, tmp_path):
     assert species["562"] == pytest.approx(25.0) and species["1280"] == pytest.approx(75.0)
 
 
-def test_substrain_is_aggregated_into_strain_and_unknown_dropped(fixer, ete3_db, tmp_path):
+def test_substrain_is_aggregated_into_strain_and_unknown_dropped(fixer, taxonomy_dir, tmp_path):
     # 401614 is a sub-strain under strain 264 in the reduced taxonomy; 999999 is unknown
     src = write(tmp_path / "sub.tsv", HEADER.format(sid="s") +
                 "@@TAXID\tRANK\tPERCENTAGE\n401614\tstrain\t60\n264\tstrain\t40\n999999\tspecies\t5\n")
     out = tmp_path / "gs.bioboxes"
-    fixer.fix_gold_standard(src, out, "s", fixer.DEFAULT_RANKS, None, ete3_db,
+    fixer.fix_gold_standard(src, out, "s", fixer.DEFAULT_RANKS, taxonomy_dir,
                             fill_higher=False, renormalise=False, taxonomy_db="NCBI", version="0.9.1")
     _, rows = read_profile(out)
     strains = {r["TAXID"]: float(r["PERCENTAGE"]) for r in rows if r["RANK"] == "strain"}
@@ -114,10 +114,10 @@ def test_substrain_is_aggregated_into_strain_and_unknown_dropped(fixer, ete3_db,
     assert not any(r["TAXID"] == "999999" for r in rows)
 
 
-def test_fixed_file_passes_validator(fixer, validator, ete3_db, tmp_path):
+def test_fixed_file_passes_validator(fixer, validator, taxonomy_dir, tmp_path):
     src = write(tmp_path / "t.tsv", HEADER.format(sid="s") + "@@TAXID\tRANK\tPERCENTAGE\n562\tspecies\t70\n1280\tspecies\t30\n")
     out = tmp_path / "gs.bioboxes"
-    fixer.fix_gold_standard(src, out, "s", fixer.DEFAULT_RANKS, None, ete3_db,
+    fixer.fix_gold_standard(src, out, "s", fixer.DEFAULT_RANKS, taxonomy_dir,
                             fill_higher=True, renormalise=False, taxonomy_db="NCBI", version="0.9.1")
     ok, errors, _w, _s = validator.validate_bioboxes(out, expected_samples=["s"])
     assert ok, errors
@@ -148,12 +148,12 @@ def test_header_keys_are_case_insensitive(validator, tmp_path):
     assert ok, errors
 
 
-def test_fix_keeps_samples_of_multi_sample_files_apart(fixer, validator, ete3_db, tmp_path):
+def test_fix_keeps_samples_of_multi_sample_files_apart(fixer, validator, taxonomy_dir, tmp_path):
     src = tmp_path / "multi.bb"
     src.write_text("@SampleID:sA\n@@TAXID\tRANK\tPERCENTAGE\n263\tspecies\t100\n"
                    "@SampleID:sB\n@@TAXID\tRANK\tPERCENTAGE\n562\tspecies\t100\n")
     out = tmp_path / "fixed.bb"
-    fixer.fix_gold_standard(src, out, None, fixer.DEFAULT_RANKS, None, ete3_db,
+    fixer.fix_gold_standard(src, out, None, fixer.DEFAULT_RANKS, taxonomy_dir,
                             True, False, "NCBI", "0.9.1")
     ok, errors, _, stats = validator.validate_bioboxes(out, ["sA", "sB"])
     assert ok, errors
@@ -171,7 +171,8 @@ def test_fix_rejects_nan_and_negative_percentages(fixer, tmp_path):
 
 
 def test_validate_taxpasta_accepts_unclassified_and_zero_counts(test_data):
-    import subprocess, sys
+    import subprocess
+    import sys
     from conftest import BIN
     result = subprocess.run([sys.executable, str(BIN / "validate_taxpasta.py"), "--strict",
                              str(test_data / "taxpasta" / "realistic_kraken2.tsv")], capture_output=True, text=True)

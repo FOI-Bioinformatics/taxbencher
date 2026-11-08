@@ -10,7 +10,6 @@ This document provides guidance for testing taxbencher components locally.
 
 **Modules requiring conda/wave**:
 
-- `TAXPASTA_TO_BIOBOXES` - needs pandas + ete3
 - `COMPARATIVE_ANALYSIS` - needs pandas + scikit-learn + plotly + scipy + statsmodels
 
 **Recommended profiles**:
@@ -83,16 +82,16 @@ at cami_opal/plots.py:382 in spider_plot
 
 **Container**: `quay.io/biocontainers/cami-opal:1.0.13--pyhdfd78af_0`
 
-### 3. ete3 NCBI Taxonomy Download
+### 3. NCBI Taxonomy Download
 
-**Issue**: Without `--taxdump`, ete3 downloads the current NCBI taxonomy (~60 MB archive, ~500 MB database)
-into `~/.etetoolkit` inside every `TAXPASTA_TO_BIOBOXES` task. This needs network access, a writable `$HOME`
-inside the container and makes lineages depend on the download date.
+**Issue**: Without `--taxdump`, every `TAXPASTA_TO_BIOBOXES` task downloads the current NCBI taxdump (~80 MB).
+This needs network access and makes lineages depend on the download date.
 
-**Solution**: Pass a pinned archive with `--taxdump taxdump.tar.gz`; the pipeline builds the ete3 database once
-(`ETE3_BUILD_TAXDB`) and shares it between all conversions. The test profiles use the reduced archive in
-`assets/test_data/taxonomy/`. Alternatively run `taxpasta standardise` with `--taxonomy <dir> --add-id-lineage
---add-rank-lineage --add-lineage`; profiles with lineage columns are converted without ete3.
+**Solution**: Pass a pinned archive with `--taxdump taxdump.tar.gz`; the pipeline extracts it once
+(`PREPARE_TAXDUMP`) and shares it between all conversions, which read it with taxopy. The test profiles use the
+reduced archive in `assets/test_data/taxonomy/`. Alternatively run `taxpasta standardise` with
+`--taxonomy <dir> --add-id-lineage --add-rank-lineage --add-lineage`; profiles with lineage columns are
+converted without taxonomy lookups.
 
 ## Testing Components
 
@@ -122,7 +121,7 @@ python3 bin/validate_bioboxes.py --strict test_output.bioboxes
 **Requirements**:
 
 ```bash
-pip install pandas ete3
+pip install pandas taxopy
 ```
 
 **Expected output**: Valid CAMI Bioboxes format file
@@ -283,13 +282,13 @@ nextflow run . -profile test,wave
 - Use stub tests for CI/CD
 - Test with realistic data for validation
 
-### 3. ete3 downloads NCBI taxonomy on first run
+### 3. taxpasta_to_bioboxes.py downloads the NCBI taxonomy
 
-**Symptom**: First run of taxpasta_to_bioboxes.py is slow (~2-3 minutes)
+**Symptom**: Every run of taxpasta_to_bioboxes.py without `--taxdump` is slow and needs network access
 
-**Cause**: ete3 downloads ~500MB taxonomy database on first use
+**Cause**: Without `--taxdump` the current NCBI taxdump (~80 MB) is downloaded into the working directory
 
-**Solution**: This is normal behavior. Subsequent runs use cached data at `~/.etetoolkit/taxa.sqlite`
+**Solution**: Download a taxdump once and pass it with `--taxdump` (archive or extracted directory)
 
 ### 4. Conda environment build takes 10 minutes
 

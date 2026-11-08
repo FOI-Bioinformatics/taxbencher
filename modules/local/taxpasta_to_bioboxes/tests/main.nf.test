@@ -10,8 +10,8 @@ nextflow_process {
 
     // All functional tests use the reduced, pinned taxonomy so results are deterministic and offline
     setup {
-        run("ETE3_BUILD_TAXDB") {
-            script "../../ete3_build_taxdb/main.nf"
+        run("PREPARE_TAXDUMP") {
+            script "../../prepare_taxdump/main.nf"
             process {
                 """
                 input[0] = file('${projectDir}/assets/test_data/taxonomy/taxdump.tar.gz', checkIfExists: true)
@@ -29,7 +29,7 @@ nextflow_process {
                     [ id: 'test_sample', sample_id: 'test_1', classifier: 'kraken2' ],
                     file('${moduleDir}/testdata/test_taxpasta.tsv', checkIfExists: true)
                 ]
-                input[1] = ETE3_BUILD_TAXDB.out.db
+                input[1] = PREPARE_TAXDUMP.out.taxdump
                 """
             }
         }
@@ -62,7 +62,7 @@ nextflow_process {
                     [ id: 'test_metaphlan', sample_id: 'test_sample', classifier: 'metaphlan' ],
                     file('${moduleDir}/testdata/test_metaphlan_taxpasta.tsv', checkIfExists: true)
                 ]
-                input[1] = ETE3_BUILD_TAXDB.out.db
+                input[1] = PREPARE_TAXDUMP.out.taxdump
                 """
             }
         }
@@ -119,7 +119,7 @@ nextflow_process {
                     ],
                     file('${moduleDir}/testdata/test_taxpasta.tsv', checkIfExists: true)
                 ]
-                input[1] = ETE3_BUILD_TAXDB.out.db
+                input[1] = PREPARE_TAXDUMP.out.taxdump
                 """
             }
         }
@@ -170,7 +170,7 @@ nextflow_process {
                     [ id: 'test_empty', sample_id: 'empty_sample' ],
                     file('${moduleDir}/testdata/test_empty.tsv', checkIfExists: true)
                 ]
-                input[1] = ETE3_BUILD_TAXDB.out.db
+                input[1] = PREPARE_TAXDUMP.out.taxdump
                 """
             }
         }
@@ -190,7 +190,7 @@ nextflow_process {
                     [ id: 'test_missing', sample_id: 'missing_sample' ],
                     file('${moduleDir}/testdata/test_missing_columns.tsv', checkIfExists: true)
                 ]
-                input[1] = ETE3_BUILD_TAXDB.out.db
+                input[1] = PREPARE_TAXDUMP.out.taxdump
                 """
             }
         }
@@ -210,7 +210,7 @@ nextflow_process {
                     [ id: 'test_unknown', sample_id: 'unknown_sample' ],
                     file('${moduleDir}/testdata/test_unknown_taxids.tsv', checkIfExists: true)
                 ]
-                input[1] = ETE3_BUILD_TAXDB.out.db
+                input[1] = PREPARE_TAXDUMP.out.taxdump
                 """
             }
         }
@@ -230,7 +230,7 @@ nextflow_process {
                     [ id: 'test_db', sample_id: 'db_sample', taxonomy_db: 'SILVA' ],
                     file('${moduleDir}/testdata/test_taxpasta.tsv', checkIfExists: true)
                 ]
-                input[1] = ETE3_BUILD_TAXDB.out.db
+                input[1] = PREPARE_TAXDUMP.out.taxdump
                 """
             }
         }

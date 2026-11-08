@@ -4,7 +4,7 @@ Repair a gold standard (CAMI profiling / Bioboxes) file.
 
 What it does
 ------------
-* Reconstructs TAXPATH and TAXPATHSN from the NCBI taxonomy (ete3) restricted
+* Reconstructs TAXPATH and TAXPATHSN from the NCBI taxonomy (taxopy) restricted
   to the CAMI ranks (one element per rank, empty for missing ranks).
 * Drops or remaps ranks OPAL does not support (root, no rank, kingdom, ...).
 * Optionally derives missing higher-rank entries from lower-rank ones
@@ -15,10 +15,11 @@ What it does
   @@ header when present.
 * Multi-sample files (several @SampleID blocks) are repaired block by block and
   written back as separate blocks.
+* Merged (outdated) taxonomy IDs are replaced by their current ID.
 
 Usage:
     fix_gold_standard.py -i gold.bioboxes -o fixed.bioboxes -s sample_id \
-        [--taxdump taxdump.tar.gz] [--fill-higher-ranks] [--renormalise]
+        [--taxdump taxdump.tar.gz|taxdump_dir] [--fill-higher-ranks] [--renormalise]
 """
 
 import argparse
@@ -27,6 +28,10 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
+
+# shared taxonomy helpers live next to this script in bin/
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from taxbencher_taxonomy import TaxonomyResolver  # noqa: E402
 
 DEFAULT_RANKS = ["superkingdom", "phylum", "class", "order", "family", "genus", "species", "strain"]
 RANK_ALIASES = {"domain": "superkingdom", "subspecies": "strain"}
@@ -39,21 +44,14 @@ def normalise_rank(rank: str) -> str:
     return RANK_ALIASES.get(rank, rank)
 
 
-def load_ncbi(taxdump: Optional[Path], dbfile: Optional[Path]):
+def load_taxonomy(taxdump: Optional[Path]) -> TaxonomyResolver:
+    if taxdump and not Path(taxdump).exists():
+        sys.exit(f"ERROR: taxdump not found: {taxdump}")
+    print("Loading NCBI taxonomy..." + (f" from {taxdump}" if taxdump else " (downloading the current taxdump)"))
     try:
-        from ete3 import NCBITaxa
-    except ImportError:
-        sys.exit("ERROR: ete3 is required (pip install ete3 / conda install -c conda-forge ete3)")
-    kwargs = {}
-    if dbfile:
-        kwargs["dbfile"] = str(dbfile)
-    if taxdump:
-        if not Path(taxdump).exists():
-            sys.exit(f"ERROR: taxdump not found: {taxdump}")
-        kwargs["taxdump_file"] = str(taxdump)
-        kwargs.setdefault("dbfile", str(Path.cwd() / "taxa.sqlite"))
-    print("Initialising NCBI taxonomy database..." + (f" from {taxdump}" if taxdump else ""))
-    return NCBITaxa(**kwargs)
+        return TaxonomyResolver(taxdump)
+    except (OSError, ValueError, RuntimeError) as exc:
+        sys.exit(f"ERROR: {exc}")
 
 
 Row = Tuple[int, str, float]
@@ -110,15 +108,13 @@ def parse_input(path: Path) -> List[Tuple[Dict[str, str], List[Row]]]:
     return blocks
 
 
-def select_rank_nodes(ncbi, taxid: int, ranks: List[str]) -> Optional[Dict[str, Tuple[int, str]]]:
-    try:
-        lineage = ncbi.get_lineage(taxid)
-    except Exception:
+def select_rank_nodes(taxonomy: TaxonomyResolver, taxid: int, ranks: List[str]) -> Optional[Dict[str, Tuple[int, str]]]:
+    resolved = taxonomy.resolve(taxid)
+    if resolved is None or not resolved.taxids:
         return None
-    if not lineage:
-        return None
-    rank_of = ncbi.get_rank(lineage)
-    name_of = ncbi.get_taxid_translator(lineage)
+    lineage = resolved.taxids
+    rank_of = dict(zip(resolved.taxids, resolved.ranks))
+    name_of = dict(zip(resolved.taxids, resolved.names))
     selected: Dict[str, Tuple[int, str]] = {}
     species_index = None
     for idx, tid in enumerate(lineage):
@@ -149,7 +145,7 @@ def build_paths(selected: Dict[str, Tuple[int, str]], rank: str, ranks: List[str
 
 
 def fix_gold_standard(input_file: Path, output_file: Path, sample_id: Optional[str], ranks: List[str],
-                      taxdump: Optional[Path], dbfile: Optional[Path], fill_higher: bool,
+                      taxdump: Optional[Path], fill_higher: bool,
                       renormalise: bool, taxonomy_db: str, version: str) -> None:
     blocks = [(headers, rows) for headers, rows in parse_input(input_file) if rows]
     if not blocks:
@@ -161,12 +157,12 @@ def fix_gold_standard(input_file: Path, output_file: Path, sample_id: Optional[s
     duplicates = sorted({sid for sid in sample_ids if sample_ids.count(sid) > 1})
     if duplicates:
         sys.exit(f"ERROR: duplicate @SampleID blocks in {input_file}: {duplicates}")
-    ncbi = load_ncbi(taxdump, dbfile)
+    taxonomy = load_taxonomy(taxdump)
 
     written = 0
     with open(output_file, "w") as handle:
         for sid, (_, rows) in zip(sample_ids, blocks):
-            out_rows = fix_sample(ncbi, sid, rows, ranks, fill_higher, renormalise)
+            out_rows = fix_sample(taxonomy, sid, rows, ranks, fill_higher, renormalise)
             handle.write(f"@SampleID:{sid}\n")
             handle.write(f"@Version:{version}\n")
             handle.write(f"@Ranks:{'|'.join(ranks)}\n")
@@ -188,7 +184,7 @@ def format_percentage(pct: float) -> str:
     return text
 
 
-def fix_sample(ncbi, sample_id: str, rows: List[Row], ranks: List[str], fill_higher: bool,
+def fix_sample(taxonomy: TaxonomyResolver, sample_id: str, rows: List[Row], ranks: List[str], fill_higher: bool,
                renormalise: bool) -> List[Tuple[int, str, str, str, float]]:
     print(f"Processing {len(rows)} entries for sample '{sample_id}'...")
 
@@ -200,7 +196,7 @@ def fix_sample(ncbi, sample_id: str, rows: List[Row], ranks: List[str], fill_hig
     unresolved: List[int] = []
 
     for taxid, rank, pct in rows:
-        selected = select_rank_nodes(ncbi, taxid, ranks)
+        selected = select_rank_nodes(taxonomy, taxid, ranks)
         if selected is None:
             unresolved.append(taxid)
             continue
@@ -239,7 +235,7 @@ def fix_sample(ncbi, sample_id: str, rows: List[Row], ranks: List[str], fill_hig
         contributions = defaultdict(int)
         for source, entries in listed.items():
             for taxid, pct in entries.items():
-                selected = select_rank_nodes(ncbi, taxid, ranks)
+                selected = select_rank_nodes(taxonomy, taxid, ranks)
                 if not selected:
                     continue
                 for target in ranks[: ranks.index(source)]:
@@ -299,8 +295,9 @@ def main() -> None:
                              "input, else 'gold_standard'); multi-sample inputs keep their own IDs")
     parser.add_argument("-r", "--ranks", default="|".join(DEFAULT_RANKS),
                         help="Pipe- or comma-separated ranks to keep (default: %(default)s)")
-    parser.add_argument("--taxdump", type=Path, default=None, help="NCBI taxdump.tar.gz for ete3 (recommended)")
-    parser.add_argument("--ete3-db", type=Path, default=None, help="ete3 sqlite database to use/create")
+    parser.add_argument("--taxdump", type=Path, default=None,
+                        help="NCBI taxdump: taxdump.tar.gz / taxdmp_*.zip archive or extracted directory "
+                             "(recommended; without it the current taxonomy is downloaded)")
     parser.add_argument("--fill-higher-ranks", action="store_true",
                         help="Derive entries for higher ranks that are absent from the input by summing the "
                              "lowest present rank (e.g. species-only truth)")
@@ -312,7 +309,7 @@ def main() -> None:
 
     sep = "|" if "|" in args.ranks else ","
     ranks = [normalise_rank(r) for r in args.ranks.split(sep) if r.strip()]
-    fix_gold_standard(args.input, args.output, args.sample_id, ranks, args.taxdump, args.ete3_db,
+    fix_gold_standard(args.input, args.output, args.sample_id, ranks, args.taxdump,
                       args.fill_higher_ranks, args.renormalise, args.taxonomy_db, args.version_bioboxes)
 
 

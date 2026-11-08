@@ -150,10 +150,8 @@ def validate_block(headers, columns, data, errors: List[str], warnings: List[str
         percentage = fields[idx["PERCENTAGE"]].strip()
 
         # TAXID
-        taxid_ok = False
         try:
             taxid_int = int(taxid)
-            taxid_ok = True
             if taxid_int <= 0:
                 errors.append(f"{prefix}Line {lineno}: TAXID must be positive: {taxid}")
         except ValueError:
@@ -259,7 +257,7 @@ def validate_bioboxes(input_file: Path, expected_samples: List[str] = None) -> T
             lines = handle.readlines()
     except Exception as exc:
         return False, [f"Cannot read file: {exc}"], [], {}
-    if not any(l.strip() for l in lines):
+    if not any(line.strip() for line in lines):
         return False, ["File is empty"], [], {}
 
     stats["total_lines"] = len(lines)

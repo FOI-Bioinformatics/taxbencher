@@ -1174,9 +1174,9 @@ maintainers:
 // Input: Taxpasta TSV with taxonomy_id and count columns
 // Output: CAMI Bioboxes profiling format with lineage paths
 //
-// Note: Uses ete3 for NCBI taxonomy lookups (~500MB download on first run)
+// Note: Uses taxopy with the taxdump extracted by PREPARE_TAXDUMP for NCBI lineage lookups
 //
-TAXPASTA_TO_BIOBOXES(ch_taxpasta)
+TAXPASTA_TO_BIOBOXES(ch_taxpasta, ch_taxdump)
 ```
 
 **Complex logic comments**:
@@ -1427,9 +1427,9 @@ def createMeta(sample_id, classifier) {
 ```yaml
 # environment.yml
 dependencies:
-  - python=3.11
-  - pandas=2.0.0 # Specific version
-  - ete3>=3.1.2,<4.0 # Version range
+  - conda-forge::python=3.12
+  - conda-forge::pandas=2.2.2 # Exact versions, matching the container
+  - bioconda::taxopy=0.12.0
 ```
 
 **Document dependencies**:
@@ -1437,9 +1437,9 @@ dependencies:
 ```groovy
 // In module main.nf
 // NOTE: This module requires:
-// - pandas >= 2.0 for DataFrame operations
-// - ete3 >= 3.1 for NCBI taxonomy lookups
-// Wave container includes both dependencies
+// - pandas for DataFrame operations
+// - taxopy for NCBI taxonomy lookups
+// The taxpasta biocontainer includes both dependencies
 ```
 
 ## Anti-Patterns to Avoid

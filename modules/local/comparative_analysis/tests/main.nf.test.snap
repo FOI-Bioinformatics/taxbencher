@@ -148,7 +148,7 @@
                         "labels": "test1_kraken2,test1_metaphlan,test1_centrifuge",
                         "num_classifiers": 3
                     },
-                    "test1_diff_taxa.tsv:md5,4ff996f3d0198bace429e1a6f5adb460"
+                    "test1_diff_taxa.tsv:md5,b3c4779fbea361f78acab4cc4e0c2709"
                 ]
             ],
             [
@@ -159,7 +159,7 @@
                         "labels": "test1_kraken2,test1_metaphlan,test1_centrifuge",
                         "num_classifiers": 3
                     },
-                    "test1_metrics_wide.tsv:md5,1e71257b255a162616b0cec185c219a1"
+                    "test1_metrics_wide.tsv:md5,889aced76292e18bb930a17402f169c7"
                 ]
             ],
             [
@@ -170,7 +170,7 @@
                         "labels": "test1_kraken2,test1_metaphlan,test1_centrifuge",
                         "num_classifiers": 3
                     },
-                    "test1_opal_summary_mqc.tsv:md5,8cae0f2b3055522de9f51e3d36cd688a"
+                    "test1_opal_summary_mqc.tsv:md5,d8d97308d77f6de889cdc6979c167092"
                 ]
             ],
             {
@@ -190,7 +190,7 @@
                 ]
             }
         ],
-        "timestamp": "2026-11-08T05:36:41.856432985",
+        "timestamp": "2026-11-08T07:38:16.701185358",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.0"
