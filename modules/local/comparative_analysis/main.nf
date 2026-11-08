@@ -11,7 +11,8 @@ process COMPARATIVE_ANALYSIS {
 
     input:
     tuple val(meta), path(opal_dir), path(bioboxes)   // bioboxes: prediction profiles of this sample (same order as meta.labels), or []
-    path(gold_standard)
+    // staged in its own directory so a prediction label equal to the gold standard's name does not collide
+    path(gold_standard, stageAs: 'gold_standard/*')
 
     output:
     tuple val(meta), path("*_pca.html")          , emit: pca_plot
@@ -32,6 +33,7 @@ process COMPARATIVE_ANALYSIS {
     def bioboxes_files = bioboxes instanceof List ? bioboxes : (bioboxes ? [bioboxes] : [])
     def labels = meta.labels ?: bioboxes_files.collect { bioboxes_file -> bioboxes_file.baseName }.join(',')
     def bioboxes_arg = bioboxes_files ? "--bioboxes ${bioboxes_files.join(' ')}" : ''
+    def classifiers_arg = meta.classifiers ? "--classifiers \"${meta.classifiers}\"" : ''
 
     """
     comparative_analysis.py \\
@@ -39,6 +41,7 @@ process COMPARATIVE_ANALYSIS {
         --gold-standard ${gold_standard} \\
         --sample-id ${sample_id} \\
         --labels "${labels}" \\
+        ${classifiers_arg} \\
         ${bioboxes_arg} \\
         --output-prefix ${prefix} \\
         ${args}

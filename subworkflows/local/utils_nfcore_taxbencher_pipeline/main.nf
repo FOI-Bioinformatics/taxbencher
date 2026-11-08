@@ -222,7 +222,8 @@ def validateSampleIdsAgainstGoldStandard(List sample_ids, gold_standard_param) {
     }
     def gs_sample_ids = [] as Set
     gs.eachLine { line ->
-        if (line.startsWith('@SampleID:')) {
+        // OPAL matches header keys case-insensitively
+        if (line.toUpperCase().startsWith('@SAMPLEID:')) {
             gs_sample_ids << line.substring('@SampleID:'.length()).trim()
         }
     }

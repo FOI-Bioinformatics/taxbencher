@@ -13,6 +13,8 @@ What it does
   across ranks: in the CAMI format every rank sums to 100 %.
 * Accepts files with 3 (TAXID, RANK, PERCENTAGE), 4 or 5 columns and uses the
   @@ header when present.
+* Multi-sample files (several @SampleID blocks) are repaired block by block and
+  written back as separate blocks.
 
 Usage:
     fix_gold_standard.py -i gold.bioboxes -o fixed.bioboxes -s sample_id \
@@ -20,6 +22,7 @@ Usage:
 """
 
 import argparse
+import math
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -53,11 +56,19 @@ def load_ncbi(taxdump: Optional[Path], dbfile: Optional[Path]):
     return NCBITaxa(**kwargs)
 
 
-def parse_input(path: Path) -> Tuple[Dict[str, str], List[Tuple[int, str, float]]]:
-    """Return headers and a list of (taxid, rank, percentage)."""
+Row = Tuple[int, str, float]
+
+
+def parse_input(path: Path) -> List[Tuple[Dict[str, str], List[Row]]]:
+    """Return one (headers, rows) block per @SampleID, rows being (taxid, rank, percentage).
+
+    Files without @SampleID lines give a single block. Rows with a non-finite or negative
+    percentage are reported and skipped.
+    """
+    blocks: List[Tuple[Dict[str, str], List[Row]]] = []
     headers: Dict[str, str] = {}
     columns: List[str] = []
-    rows: List[Tuple[int, str, float]] = []
+    rows: List[Row] = []
     skipped = 0
     with open(path) as handle:
         for lineno, raw in enumerate(handle, 1):
@@ -65,11 +76,15 @@ def parse_input(path: Path) -> Tuple[Dict[str, str], List[Tuple[int, str, float]
             if not line.strip() or line.startswith("#"):
                 continue
             if line.startswith("@@"):
-                columns = [c.strip() for c in line[2:].split("\t")]
+                columns = [c.strip().upper() for c in line[2:].split("\t")]
                 continue
             if line.startswith("@"):
                 key, _, value = line[1:].partition(":")
-                headers[key.strip()] = value.strip()
+                key = key.strip()
+                if key.upper() == "SAMPLEID" and (rows or any(k.upper() == "SAMPLEID" for k in headers)):
+                    blocks.append((headers, rows))  # a new sample block starts
+                    headers, rows, columns = {}, [], []
+                headers["SampleID" if key.upper() == "SAMPLEID" else key] = value.strip()
                 continue
             parts = line.split("\t")
             try:
@@ -81,13 +96,18 @@ def parse_input(path: Path) -> Tuple[Dict[str, str], List[Tuple[int, str, float]
                     taxid, rank, pct = parts[0], parts[1], parts[-1]
                 else:
                     raise ValueError("too few columns")
-                rows.append((int(taxid), rank.strip(), float(pct)))
+                value = float(pct)
+                if not math.isfinite(value) or value < 0:
+                    raise ValueError(f"percentage {pct!r} is not a finite non-negative number")
+                rows.append((int(taxid), rank.strip(), value))
             except (ValueError, IndexError) as exc:
                 print(f"Warning: skipping malformed line {lineno}: {line!r} ({exc})")
                 skipped += 1
+    if rows or headers or not blocks:
+        blocks.append((headers, rows))
     if skipped:
         print(f"Skipped {skipped} malformed lines")
-    return headers, rows
+    return blocks
 
 
 def select_rank_nodes(ncbi, taxid: int, ranks: List[str]) -> Optional[Dict[str, Tuple[int, str]]]:
@@ -131,11 +151,45 @@ def build_paths(selected: Dict[str, Tuple[int, str]], rank: str, ranks: List[str
 def fix_gold_standard(input_file: Path, output_file: Path, sample_id: Optional[str], ranks: List[str],
                       taxdump: Optional[Path], dbfile: Optional[Path], fill_higher: bool,
                       renormalise: bool, taxonomy_db: str, version: str) -> None:
-    headers, rows = parse_input(input_file)
-    if not rows:
+    blocks = [(headers, rows) for headers, rows in parse_input(input_file) if rows]
+    if not blocks:
         sys.exit("ERROR: no data rows found in input")
-    sample_id = sample_id or headers.get("SampleID") or "gold_standard"
+    if sample_id and len(blocks) > 1:
+        sys.exit(f"ERROR: --sample-id can only be used with single-sample input; {input_file} has "
+                 f"{len(blocks)} @SampleID blocks")
+    sample_ids = [sample_id or headers.get("SampleID") or "gold_standard" for headers, _ in blocks]
+    duplicates = sorted({sid for sid in sample_ids if sample_ids.count(sid) > 1})
+    if duplicates:
+        sys.exit(f"ERROR: duplicate @SampleID blocks in {input_file}: {duplicates}")
     ncbi = load_ncbi(taxdump, dbfile)
+
+    written = 0
+    with open(output_file, "w") as handle:
+        for sid, (_, rows) in zip(sample_ids, blocks):
+            out_rows = fix_sample(ncbi, sid, rows, ranks, fill_higher, renormalise)
+            handle.write(f"@SampleID:{sid}\n")
+            handle.write(f"@Version:{version}\n")
+            handle.write(f"@Ranks:{'|'.join(ranks)}\n")
+            handle.write(f"@TaxonomyID:{taxonomy_db}\n")
+            handle.write("@@TAXID\tRANK\tTAXPATH\tTAXPATHSN\tPERCENTAGE\n")
+            for taxid, rank, taxpath, taxpathsn, pct in out_rows:
+                handle.write(f"{taxid}\t{rank}\t{taxpath}\t{taxpathsn}\t{format_percentage(pct)}\n")
+            if len(blocks) > 1:
+                handle.write("\n")
+            written += len(out_rows)
+    print(f"Wrote {written} entries for {len(blocks)} sample(s) to {output_file}")
+
+
+def format_percentage(pct: float) -> str:
+    """Six decimals, but never round a non-zero abundance to 0 (OPAL drops 0.0 rows)."""
+    text = f"{pct:.6f}"
+    if pct > 0 and float(text) == 0.0:
+        text = f"{pct:.6e}"
+    return text
+
+
+def fix_sample(ncbi, sample_id: str, rows: List[Row], ranks: List[str], fill_higher: bool,
+               renormalise: bool) -> List[Tuple[int, str, str, str, float]]:
     print(f"Processing {len(rows)} entries for sample '{sample_id}'...")
 
     # rank -> taxid -> percentage ; node info for TAXPATH
@@ -230,17 +284,8 @@ def fix_gold_standard(input_file: Path, output_file: Path, sample_id: Optional[s
             out_rows.append((taxid, rank, taxpath, taxpathsn, pct * factor))
 
     if not out_rows:
-        sys.exit("ERROR: no entries left after fixing; nothing written")
-
-    with open(output_file, "w") as handle:
-        handle.write(f"@SampleID:{sample_id}\n")
-        handle.write(f"@Version:{version}\n")
-        handle.write(f"@Ranks:{'|'.join(ranks)}\n")
-        handle.write(f"@TaxonomyID:{taxonomy_db}\n")
-        handle.write("@@TAXID\tRANK\tTAXPATH\tTAXPATHSN\tPERCENTAGE\n")
-        for taxid, rank, taxpath, taxpathsn, pct in out_rows:
-            handle.write(f"{taxid}\t{rank}\t{taxpath}\t{taxpathsn}\t{pct:.6f}\n")
-    print(f"Wrote {len(out_rows)} entries to {output_file}")
+        sys.exit(f"ERROR: no entries left for sample '{sample_id}' after fixing; nothing written")
+    return out_rows
 
 
 def main() -> None:
@@ -250,9 +295,10 @@ def main() -> None:
     parser.add_argument("-i", "--input", required=True, type=Path, help="Input gold standard file")
     parser.add_argument("-o", "--output", required=True, type=Path, help="Output fixed file")
     parser.add_argument("-s", "--sample-id", default=None,
-                        help="@SampleID for the output (default: value from input, else 'gold_standard')")
+                        help="@SampleID for the output of a single-sample input (default: value from the "
+                             "input, else 'gold_standard'); multi-sample inputs keep their own IDs")
     parser.add_argument("-r", "--ranks", default="|".join(DEFAULT_RANKS),
-                        help="Pipe-separated ranks to keep (default: %(default)s)")
+                        help="Pipe- or comma-separated ranks to keep (default: %(default)s)")
     parser.add_argument("--taxdump", type=Path, default=None, help="NCBI taxdump.tar.gz for ete3 (recommended)")
     parser.add_argument("--ete3-db", type=Path, default=None, help="ete3 sqlite database to use/create")
     parser.add_argument("--fill-higher-ranks", action="store_true",
@@ -264,7 +310,8 @@ def main() -> None:
     parser.add_argument("--version-bioboxes", default="0.9.1", help="@Version value (default: 0.9.1)")
     args = parser.parse_args()
 
-    ranks = [normalise_rank(r) for r in args.ranks.split("|") if r.strip()]
+    sep = "|" if "|" in args.ranks else ","
+    ranks = [normalise_rank(r) for r in args.ranks.split(sep) if r.strip()]
     fix_gold_standard(args.input, args.output, args.sample_id, ranks, args.taxdump, args.ete3_db,
                       args.fill_higher_ranks, args.renormalise, args.taxonomy_db, args.version_bioboxes)
 

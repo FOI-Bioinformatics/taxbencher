@@ -27,11 +27,20 @@ process ETE3_BUILD_TAXDB {
     # Build the ete3 NCBITaxa sqlite database once from a pinned taxdump so that
     # every TAXPASTA_TO_BIOBOXES task uses the same taxonomy without network access.
     python - <<'PY'
-    import os, sys
+    import os, sys, tarfile, zipfile
     from ete3 import NCBITaxa
     taxdump = "${taxdump}"
     if not os.path.exists(taxdump):
         sys.exit(f"taxdump not found: {taxdump}")
+    if zipfile.is_zipfile(taxdump):
+        # dated NCBI archives (taxdump_archive/taxdmp_YYYY-MM-DD.zip) are zip files; ete3 reads tar
+        with zipfile.ZipFile(taxdump) as archive, tarfile.open("taxdump_from_zip.tar.gz", "w:gz") as tar:
+            for member in archive.infolist():
+                if member.is_dir():
+                    continue
+                path = archive.extract(member, "taxdump_unzipped")
+                tar.add(path, arcname=os.path.basename(member.filename))
+        taxdump = "taxdump_from_zip.tar.gz"
     NCBITaxa(dbfile="taxa.sqlite", taxdump_file=taxdump)
     PY
 

@@ -131,3 +131,54 @@ def test_parse_ranks_accepts_pipe_and_comma():
     assert conv.parse_ranks("domain,species") == ["superkingdom", "species"]
     with pytest.raises(Exception):
         conv.parse_ranks("species|species")
+
+
+FRANCISELLA = ["2", "1224", "1236", "72273", "34064", "262", "263"]
+
+
+def write_counts(path, rows, extra_header=""):
+    path.write_text("taxonomy_id\tcount" + extra_header + "\n" + "".join("\t".join(map(str, r)) + "\n" for r in rows))
+    return path
+
+
+def test_clade_mode_nested_strains_are_counted_once(converter, test_data, ete3_db, validator, tmp_path):
+    # 119857 (subsp. holarctica) and its strains 1432652/393011: one strain-rank entry, own TAXPATH
+    src = write_counts(tmp_path / "in.tsv", [(t, 100) for t in FRANCISELLA] + [(119857, 100), (393011, 60)])
+    _, out = convert(converter, tmp_path, src, ete3_db=ete3_db, abundance_mode="clade")
+    _, rows = read_profile(out)
+    strains = [r for r in rows if r["RANK"] == "strain"]
+    assert [(r["TAXID"], float(r["PERCENTAGE"])) for r in strains] == [("119857", pytest.approx(100.0))]
+    assert strains[0]["TAXPATH"].split("|")[-1] == "119857"
+    # without the parent, the listed strains are summed onto it
+    src = write_counts(tmp_path / "in2.tsv", [(t, 100) for t in FRANCISELLA] + [(393011, 60), (1432652, 30)])
+    _, out = convert(converter, tmp_path, src, ete3_db=ete3_db, abundance_mode="clade")
+    _, rows = read_profile(out)
+    assert rank_sums(rows)["strain"] == pytest.approx(90.0)
+    # the bundled realistic MetaPhlAn fixture converts to a valid profile
+    _, out = convert(converter, tmp_path, test_data / "taxpasta" / "realistic_metaphlan.tsv",
+                     ete3_db=ete3_db, abundance_mode="clade")
+    ok, errors, _, _ = validator.validate_bioboxes(out)
+    assert ok, errors
+
+
+def test_tiny_abundances_are_not_rounded_to_zero(converter, ete3_db, tmp_path):
+    src = write_counts(tmp_path / "in.tsv", [(562, 300_000_000), (263, 1)])
+    _, out = convert(converter, tmp_path, src, ete3_db=ete3_db)
+    _, rows = read_profile(out)
+    tiny = [r for r in rows if r["TAXID"] == "263"][0]
+    assert 0 < float(tiny["PERCENTAGE"]) < 1e-6
+
+
+def test_clade_mode_include_unclassified_caps_merged_taxid0(converter, ete3_db, tmp_path):
+    # MetaPhlAn 4 via taxpasta: taxid 0 holds UNCLASSIFIED (10 %) plus an unmappable t__SGB row (90 %)
+    lineage = ["2", "1224", "1236", "91347", "543", "561", "562"]
+    src = write_counts(tmp_path / "in.tsv", [(0, 100_000_000)] + [(t, 90_000_000) for t in lineage])
+    _, out = convert(converter, tmp_path, src, ete3_db=ete3_db, abundance_mode="clade", include_unclassified=True)
+    _, rows = read_profile(out)
+    assert rank_sums(rows)["superkingdom"] == pytest.approx(90.0)
+
+
+def test_multi_sample_long_table_is_rejected(converter, ete3_db, tmp_path):
+    src = write_counts(tmp_path / "in.tsv", [(562, 10, "a"), (263, 5, "b")], extra_header="\tsample")
+    with pytest.raises(SystemExit):
+        convert(converter, tmp_path, src, ete3_db=ete3_db)

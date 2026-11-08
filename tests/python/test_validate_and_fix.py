@@ -121,3 +121,58 @@ def test_fixed_file_passes_validator(fixer, validator, ete3_db, tmp_path):
                             fill_higher=True, renormalise=False, taxonomy_db="NCBI", version="0.9.1")
     ok, errors, _w, _s = validator.validate_bioboxes(out, expected_samples=["s"])
     assert ok, errors
+
+
+GOOD_ROW = "2\tsuperkingdom\t2\tBacteria\t{pct}\n"
+ONE_RANK_HEADER = "@SampleID:{sid}\n@Version:0.9.1\n@Ranks:superkingdom\n@TaxonomyID:NCBI\n@@TAXID\tRANK\tTAXPATH\tTAXPATHSN\tPERCENTAGE\n"
+
+
+def test_nan_percentage_is_an_error(validator, tmp_path):
+    f = tmp_path / "nan.bb"
+    f.write_text(ONE_RANK_HEADER.format(sid="s1") + GOOD_ROW.format(pct="nan"))
+    ok, errors, _, _ = validator.validate_bioboxes(f)
+    assert not ok and any("finite" in e for e in errors)
+
+
+def test_header_after_column_line_is_an_error(validator, tmp_path):
+    f = tmp_path / "order.bb"
+    f.write_text(ONE_RANK_HEADER.format(sid="s1") + "@Extra:x\n" + GOOD_ROW.format(pct="100"))
+    ok, errors, _, _ = validator.validate_bioboxes(f)
+    assert not ok and any("after the @@" in e for e in errors)
+
+
+def test_header_keys_are_case_insensitive(validator, tmp_path):
+    f = tmp_path / "case.bb"
+    f.write_text(ONE_RANK_HEADER.format(sid="s1").replace("@SampleID", "@SampleId") + GOOD_ROW.format(pct="100"))
+    ok, errors, _, _ = validator.validate_bioboxes(f, ["s1"])
+    assert ok, errors
+
+
+def test_fix_keeps_samples_of_multi_sample_files_apart(fixer, validator, ete3_db, tmp_path):
+    src = tmp_path / "multi.bb"
+    src.write_text("@SampleID:sA\n@@TAXID\tRANK\tPERCENTAGE\n263\tspecies\t100\n"
+                   "@SampleID:sB\n@@TAXID\tRANK\tPERCENTAGE\n562\tspecies\t100\n")
+    out = tmp_path / "fixed.bb"
+    fixer.fix_gold_standard(src, out, None, fixer.DEFAULT_RANKS, None, ete3_db,
+                            True, False, "NCBI", "0.9.1")
+    ok, errors, _, stats = validator.validate_bioboxes(out, ["sA", "sB"])
+    assert ok, errors
+    text = out.read_text()
+    block_a, block_b = text.split("@SampleID:sB")
+    assert "\t263\t" not in block_b and "562\tspecies" not in block_a
+    assert "2\tsuperkingdom" in block_a and "2\tsuperkingdom" in block_b
+
+
+def test_fix_rejects_nan_and_negative_percentages(fixer, tmp_path):
+    src = tmp_path / "bad.bb"
+    src.write_text("@SampleID:s\n@@TAXID\tRANK\tPERCENTAGE\n263\tspecies\tnan\n562\tspecies\t-5\n561\tgenus\t50\n")
+    blocks = fixer.parse_input(src)
+    assert [row for _, rows in blocks for row in rows] == [(561, "genus", 50.0)]
+
+
+def test_validate_taxpasta_accepts_unclassified_and_zero_counts(test_data):
+    import subprocess, sys
+    from conftest import BIN
+    result = subprocess.run([sys.executable, str(BIN / "validate_taxpasta.py"), "--strict",
+                             str(test_data / "taxpasta" / "realistic_kraken2.tsv")], capture_output=True, text=True)
+    assert result.returncode == 0, result.stdout + result.stderr

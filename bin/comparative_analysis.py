@@ -43,7 +43,7 @@ except ImportError as exc:  # pragma: no cover - depends on environment
     print("[comparative_analysis.py] Falling back to placeholder mode", file=sys.stderr)
     FULL_ANALYSIS = False
 
-__version__ = "2.0.0"
+__version__ = "2.1.0"
 
 GOLD_STANDARD_LABEL = "Gold standard"
 RANK_ORDER = ["superkingdom", "phylum", "class", "order", "family", "genus", "species", "strain"]
@@ -68,13 +68,17 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--gold-standard", type=Path, required=True, help="Gold standard bioboxes file")
     parser.add_argument("--sample-id", type=str, required=True, help="Sample ID (matches @SampleID)")
     parser.add_argument("--labels", type=str, required=True, help="Comma-separated classifier labels")
+    parser.add_argument("--classifiers", type=str, default="",
+                        help="Comma-separated classifier names (samplesheet 'classifier' column) in the same "
+                             "order as --labels; written to the wide table so samples can be pooled per classifier")
     parser.add_argument("--bioboxes", type=Path, nargs="*", default=[],
                         help="CAMI profiles of the classifiers, in the same order as --labels")
     parser.add_argument("--output-prefix", type=str, required=True, help="Output file prefix")
     parser.add_argument("--summary-rank", type=str, default="species",
                         help="Rank used for the MultiQC summary table (default: species)")
     parser.add_argument("--diff-min-abs", type=float, default=0.0,
-                        help="Only report taxa whose |observed - expected| exceeds this many percent (default: 0)")
+                        help="Only list taxa whose |observed - expected| is at least this many percent in "
+                             "_diff_taxa.tsv; TP/FP/FN counts in the report always use every taxon (default: 0)")
     parser.add_argument("--version", action="version", version=f"comparative_analysis.py {__version__}")
     return parser.parse_args()
 
@@ -92,7 +96,8 @@ def parse_opal_metrics(opal_dir: Path, sample_id: str) -> Optional["pd.DataFrame
             return None
         results = candidates[0]
     try:
-        df = pd.read_csv(results, sep="\t")
+        # keep_default_na=False: labels such as "NA" or "None" are valid tool names
+        df = pd.read_csv(results, sep="\t", dtype=str, keep_default_na=False)
     except Exception as exc:
         log(f"ERROR parsing {results}: {exc}")
         return None
@@ -102,21 +107,23 @@ def parse_opal_metrics(opal_dir: Path, sample_id: str) -> Optional["pd.DataFrame
         return None
     if "sample" in df.columns and sample_id in set(df["sample"].astype(str)):
         df = df[df["sample"].astype(str) == sample_id]
-    df = df.dropna(subset=["value"])
-    df["value"] = pd.to_numeric(df["value"], errors="coerce")
+    df["value"] = pd.to_numeric(df["value"].replace("", float("nan")), errors="coerce")
     df = df.dropna(subset=["value"])
     # OPAL reports rank-independent metrics (UniFrac) with rank "na"
-    df["rank"] = df["rank"].fillna("na").astype(str).replace({"nan": "na", "": "na"})
+    df["rank"] = df["rank"].astype(str).replace({"nan": "na", "": "na"})
     log(f"Loaded {len(df)} OPAL metric values for {df['tool'].nunique()} tools "
         f"and {df['rank'].nunique()} ranks from {results.name}")
     return df
 
 
-def pivot_metrics(long_df: "pd.DataFrame", sample_id: str) -> "pd.DataFrame":
+def pivot_metrics(long_df: "pd.DataFrame", sample_id: str,
+                  classifier_of: Optional[Dict[str, str]] = None) -> "pd.DataFrame":
     """Long OPAL table -> one row per (sample, tool, rank), one column per metric."""
     ranked = long_df[long_df["rank"] != "na"]
     wide = ranked.pivot_table(index=["tool", "rank"], columns="metric", values="value", aggfunc="first").reset_index()
     wide.insert(0, "sample", sample_id)
+    classifier_of = classifier_of or {}
+    wide.insert(2, "classifier", [classifier_of.get(tool, tool) for tool in wide["tool"]])
     sample_level = long_df[long_df["rank"] == "na"]
     if not sample_level.empty:
         # broadcast rank-independent metrics (e.g. UniFrac) to every rank row of the tool
@@ -256,8 +263,6 @@ def perform_differential_abundance(gold_df: "pd.DataFrame", profiles: Dict[str, 
             if obs <= 0 and exp <= 0:
                 continue
             diff = obs - exp
-            if abs(diff) < min_abs:
-                continue
             if exp > 0 and obs > 0:
                 status, log2fc = "TP", math.log2(obs / exp)
             elif exp > 0:
@@ -282,8 +287,10 @@ def perform_differential_abundance(gold_df: "pd.DataFrame", profiles: Dict[str, 
         diff_df["abs_order"] = diff_df["abs_diff_pct"].abs()
         diff_df = diff_df.sort_values(["classifier", "rank_order", "abs_order"], ascending=[True, True, False])
         diff_df = diff_df.drop(columns=["rank_order", "abs_order"])
-    diff_df.to_csv(output_file, sep="\t", index=False)
-    log(f"Wrote {len(diff_df)} taxon comparisons to {output_file}")
+    # --diff-min-abs only shortens the written table; TP/FP/FN counts in the report use every taxon
+    written = diff_df[diff_df["abs_diff_pct"].abs() >= min_abs] if min_abs > 0 else diff_df
+    written.to_csv(output_file, sep="\t", index=False)
+    log(f"Wrote {len(written)} of {len(diff_df)} taxon comparisons to {output_file}")
     return diff_df
 
 
@@ -412,6 +419,11 @@ No significance testing is performed: one profile per classifier provides no rep
 def main() -> None:
     args = parse_args()
     labels = [l.strip() for l in args.labels.split(",") if l.strip()]
+    classifiers = [c.strip() for c in args.classifiers.split(",") if c.strip()]
+    if classifiers and len(classifiers) != len(labels):
+        log(f"WARNING: {len(classifiers)} classifier names for {len(labels)} labels; using labels")
+        classifiers = []
+    classifier_of = dict(zip(labels, classifiers))
     log(f"Sample ID: {args.sample_id} | labels: {labels} | OPAL dir: {args.opal_dir} | full analysis: {FULL_ANALYSIS}")
 
     pca_html = Path(f"{args.output_prefix}_pca.html")
@@ -423,7 +435,7 @@ def main() -> None:
     if not FULL_ANALYSIS:
         create_placeholder_pca(args.sample_id, labels, pca_html, "Python dependencies are missing.")
         create_placeholder_diff_taxa(diff_tsv, "analysis dependencies (pandas, scikit-learn, plotly) are missing")
-        wide_tsv.write_text("sample\ttool\trank\n")
+        wide_tsv.write_text("sample\ttool\tclassifier\trank\n")
         write_multiqc_table(None, args.sample_id, labels, args.summary_rank, mqc_tsv)
         comparison_html.write_text(f"<html><body><h1>Classifier Comparison - {args.sample_id}</h1>"
                                    f"<p>Full analysis requires pandas, scikit-learn and plotly.</p></body></html>")
@@ -433,14 +445,14 @@ def main() -> None:
     long_df = parse_opal_metrics(args.opal_dir, args.sample_id)
     wide = None
     if long_df is not None and not long_df.empty:
-        wide = pivot_metrics(long_df, args.sample_id)
+        wide = pivot_metrics(long_df, args.sample_id, classifier_of)
         wide.to_csv(wide_tsv, sep="\t", index=False)
         missing_labels = [l for l in labels if l not in set(wide["tool"])]
         if missing_labels:
             log(f"WARNING: labels without OPAL metrics: {missing_labels}")
         perform_pca_analysis(long_df, args.sample_id, pca_html)
     else:
-        wide_tsv.write_text("sample\ttool\trank\n")
+        wide_tsv.write_text("sample\ttool\tclassifier\trank\n")
         create_placeholder_pca(args.sample_id, labels, pca_html, "OPAL metrics were not found.")
 
     diff_df = None

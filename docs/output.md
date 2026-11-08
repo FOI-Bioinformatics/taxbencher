@@ -247,12 +247,11 @@ F1 score and L1 norm error across ranks.
 <summary>Output files</summary>
 
 - `pipeline_info/`
-  - `execution_report.html` - Nextflow execution report
-  - `execution_timeline.html` - Timeline of all tasks
-  - `execution_trace.txt` - Trace file with resource usage
-  - `pipeline_dag.svg` - Pipeline directed acyclic graph
-  - `samplesheet.valid.csv` - Validated samplesheet used
-  - `params.json` - Parameters used for this run
+  - `execution_report_<timestamp>.html` - Nextflow execution report
+  - `execution_timeline_<timestamp>.html` - Timeline of all tasks
+  - `execution_trace_<timestamp>.txt` - Trace file with resource usage
+  - `pipeline_dag_<timestamp>.html` - Pipeline directed acyclic graph
+  - `params_<timestamp>.json` - Parameters used for this run
   - `taxbencher_software_mqc_versions.yml` - Software versions
 
 </details>

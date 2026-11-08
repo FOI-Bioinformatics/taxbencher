@@ -9,21 +9,28 @@
         "properties": {
             "sample_id": {
                 "type": "string",
-                "pattern": "^[^\\s,|]+$",
-                "errorMessage": "Sample ID (biological sample identifier, must match a @SampleID in the gold standard) must be provided and cannot contain spaces, commas or pipes",
-                "meta": ["sample_id"]
+                "pattern": "^[A-Za-z0-9._-]+$",
+                "errorMessage": "Sample ID (biological sample identifier, must match a @SampleID in the gold standard) must be provided and may only contain letters, digits, '.', '_' and '-'",
+                "meta": [
+                    "sample_id"
+                ]
             },
             "label": {
                 "type": "string",
-                "pattern": "^[^\\s,|]+$",
-                "errorMessage": "Label (unique identifier for this taxonomic profile) must be provided and cannot contain spaces, commas or pipes",
-                "meta": ["id", "label"]
+                "pattern": "^[A-Za-z0-9._-]+$",
+                "errorMessage": "Label (unique identifier for this taxonomic profile) must be provided and may only contain letters, digits, '.', '_' and '-'",
+                "meta": [
+                    "id",
+                    "label"
+                ]
             },
             "classifier": {
                 "type": "string",
                 "pattern": "^\\S+$",
                 "errorMessage": "Classifier name must be provided and cannot contain spaces (use taxpasta profiler names for raw outputs: bracken, centrifuge, diamond, ganon, kaiju, kmcp, kraken2, krakenuniq, megan6, metaphlan, motus)",
-                "meta": ["classifier"]
+                "meta": [
+                    "classifier"
+                ]
             },
             "taxpasta_file": {
                 "type": "string",
@@ -32,13 +39,36 @@
             },
             "taxonomy_db": {
                 "type": "string",
-                "enum": ["NCBI", "GTDB"],
+                "enum": [
+                    "NCBI",
+                    "GTDB"
+                ],
                 "default": "NCBI",
                 "errorMessage": "Taxonomy database must be NCBI or GTDB (default: NCBI)",
-                "meta": ["taxonomy_db"]
+                "meta": [
+                    "taxonomy_db"
+                ]
+            },
+            "abundance_mode": {
+                "type": "string",
+                "enum": [
+                    "direct",
+                    "clade"
+                ],
+                "errorMessage": "abundance_mode must be 'direct' (reads assigned directly to each taxon, e.g. Kraken2) or 'clade' (cumulative clade abundances, e.g. MetaPhlAn); leave empty to derive it from the classifier",
+                "meta": [
+                    "abundance_mode"
+                ]
             }
         },
-        "required": ["sample_id", "label", "classifier", "taxpasta_file"]
+        "required": [
+            "sample_id",
+            "label",
+            "classifier",
+            "taxpasta_file"
+        ]
     },
-    "uniqueEntries": ["label"]
+    "uniqueEntries": [
+        "label"
+    ]
 }

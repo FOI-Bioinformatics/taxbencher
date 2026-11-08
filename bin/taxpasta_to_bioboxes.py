@@ -67,6 +67,16 @@ BELOW_SPECIES_RANKS = {"strain", "subspecies", "no rank", "isolate", "serotype",
                        "forma specialis", "varietas", "forma", "clade"}
 
 UNCLASSIFIED_TAXID = 0
+# taxpasta stores MetaPhlAn relative abundances as percent x 1e6, so 100 % == 1e8.
+CLADE_MODE_TOTAL = 100 * 1_000_000
+
+
+def format_percentage(pct: float) -> str:
+    """Six decimals like before, but never round a non-zero abundance to 0 (OPAL drops 0.0 rows)."""
+    text = f"{pct:.6f}"
+    if pct > 0 and float(text) == 0.0:
+        text = f"{pct:.6e}"
+    return text
 
 
 def setup_logging(verbose: bool = False) -> None:
@@ -216,6 +226,12 @@ def read_profile(input_file: Path) -> pd.DataFrame:
     except Exception as exc:
         logging.error(f"Error reading input file: {exc}")
         sys.exit(1)
+    if "sample" in df.columns and df["sample"].nunique(dropna=True) > 1:
+        logging.error(
+            f"{input_file} holds {df['sample'].nunique()} samples (a 'taxpasta merge --output-format long' "
+            f"table?); provide one profile per samplesheet row"
+        )
+        sys.exit(1)
 
     missing = {"taxonomy_id", "count"} - set(df.columns)
     if missing:
@@ -295,6 +311,8 @@ def convert_taxpasta_to_bioboxes(
     unresolved_taxa: List[int] = []
     above_rank_count = 0.0
     top_level_total = 0.0  # clade mode denominator
+    # clade mode, strain rank: selected strain node -> {member taxid: (value, lineage taxids)}
+    strain_members: Dict[int, Dict[int, Tuple[float, List[int]]]] = defaultdict(dict)
     ignored_ranks: Dict[str, int] = defaultdict(int)
 
     for taxid, count in zip(classified_df["taxonomy_id"], classified_df["count"]):
@@ -329,13 +347,24 @@ def convert_taxpasta_to_bioboxes(
         else:  # clade mode: use the taxon's own value only
             own_rank = normalise_rank(lineage.ranks[-1])
             own_taxid = lineage.taxids[-1]
-            if own_rank not in ranks:
-                # NCBI "no rank" strain-like node below species -> strain
-                if "strain" in selected and selected["strain"][0] == own_taxid:
-                    own_rank = "strain"
-                else:
-                    ignored_ranks[own_rank or "none"] += 1
-                    continue
+            strain_node = selected.get("strain")
+            below_strain_node = (
+                strain_node is not None
+                and own_taxid != strain_node[0]
+                and strain_node[0] in lineage.taxids[:-1]
+                and own_rank in BELOW_SPECIES_RANKS
+            )
+            if strain_node is not None and (own_taxid == strain_node[0] or below_strain_node):
+                # Strain rank holds one node per lineage (the highest strain-like node below
+                # the species, as in direct mode and in fix_gold_standard.py). Deeper strain-like
+                # nodes are collected and resolved after the loop, so they are neither written
+                # with their ancestor's TAXPATH nor counted twice.
+                strain_members[strain_node[0]][own_taxid] = (count, list(lineage.taxids))
+                node_info[("strain", strain_node[0])] = (strain_node[1], *path_for("strain"))
+                continue
+            if own_rank not in ranks or own_rank not in selected:
+                ignored_ranks[own_rank or "none"] += 1
+                continue
             # top level nodes (no selected ancestor above own rank) define the denominator
             rank_idx = ranks.index(own_rank)
             if not any(r in selected for r in ranks[:rank_idx]):
@@ -343,10 +372,32 @@ def convert_taxpasta_to_bioboxes(
             abundance[own_rank][own_taxid] += count
             node_info[(own_rank, own_taxid)] = (selected[own_rank][1], *path_for(own_rank))
 
+    # clade mode, strain rank: the node's own (cumulative) value when it is listed, otherwise the
+    # sum of its top-most listed strain-like descendants (nested ones are already included in those)
+    for strain_taxid, members in strain_members.items():
+        if strain_taxid in members:
+            abundance["strain"][strain_taxid] += members[strain_taxid][0]
+            continue
+        for member_taxid, (value, member_lineage) in members.items():
+            if not any(other in member_lineage[:-1] for other in members if other != member_taxid):
+                abundance["strain"][strain_taxid] += value
+
     if abundance_mode == "direct":
         denominator = total_classified + (unclassified if include_unclassified else 0.0)
     else:
-        denominator = top_level_total + (unclassified if include_unclassified else 0.0)
+        unclassified_used = unclassified
+        if include_unclassified and top_level_total <= CLADE_MODE_TOTAL * (1 + 1e-9):
+            # taxpasta merges MetaPhlAn 4 rows it cannot map to a taxid (t__SGB...) into taxid 0
+            # together with UNCLASSIFIED; on the MetaPhlAn scale (100 % == 1e8) the real
+            # unclassified share is at most what the classified top level leaves free.
+            unclassified_used = min(unclassified, max(0.0, CLADE_MODE_TOTAL - top_level_total))
+            if unclassified_used < unclassified:
+                logging.info(
+                    f"clade mode: taxid 0 holds {unclassified:g}, more than the {unclassified_used:g} left "
+                    f"unclassified on the 100 % scale (taxpasta merges unmappable MetaPhlAn rows into taxid 0); "
+                    f"using {unclassified_used:g}"
+                )
+        denominator = top_level_total + (unclassified_used if include_unclassified else 0.0)
         if top_level_total <= 0 and classified_df.shape[0] > 0:
             logging.warning("clade mode: no top-level taxa found; falling back to sum of all values")
             denominator = total_classified
@@ -410,7 +461,7 @@ def convert_taxpasta_to_bioboxes(
         handle.write(f"@TaxonomyID:{taxonomy_db}\n")
         handle.write("@@TAXID\tRANK\tTAXPATH\tTAXPATHSN\tPERCENTAGE\n")
         for node_taxid, rank, taxpath, taxpathsn, pct in rows:
-            handle.write(f"{node_taxid}\t{rank}\t{taxpath}\t{taxpathsn}\t{pct:.6f}\n")
+            handle.write(f"{node_taxid}\t{rank}\t{taxpath}\t{taxpathsn}\t{format_percentage(pct)}\n")
 
     logging.info(f"Successfully wrote {len(rows)} entries across {len(rank_sums)} ranks")
     return len(rows)
